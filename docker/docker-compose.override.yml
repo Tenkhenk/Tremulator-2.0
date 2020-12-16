@@ -1,0 +1,9 @@
+version: "2"
+services:
+  iiif:
+    ports:
+      - ${IIIF_PORT}:${IIIF_PORT}
+  front:
+    ports:
+      - ${FRONT_HOST_HTTP_PORT}:${FRONT_HOST_HTTP_PORT}
+      - ${HOST_HTTP_PORT}:${HOST_HTTP_PORT}
