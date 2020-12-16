@@ -1,0 +1,7 @@
+{
+  "error_with_stack": false,
+  "logs": {
+    "console_level": "error",
+    "file_level": "error"
+  }
+}

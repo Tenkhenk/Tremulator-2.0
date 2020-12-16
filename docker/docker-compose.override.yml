@@ -3,7 +3,10 @@ services:
   iiif:
     ports:
       - ${IIIF_PORT}:${IIIF_PORT}
-  front:
+  frontend:
     ports:
-      - ${FRONT_HOST_HTTP_PORT}:${FRONT_HOST_HTTP_PORT}
-      - ${HOST_HTTP_PORT}:${HOST_HTTP_PORT}
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+      - "${HOST_HTTP_PORT}:80"
+  backend:
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
