@@ -6,6 +6,6 @@
 /backend/build
 /backend/*.log
 /backend/application.log
-/backend/*.-audit.json
+/backend/*-audit.json
 
 /docker/iiif/data/*
