@@ -1,12 +1,17 @@
-import "./controllers/miscellaneous";
-import "./services/logger.service";
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import * as swaggerUi from "swagger-ui-express";
 import { RegisterRoutes } from "./routes";
-import { getLogger, Logger } from "./services/logger.service";
+import { getLogger, Logger } from "./services/logger";
 import { errorFilter } from "./error-handler";
 import { config } from "./config";
+// project's services & controllers
+import "./controllers/authentification";
+import "./controllers/miscellaneous";
+import "./services/authentification";
+import "./services/cache";
+import "./services/jwt";
+import "./services/logger";
 
 // logger
 const log: Logger = getLogger("Server");

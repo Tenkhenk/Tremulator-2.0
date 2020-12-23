@@ -2,7 +2,6 @@ import { merge } from "lodash";
 import { config_default } from "./default";
 import * as config_dev from "./dev.json";
 import * as config_test from "./test.json";
-import * as config_docker from "./docker.json";
 import * as config_production from "./production.json";
 
 export interface Configuration {
@@ -26,19 +25,26 @@ export interface Configuration {
     // it's a relative path from where you start the app or an absolute path (better)
     file_path: string;
   };
+  auth: {
+    // The client ID for the OpenID Connect
+    client_id: string;
+    // The client secret for the OpenID Connect.
+    // Perhaps it's not needed if the provider support PKCS.
+    client_secret?: string;
+    // The provider endpoint where to validate a token
+    authority_token_endpoint: string;
+    // The provider endpoint where we can retrieve certificates for the json web tokens
+    authority_jwks_uri: string;
+    // The provider endpoint where we can retrieve user info
+    userinfo_endpoint: string;
+  };
 }
 
 let config: Configuration;
 
 switch (process.env.configuration) {
-  case "dev":
-    config = merge(config_default, config_dev);
-    break;
   case "test":
     config = merge(config_default, config_test);
-    break;
-  case "docker":
-    config = merge(config_default, config_docker);
     break;
   case "production":
     config = merge(config_default, config_production);
