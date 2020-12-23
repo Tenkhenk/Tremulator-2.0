@@ -10,5 +10,5 @@ RUN n 14
 RUN npm i npm@latest -g
 
 EXPOSE 80
-
+WORKDIR /frontend
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]

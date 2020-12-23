@@ -9,5 +9,5 @@ RUN n 14
 RUN npm i npm@latest -g
 
 EXPOSE 3000
-
-ENTRYPOINT ["/bin/bash", "/docker-entrypoint.sh", "$MODE"]
+WORKDIR /backend
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh", "$MODE"]

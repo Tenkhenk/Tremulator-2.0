@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /front
+cd /frontend
 
 if [ "$MODE" = "dev" ]; then
   echo "/!\\ Mode is set to DEV /!\\"

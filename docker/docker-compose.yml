@@ -24,7 +24,7 @@ services:
       - ${HOST_HTTP_PORT}:80
     volumes:
       - ${PROJECT_PATH}/docker/frontend/nginx.${MODE}.conf:/etc/nginx/nginx.conf
-      - ${PROJECT_PATH}/front:/frontend
+      - ${PROJECT_PATH}/frontend:/frontend
     env_file:
       - ${PROJECT_PATH}/docker/.env
 
