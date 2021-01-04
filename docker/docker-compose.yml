@@ -50,5 +50,6 @@ services:
       - iiif
     volumes:
       - ${PROJECT_PATH}/backend:/backend
+      - ${PROJECT_PATH}/docker/iiif/data:/data
     env_file:
       - ${PROJECT_PATH}/docker/.env
