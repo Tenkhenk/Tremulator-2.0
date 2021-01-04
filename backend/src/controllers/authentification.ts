@@ -43,7 +43,7 @@ export class AuthController extends Controller {
   @Response("401", "Unauthorized")
   @Response("403", "Forbidden")
   @Response("500", "Internal Error")
-  public async whoami(@Request() req: express.Request): Promise<User> {
+  public async whoami(@Request() req: express.Request): Promise<Omit<User, "collections">> {
     // get the user
     const user: User = await this.auth.verify(req);
     this.log.debug(`User is `, user);

@@ -1,4 +1,5 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
+import { Collection } from "./collection";
 
 @Entity()
 export class User extends BaseEntity {
@@ -19,4 +20,8 @@ export class User extends BaseEntity {
 
   @Column()
   expires_at: Date;
+
+  @ManyToMany(() => Collection)
+  @JoinTable()
+  collections: Array<Collection>;
 }

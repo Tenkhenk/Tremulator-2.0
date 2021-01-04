@@ -9,7 +9,7 @@
     "build": "npm run generate && tsc",
     "generate": "npm run generate:routes && npm run generate:spec",
     "generate:spec": "tsoa spec",
-    "generate:routes": "tsoa routes",
+    "generate:routes": "tsoa routes -c ./tsoa.json",
     "lint": "eslint --ext .ts ./src"
   },
   "author": "OuestWare",
