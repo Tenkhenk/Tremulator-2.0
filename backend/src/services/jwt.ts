@@ -3,7 +3,7 @@ import * as jwt from "jsonwebtoken";
 import { Singleton } from "typescript-ioc";
 import { getLogger, Logger } from "./logger";
 import { config } from "../config";
-import { User } from "../types/authentification";
+import { User } from "../entities/user";
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 @Singleton

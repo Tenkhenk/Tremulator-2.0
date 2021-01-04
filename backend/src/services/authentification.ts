@@ -3,18 +3,31 @@ import * as express from "express";
 import * as Boom from "@hapi/boom";
 import axios from "axios";
 import { config } from "../config";
-import { User, ValidateCodeRequest, ValidateCodeResponse } from "../types/authentification";
-import { CacheService } from "./cache";
+import { User } from "../entities/user";
 import { JwtService } from "./jwt";
 import { getLogger, Logger } from "./logger";
+
+export interface ValidateCodeRequest {
+  client_id: string;
+  code: string;
+  code_verifier: string;
+  grant_type: string;
+  redirect_uri?: string;
+}
+
+export interface ValidateCodeResponse {
+  access_token: string;
+  expires_in: number;
+  scope: string;
+  token_type: string;
+  id_token: string;
+}
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 @Singleton
 export class AuthService {
   // logger
   private log: Logger = getLogger("AuthService");
-  @Inject
-  private cache: CacheService;
   @Inject
   private jwt: JwtService;
 
@@ -62,12 +75,19 @@ export class AuthService {
       },
       responseType: "json",
     });
-    const profile: User = profileResponse.data;
-    profile.email = profile.email || profile.mail;
-    this.log.info(`User profile is `, profile);
+    this.log.info(`User profile is `, profileResponse.data);
 
-    // save in the cache
-    this.cache.set<User>(result.access_token, profile, result.expires_in);
+    // save in the db
+    console.log("access_token", result.access_token);
+    const user = new User();
+    user.email = profileResponse.data.email || profileResponse.data.mail;
+    user.firstname = profileResponse.data.given_name;
+    user.lastname = profileResponse.data.family_name;
+    user.avatar = profileResponse.data.picture;
+    user.access_token = result.access_token;
+    user.expires_at = new Date(Date.now() + result.expires_in * 1000);
+    await user.save();
+
     return result;
   }
 
@@ -77,7 +97,7 @@ export class AuthService {
    * Otherwise, it returns the user 's profile.
    */
   verify(request: express.Request): Promise<User> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       let token: string;
 
       // test if bearer token is in query parameter
@@ -105,12 +125,17 @@ export class AuthService {
 
       // verify that the token is in the cache
       if (token) {
-        const user: User = this.cache.get<User>(token);
+        const user: User = await User.findOne({ where: { access_token: token } });
+        console.log(user, token, user.expires_at.getTime(), Date.now());
         if (user) {
-          this.log.info(`Token find in cache, user is`, user);
-          resolve(user);
+          if (Date.now() <= user.expires_at.getTime()) {
+            this.log.info(`Token find in cache, user is`, user);
+            resolve(user);
+          } else {
+            reject(Boom.unauthorized(`Token is expired`));
+          }
         } else {
-          reject(Boom.unauthorized("Bad access token (or user not found in cache)"));
+          reject(Boom.unauthorized("Bad access token"));
         }
       } else {
         reject(Boom.unauthorized("Bearer token not present"));

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { userManager } from "../../hooks/user";
+import { manager } from "../../hooks/user";
 
 interface Props {}
 export const PageAuthCallback: React.FC<Props> = (props: Props) => {
@@ -12,7 +12,7 @@ export const PageAuthCallback: React.FC<Props> = (props: Props) => {
     const main = async () => {
       try {
         setLoading(true);
-        await userManager.signinRedirectCallback();
+        await manager.signinRedirectCallback();
         const redirectUrl: string = localStorage.getItem("AUTH_REDIRECT_URL") || "/";
         history.push(redirectUrl || "/");
       } catch (e) {

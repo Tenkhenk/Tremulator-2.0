@@ -3,10 +3,13 @@ services:
   iiif:
     ports:
       - ${IIIF_PORT}:${IIIF_PORT}
+  db:
+    ports:
+      - ${HOST_POSTGRES_PORT}:5432
   frontend:
     ports:
       - ${FRONTEND_PORT}:${FRONTEND_PORT}
-      - "${HOST_HTTP_PORT}:80"
+      - ${HOST_HTTP_PORT}:80
   backend:
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}

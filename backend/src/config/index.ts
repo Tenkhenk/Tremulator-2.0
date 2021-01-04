@@ -38,6 +38,16 @@ export interface Configuration {
     // The provider endpoint where we can retrieve user info
     userinfo_endpoint: string;
   };
+  db: {
+    // type of the database (`postgres`)
+    host: string;
+    port: number;
+    username: string;
+    password: string;
+    database: string;
+    synchronize: boolean;
+    logging: boolean;
+  };
 }
 
 let config: Configuration;

@@ -4,7 +4,7 @@ import { useGet, usePost } from "../hooks/api";
 
 interface Props {}
 export const PageHome: React.FC<Props> = (props: Props) => {
-  const [user] = useUser();
+  const { user } = useUser();
   const { data, loading, error } = useGet<string>("/misc/ping");
   const [echo, { loading: postLoading, error: postError, data: postData }] = usePost<
     { test: string },
@@ -12,7 +12,9 @@ export const PageHome: React.FC<Props> = (props: Props) => {
   >("/misc/echo");
   return (
     <>
-      <h1>Hello World {user?.name}</h1>
+      <h1>
+        Hello World {user?.firstname} {user?.lastname}
+      </h1>
       <div>
         <h2>GET hook</h2>
         {loading && <p>Api is loading ...</p>}

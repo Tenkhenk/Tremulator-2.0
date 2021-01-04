@@ -11,3 +11,4 @@
 /backend/*-audit.json
 
 /docker/iiif/data/*
+/docker/db/data/*

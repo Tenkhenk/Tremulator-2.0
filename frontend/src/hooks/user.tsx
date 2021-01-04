@@ -1,48 +1,26 @@
 import { User as OIDCUser, UserManager, WebStorageStateStore } from "oidc-client";
 import { config } from "../config";
+import { User } from "../types";
 
-export class User {
-  email?: string;
-  name?: string;
-  avatar?: string;
-  firstname?: string;
-  lastname?: string;
-  locale?: string;
-}
-
-export const userManager = new UserManager({
+export const manager = new UserManager({
   ...config.auth,
   userStore: new WebStorageStateStore({ store: window.localStorage }),
 });
 
 /**
- * Hook to manage connected user.
+ * Hook to retrieve the connected user and the oidc user manager.
  */
-export function useUser(): [User | null, (user: User) => void] {
-  /**
-   * Retrieve the connected user.
-   */
-  function getUser(): User | null {
-    let result: User | null = null;
-    const value = localStorage.getItem(`oidc.user:${config.auth.authority}:${config.auth.client_id}`);
-    if (value) {
-      const oidcUser: OIDCUser = JSON.parse(value) as OIDCUser;
-      result = {
-        email: oidcUser.profile.email,
-        name: oidcUser.profile.name,
-        avatar: oidcUser.profile.picture,
-        firstname: oidcUser.profile.given_name,
-        lastname: oidcUser.profile.family_name,
-        locale: oidcUser.profile.locale,
-      };
-    }
-    return result;
+export function useUser(): { user: User | null; manager: UserManager } {
+  let user: User | null = null;
+  const value = localStorage.getItem(`oidc.user:${config.auth.authority}:${config.auth.client_id}`);
+  if (value) {
+    const oidcUser: OIDCUser = JSON.parse(value) as OIDCUser;
+    user = {
+      email: oidcUser.profile.email || "",
+      avatar: oidcUser.profile.picture || "",
+      firstname: oidcUser.profile.given_name || "",
+      lastname: oidcUser.profile.family_name || "",
+    };
   }
-
-  /**
-   * Connect the user
-   */
-  function setUser(user: User): void {}
-
-  return [getUser(), setUser];
+  return { user, manager };
 }

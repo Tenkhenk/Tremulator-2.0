@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { config } from "../config";
-import { userManager } from "./user";
+import { manager } from "./user";
 
 interface APIResult<T> {
   loading: boolean;
@@ -19,7 +19,8 @@ export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }):
 
   useEffect(() => {
     const main = async () => {
-      const user = await userManager.getUser();
+      const user = await manager.getUser();
+      setData(null);
       setLoading(true);
       setError(null);
       try {
@@ -54,10 +55,11 @@ export function usePost<P, R>(
   const [data, setData] = useState<R | null>(null);
 
   async function post(body: P, urlParams: { [key: string]: unknown } = {}): Promise<APIResult<R>> {
+    setData(null);
     setLoading(true);
     setError(null);
     try {
-      const user = await userManager.getUser();
+      const user = await manager.getUser();
       const response = await axios({
         method: "POST",
         url: `${config.api_path}${path}`,

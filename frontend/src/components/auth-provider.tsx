@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { userManager } from "../hooks/user";
+import { manager } from "../hooks/user";
 
 interface Props {
   secured: boolean;
@@ -15,10 +15,10 @@ export const AuthProvider: React.FC<Props> = (props: React.PropsWithChildren<Pro
   useEffect(() => {
     const main = async () => {
       if (secured) {
-        const user = await userManager.getUser();
+        const user = await manager.getUser();
         if (!user || user.expired) {
           localStorage.setItem("AUTH_REDIRECT_URL", `${location.pathname}${location.search}`);
-          userManager.signinRedirect();
+          manager.signinRedirect();
         }
       }
     };

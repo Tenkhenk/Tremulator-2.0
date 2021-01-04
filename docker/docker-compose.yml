@@ -1,6 +1,6 @@
 version: "2"
 services:
-  # Frontend
+  # IIIF Server
   iiif:
     build:
       context: ./iiif
@@ -14,12 +14,23 @@ services:
     env_file:
       - ${PROJECT_PATH}/docker/.env
 
+  # Postgres server
+  db:
+    image: postgres:${POSTGRES_VERSION}
+    restart: ${RESTART_POLICY}
+    volumes:
+      - ${PROJECT_PATH}/docker/db/data:${PGDATA}
+    env_file:
+      - ${PROJECT_PATH}/docker/.env
+
   # Frontend
   frontend:
     build:
       context: ./frontend
       dockerfile: ./Dockerfile
     restart: ${RESTART_POLICY}
+    depends_on:
+      - backend
     ports:
       - ${HOST_HTTP_PORT}:80
     volumes:
@@ -28,12 +39,15 @@ services:
     env_file:
       - ${PROJECT_PATH}/docker/.env
 
-  # Frontend
+  # Backend
   backend:
     build:
       context: ./backend
       dockerfile: ./Dockerfile
     restart: ${RESTART_POLICY}
+    depends_on:
+      - db
+      - iiif
     volumes:
       - ${PROJECT_PATH}/backend:/backend
     env_file:

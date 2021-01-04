@@ -3,8 +3,8 @@ import { Inject } from "typescript-ioc";
 import * as Boom from "@hapi/boom";
 import * as express from "express";
 import { getLogger, Logger } from "../services/logger";
-import { ValidateCodeRequest, ValidateCodeResponse } from "../types/authentification";
-import { AuthService } from "../services/authentification";
+import { AuthService, ValidateCodeRequest, ValidateCodeResponse } from "../services/authentification";
+import { User } from "../entities/user";
 
 /**
  * Endpoint used in the OpenId code flow to validate the receive Authorization code
@@ -43,9 +43,9 @@ export class AuthController extends Controller {
   @Response("401", "Unauthorized")
   @Response("403", "Forbidden")
   @Response("500", "Internal Error")
-  public async whoami(@Request() req: express.Request): Promise<object> {
+  public async whoami(@Request() req: express.Request): Promise<User> {
     // get the user
-    const user: object = await this.auth.verify(req);
+    const user: User = await this.auth.verify(req);
     this.log.debug(`User is `, user);
     return user;
   }

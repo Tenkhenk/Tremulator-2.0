@@ -1,7 +1,7 @@
 import * as express from "express";
 import { Container } from "typescript-ioc";
 import { AuthService } from "./services/authentification";
-import { User } from "./types/authentification";
+import { User } from "./entities/user";
 import { config } from "./config";
 
 const auth: AuthService = Container.get(AuthService);
