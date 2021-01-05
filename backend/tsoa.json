@@ -5,7 +5,14 @@
   "spec": {
     "outputDirectory": "build",
     "basePath": "/api/v1",
-    "specVersion": 3
+    "specVersion": 3,
+    "securityDefinitions": {
+      "auth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
   },
   "routes": {
     "routesDir": "src",
