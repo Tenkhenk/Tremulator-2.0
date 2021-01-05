@@ -39,5 +39,5 @@ else
   echo " ~ Run the server"
   echo " ~"
   echo
-  node ./build/server.js
+  node ./build/index.js
 fi
