@@ -126,10 +126,9 @@ export class AuthService {
       // verify that the token is in the cache
       if (token) {
         const user: User = await User.findOne({ where: { access_token: token } });
-        console.log(user, token, user.expires_at.getTime(), Date.now());
         if (user) {
           if (Date.now() <= user.expires_at.getTime()) {
-            this.log.info(`Token find in cache, user is`, user);
+            this.log.info(`Token found in db, user is`, user);
             resolve(user);
           } else {
             reject(Boom.unauthorized(`Token is expired`));
