@@ -51,7 +51,7 @@ export class Logger {
  * Create a logger instance.
  */
 export function getLogger(label: string): Logger {
-  if (!winston.logger.has(label)) {
+  if (!winston.loggers.has(label)) {
     winston.loggers.add(label, {
       levels: logLevels.levels,
       transports: [
