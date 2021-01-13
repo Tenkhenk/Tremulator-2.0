@@ -10,4 +10,4 @@ RUN npm i npm@latest -g
 
 EXPOSE 3000
 WORKDIR /backend
-ENTRYPOINT ["/bin/bash", "/entrypoint.sh", "$MODE"]
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
