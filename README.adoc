@@ -1,5 +1,10 @@
 = Project Tremulator
 
+== Description
+
+The Tremulator is a digital Humanities tool developed by Ian D. Johnson and David F. Johnson
+for collecting and visualizing irregular paleographical data on Medieval manuscripts.
+
 include::./docker/README.adoc[leveloffset=+1]
 
 include::./frontend/README.adoc[leveloffset=+1]
