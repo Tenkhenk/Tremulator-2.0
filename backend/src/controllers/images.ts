@@ -1,18 +1,22 @@
-import { Body, Controller, Get, Post, Put, Delete, Route, Response, Query, Path, Security, Tags } from "tsoa";
+import { Body, Controller, Get, Post, Put, Delete, Route, Response, Request, Query, Path, Security, Tags } from "tsoa";
 import { Inject } from "typescript-ioc";
+import { DefaultController, ExpressAuthRequest } from "./default";
 import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
 import { ImageModel } from "../entities/image";
 
 @Tags("Collections", "Images")
-@Route("images")
-export class ImagesController extends Controller {
+@Route("collections")
+export class ImagesController extends DefaultController {
   // logger
   private log: Logger = getLogger("ImagesController");
   @Inject
   private db: DbService;
 
-  @Post()
+  /**
+   * Upload and create an image in the collection.
+   */
+  @Post("{collectionId}/images")
   @Security("auth")
   @Response("201", "Created")
   @Response("400", "Bad Request")
@@ -20,11 +24,17 @@ export class ImagesController extends Controller {
   @Response("403", "Forbidden")
   @Response("404", "Not Found")
   @Response("500", "Internal Error")
-  public async create(): Promise<ImageModel> {
+  public async upload(@Request() req: ExpressAuthRequest, @Path() collectionId: number): Promise<ImageModel> {
+    // Get the collection
+    const collection = await this.getCollection(req, collectionId);
+    await this.handleFileUpload(req, "file");
     return null;
   }
 
-  @Get("{id}")
+  /**
+   * Get an image from the collection.
+   */
+  @Get("{collectionId}/images/{id}")
   @Security("auth")
   @Response("200", "Success")
   @Response("400", "Bad Request")
@@ -32,11 +42,20 @@ export class ImagesController extends Controller {
   @Response("403", "Forbidden")
   @Response("404", "Not Found")
   @Response("500", "Internal Error")
-  public async get(@Path() id: number): Promise<ImageModel> {
+  public async get(
+    @Request() req: ExpressAuthRequest,
+    @Path() collectionId: number,
+    @Path() id: number,
+  ): Promise<ImageModel> {
+    // Get the collection
+    const collection = await this.getCollection(req, collectionId);
     return null;
   }
 
-  @Put("{id}")
+  /**
+   * Update an image from the collection.
+   */
+  @Put("{collectionId}/images/{id}")
   @Security("auth")
   @Response("204", "No Content")
   @Response("400", "Bad request")
@@ -44,11 +63,20 @@ export class ImagesController extends Controller {
   @Response("403", "Forbidden")
   @Response("404", "Not found")
   @Response("500", "Internal Error")
-  public async update(@Path() id: number): Promise<void> {
+  public async update(
+    @Request() req: ExpressAuthRequest,
+    @Path() collectionId: number,
+    @Path() id: number,
+  ): Promise<void> {
+    // Get the collection
+    const collection = await this.getCollection(req, collectionId);
     return null;
   }
 
-  @Delete("{id}")
+  /**
+   * Delete an image from the collection.
+   */
+  @Delete("{collectionId}/images/{id}")
   @Security("auth")
   @Response("204", "No Content")
   @Response("400", "Bad request")
@@ -56,7 +84,13 @@ export class ImagesController extends Controller {
   @Response("403", "Forbidden")
   @Response("404", "Not found")
   @Response("500", "Internal Error")
-  public async delete(): Promise<void> {
+  public async delete(
+    @Request() req: ExpressAuthRequest,
+    @Path() collectionId: number,
+    @Path() id: number,
+  ): Promise<void> {
+    // Get the collection
+    const collection = await this.getCollection(req, collectionId);
     return null;
   }
 }

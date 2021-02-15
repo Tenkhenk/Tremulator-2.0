@@ -2,12 +2,18 @@ import { Controller } from "tsoa";
 import * as express from "express";
 import * as multer from "multer";
 import * as Boom from "@hapi/boom";
+import * as fs from "fs";
+import * as path from "path";
 import { ValidationError } from "class-validator";
 import { CollectionEntity } from "../entities/collection";
 import { UserEntity } from "../entities/user";
+import { getLogger, Logger } from "../services/logger";
+import { config } from "../config";
 
 // Express request with user
 export type ExpressAuthRequest = express.Request & { user: UserEntity };
+
+const log: Logger = getLogger("DefaultController");
 
 export class DefaultController extends Controller {
   /**
@@ -46,15 +52,16 @@ export class DefaultController extends Controller {
   }
 
   /**
-   *
+   * Handle a file upload.
    */
   protected handleFileUpload(request: express.Request, fieldname: string): Promise<void> {
     const multerSingle = multer().single(fieldname);
     return new Promise((resolve, reject) => {
       multerSingle(request, undefined, async (error) => {
-        if (error) {
-          reject(error);
-        }
+        if (error) reject(error);
+        if (!request.file) reject("File not present");
+        console.log(request.file);
+        fs.writeFileSync(path.join(config.upload_path, request.file.originalname), request.file.buffer);
         resolve();
       });
     });

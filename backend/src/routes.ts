@@ -437,10 +437,12 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.post('/api/v1/images',
+        app.post('/api/v1/collections/:collectionId/images',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
+                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                    collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -455,14 +457,16 @@ export function RegisterRoutes(app: express.Router) {
             const controller = new ImagesController();
 
 
-            const promise = controller.create.apply(controller, validatedArgs as any);
+            const promise = controller.upload.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/api/v1/images/:id',
+        app.get('/api/v1/collections/:collectionId/images/:id',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
+                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                    collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
@@ -482,10 +486,12 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/api/v1/images/:id',
+        app.put('/api/v1/collections/:collectionId/images/:id',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
+                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                    collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
@@ -505,10 +511,13 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.delete('/api/v1/images/:id',
+        app.delete('/api/v1/collections/:collectionId/images/:id',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
+                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                    collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa

@@ -22,7 +22,7 @@ export class CollectionsController extends DefaultController {
   /**
    * Make a search in the collections.
    */
-  @Get("")
+  @Get()
   @Security("auth")
   @Response("200", "Success")
   @Response("400", "Bad Request")
@@ -40,11 +40,16 @@ export class CollectionsController extends DefaultController {
       .leftJoinAndSelect("collection.users", "user")
       .where(
         `
-        (collection.ownerEmail = :email OR user.email = :email) AND
+        (collection.ownerEmail = :email OR user.email = :email)
+        ${
+          search !== ""
+            ? `AND
         (
           to_tsvector('simple', collection.name) @@ to_tsquery('simple', :query) OR
           to_tsvector('simple', collection.description) @@ to_tsquery('simple', :query)
-        )
+        )`
+            : ""
+        }
         `,
         { query: search.trim().replace(/ /g, " & "), email: req.user.email },
       )

@@ -13,18 +13,39 @@
         "bearerFormat": "JWT"
       }
     },
-    "paths": {
-      "/collections/{id}/images": {
-        "post": {
-          "consumes": ["multipart/form-data"],
-          "parameters": [
-            {
-              "in": "formData",
-              "name": "file",
+    "specMerging": "recursive",
+    "spec": {
+      "paths": {
+        "/collections/{collectionId}/images": {
+          "post": {
+            "parameters": [
+              {
+                "in": "path",
+                "name": "collectionId",
+                "required": true,
+                "schema": {
+                  "format": "double",
+                  "type": "number"
+                }
+              }
+            ],
+            "requestBody": {
               "required": true,
-              "type": "file"
+              "content": {
+                "multipart/form-data": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "file": {
+                        "type": "string",
+                        "format": "binary"
+                      }
+                    }
+                  }
+                }
+              }
             }
-          ]
+          }
         }
       }
     }

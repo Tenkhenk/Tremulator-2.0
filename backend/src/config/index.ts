@@ -9,6 +9,8 @@ export interface Configuration {
   port: number;
   // Should we display stack on error
   error_with_stack: boolean;
+  // Path to the upload folder
+  upload_path: string;
   // Logging configuration
   logs: {
     // debug, info, warn, error
