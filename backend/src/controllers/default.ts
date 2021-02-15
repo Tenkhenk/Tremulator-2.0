@@ -1,7 +1,13 @@
 import { Controller } from "tsoa";
-import { CollectionEntity } from "../entities/collection";
+import * as express from "express";
+import * as multer from "multer";
 import * as Boom from "@hapi/boom";
 import { ValidationError } from "class-validator";
+import { CollectionEntity } from "../entities/collection";
+import { UserEntity } from "../entities/user";
+
+// Express request with user
+export type ExpressAuthRequest = express.Request & { user: UserEntity };
 
 export class DefaultController extends Controller {
   /**
@@ -11,7 +17,7 @@ export class DefaultController extends Controller {
    * @throw  A 404 if the collection is not found, or a 403 if the user is not allowed
    * @returns {CollectionEntity}
    */
-  protected async getCollection(req: any, id: number): Promise<CollectionEntity> {
+  protected async getCollection(req: ExpressAuthRequest, id: number): Promise<CollectionEntity> {
     // Search the collection in DB
     const collection = await CollectionEntity.findOne(id, { relations: ["users", "owner"] });
 
@@ -37,5 +43,20 @@ export class DefaultController extends Controller {
     if (errors && errors.length > 0) {
       throw Boom.badRequest(`Validation failed for field(s) ${errors.map((e) => e.property).join(",")}`);
     }
+  }
+
+  /**
+   *
+   */
+  protected handleFileUpload(request: express.Request, fieldname: string): Promise<void> {
+    const multerSingle = multer().single(fieldname);
+    return new Promise((resolve, reject) => {
+      multerSingle(request, undefined, async (error) => {
+        if (error) {
+          reject(error);
+        }
+        resolve();
+      });
+    });
   }
 }

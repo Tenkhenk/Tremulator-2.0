@@ -12,6 +12,21 @@
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
+    },
+    "paths": {
+      "/collections/{id}/images": {
+        "post": {
+          "consumes": ["multipart/form-data"],
+          "parameters": [
+            {
+              "in": "formData",
+              "name": "file",
+              "required": true,
+              "type": "file"
+            }
+          ]
+        }
+      }
     }
   },
   "routes": {

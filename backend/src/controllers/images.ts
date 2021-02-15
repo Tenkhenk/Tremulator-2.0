@@ -4,7 +4,7 @@ import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
 import { ImageModel } from "../entities/image";
 
-@Tags("Images")
+@Tags("Collections", "Images")
 @Route("images")
 export class ImagesController extends Controller {
   // logger
@@ -19,7 +19,6 @@ export class ImagesController extends Controller {
   @Response("401", "Unauthorized")
   @Response("403", "Forbidden")
   @Response("404", "Not Found")
-  @Response("500", "Internal Error")
   @Response("500", "Internal Error")
   public async create(): Promise<ImageModel> {
     return null;

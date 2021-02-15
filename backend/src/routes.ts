@@ -244,7 +244,7 @@ export function RegisterRoutes(app: express.Router) {
                     req: {"in":"request","name":"req","required":true,"dataType":"object"},
                     search: {"default":"","in":"query","name":"search","dataType":"string"},
                     skip: {"default":0,"in":"query","name":"skip","dataType":"double"},
-                    limit: {"default":0,"in":"query","name":"limit","dataType":"double"},
+                    limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -408,7 +408,7 @@ export function RegisterRoutes(app: express.Router) {
             const controller = new CollectionsController();
 
 
-            const promise = controller.usersAdd.apply(controller, validatedArgs as any);
+            const promise = controller.userAdd.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -433,7 +433,7 @@ export function RegisterRoutes(app: express.Router) {
             const controller = new CollectionsController();
 
 
-            const promise = controller.usersDelete.apply(controller, validatedArgs as any);
+            const promise = controller.userDelete.apply(controller, validatedArgs as any);
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
