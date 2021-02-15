@@ -20,7 +20,7 @@ export const config_default = {
     scope: "openid profile email",
     response_type: "code",
     filterProtocolClaims: true,
-    loadUserInfo: true,
+    loadUserInfo: false,
     revokeAccessTokenOnSignout: true,
     metadata: {
       issuer: "https://accounts.google.com",
