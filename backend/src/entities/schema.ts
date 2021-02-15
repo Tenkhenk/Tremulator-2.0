@@ -1,11 +1,16 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Collection } from "./collection";
+import { CollectionEntity } from "./collection";
 
-@Entity()
-export class Schema extends BaseEntity {
+@Entity("schema")
+export class SchemaEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Collection, (collection) => collection.schemas)
-  collection: Collection;
+  @Column({ type: "json" })
+  schema: any;
+
+  @ManyToOne(() => CollectionEntity, (collection) => collection.schemas)
+  collection: CollectionEntity;
 }
+
+export type SchemaModel = Pick<SchemaEntity, "id" | "schema">;

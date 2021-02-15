@@ -5,6 +5,7 @@
   "main": "./build/index.js",
   "scripts": {
     "start": "export configuration=\"dev\" && npm run generate && tsc-watch --onSuccess 'nodemon ./build/index.js'",
+    "test": "export configuration=\"test\" && nyc --reporter=html --reporter=text mocha --exit -r ts-node/register test/{,**/}*.test.ts",
     "serve": "npm run generate && tsc-watch --onSuccess 'nodemon ./build/index.js'",
     "build": "npm run generate && tsc",
     "generate": "npm run generate:routes && npm run generate:spec",
@@ -17,6 +18,8 @@
     "@hapi/boom": "^9.1.1",
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
+    "class-transformer": "^0.3.2",
+    "class-validator": "^0.13.1",
     "express": "^4.17.1",
     "http-status-codes": "^2.1.4",
     "jsonwebtoken": "^8.5.1",
@@ -34,11 +37,18 @@
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.0",
+    "@types/chai": "^4.2.15",
     "@types/express": "^4.17.9",
     "@types/lodash": "^4.14.165",
+    "@types/mocha": "^8.2.0",
     "@types/node": "^14.14.14",
+    "chai": "^4.3.0",
+    "mocha": "^8.3.0",
+    "mock-express-request": "^0.2.2",
     "nodemon": "^2.0.6",
+    "nyc": "^15.1.0",
     "prettier": "^2.2.1",
+    "ts-node": "^9.1.1",
     "tsc-watch": "^4.2.9",
     "typescript": "^4.1.3"
   }

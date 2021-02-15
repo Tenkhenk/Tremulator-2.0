@@ -1,21 +1,26 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
-import { Collection } from "./collection";
-import { Annotation } from "./annotation";
+import { IsNotEmpty, IsUrl } from "class-validator";
+import { CollectionEntity } from "./collection";
+import { AnnotationEntity } from "./annotation";
 
-@Entity()
-export class Image extends BaseEntity {
+@Entity("image")
+export class ImageEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
+  @IsNotEmpty()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
+  @IsUrl()
   url: string;
 
-  @ManyToOne(() => Collection, (collection) => collection.images)
-  collection: Collection;
+  @ManyToOne(() => CollectionEntity, (collection) => collection.images)
+  collection: CollectionEntity;
 
-  @OneToMany(() => Annotation, (annotation) => annotation.image)
-  annotations: Array<Annotation>;
+  @OneToMany(() => AnnotationEntity, (annotation) => annotation.image)
+  annotations: Array<AnnotationEntity>;
 }
+
+export type ImageModel = Pick<ImageEntity, "id" | "name" | "url">;

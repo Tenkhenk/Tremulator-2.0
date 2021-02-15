@@ -1,27 +1,32 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
-import { Collection } from "./collection";
+import { IsEmail, IsDate } from "class-validator";
+import { CollectionEntity } from "./collection";
 
-@Entity()
-export class User extends BaseEntity {
+@Entity("user")
+export class UserEntity extends BaseEntity {
+  @IsEmail()
   @Column({ primary: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   firstname: string;
 
-  @Column()
+  @Column({ nullable: true })
   lastname: string;
 
-  @Column()
+  @Column({ nullable: true })
   avatar: string;
 
   @Column()
   access_token: string;
 
   @Column()
+  @IsDate()
   expires_at: Date;
 
-  @ManyToMany(() => Collection)
+  @ManyToMany(() => CollectionEntity)
   @JoinTable()
-  collections: Array<Collection>;
+  collections: Array<CollectionEntity>;
 }
+
+export type UserModel = Pick<UserEntity, "email" | "firstname" | "lastname" | "avatar" | "access_token" | "expires_at">;

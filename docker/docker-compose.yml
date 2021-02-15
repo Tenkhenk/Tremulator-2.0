@@ -19,9 +19,12 @@ services:
     image: postgres:${POSTGRES_VERSION}
     restart: ${RESTART_POLICY}
     volumes:
-      - ${PROJECT_PATH}/docker/db/data:${PGDATA}
-    env_file:
-      - ${PROJECT_PATH}/docker/.env
+      - ${PROJECT_PATH}/docker/db/data:/var/lib/postgresql/data/pgdata
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
   # Frontend
   frontend:

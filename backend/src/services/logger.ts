@@ -68,7 +68,7 @@ export function getLogger(label: string): Logger {
         // There is also a combined log file
         new DailyRotateFile({
           filename: path.join(config.logs.file_path, "application-%DATE%.log"),
-          datePattern: "YYYY-MM-DD-HH",
+          datePattern: "YYYY-MM-DD",
           createSymlink: true,
           symlinkName: "application.log",
           zippedArchive: true,

@@ -1,1 +1,14 @@
-{}
+{
+  "logs": {
+    "console_level": "debug"
+  },
+  "db": {
+    "host": "localhost",
+    "port": 5432,
+    "username": "tremulator",
+    "password": "tr3mul4t0r",
+    "database": "tremulator-test",
+    "synchronize": true,
+    "logging": false
+  }
+}

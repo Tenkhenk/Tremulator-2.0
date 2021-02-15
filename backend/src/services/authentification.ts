@@ -3,7 +3,7 @@ import * as express from "express";
 import * as Boom from "@hapi/boom";
 import axios from "axios";
 import { config } from "../config";
-import { User } from "../entities/user";
+import { UserEntity } from "../entities/user";
 import { JwtService } from "./jwt";
 import { getLogger, Logger } from "./logger";
 
@@ -78,8 +78,7 @@ export class AuthService {
     this.log.info(`User profile is `, profileResponse.data);
 
     // save in the db
-    console.log("access_token", result.access_token);
-    const user = new User();
+    const user = new UserEntity();
     user.email = profileResponse.data.email || profileResponse.data.mail;
     user.firstname = profileResponse.data.given_name;
     user.lastname = profileResponse.data.family_name;
@@ -96,7 +95,7 @@ export class AuthService {
    * if it's not found, throw an exception (badRequest or Unauthorized).
    * Otherwise, it returns the user 's profile.
    */
-  verify(request: express.Request): Promise<User> {
+  verify(request: express.Request): Promise<UserEntity> {
     return new Promise(async (resolve, reject) => {
       let token: string;
 
@@ -125,7 +124,7 @@ export class AuthService {
 
       // verify that the token is in the cache
       if (token) {
-        const user: User = await User.findOne({ where: { access_token: token } });
+        const user = await UserEntity.findOne({ where: { access_token: token } });
         if (user) {
           if (Date.now() <= user.expires_at.getTime()) {
             this.log.info(`Token found in db, user is`, user);

@@ -1,18 +1,20 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Image } from "./image";
-import { Schema } from "./schema";
+import { ImageEntity } from "./image";
+import { SchemaEntity } from "./schema";
 
-@Entity()
-export class Annotation extends BaseEntity {
+@Entity("annotation")
+export class AnnotationEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  data: string;
+  @Column({ type: "json" })
+  data: any;
 
-  @ManyToOne(() => Image, (image) => image.annotations)
-  image: Image;
+  @ManyToOne(() => ImageEntity, (image) => image.annotations)
+  image: ImageEntity;
 
-  @ManyToOne(() => Schema)
-  schema: Schema;
+  @ManyToOne(() => SchemaEntity)
+  schema: SchemaEntity;
 }
+
+export type AnnotationModel = Pick<AnnotationEntity, "id" | "data">;

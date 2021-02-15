@@ -9,6 +9,8 @@
 /backend/*.log.gz
 /backend/application.log
 /backend/*-audit.json
+/backend/coverage
+/backend/.nyc_output
 
 /docker/iiif/data/*
 /docker/db/data/*

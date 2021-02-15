@@ -8,31 +8,35 @@ import {
   ManyToMany,
   JoinTable,
 } from "typeorm";
-import { Schema } from "./schema";
-import { Image } from "./image";
-import { User } from "./user";
+import { IsNotEmpty } from "class-validator";
+import { SchemaEntity } from "./schema";
+import { ImageEntity } from "./image";
+import { UserEntity } from "./user";
 
-@Entity()
-export class Collection extends BaseEntity {
+@Entity("collection")
+export class CollectionEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
+  @IsNotEmpty()
   name: string;
 
   @Column()
   description: string;
 
-  @ManyToOne(() => User)
-  owner: User;
+  @ManyToOne(() => UserEntity)
+  owner: UserEntity;
 
-  @ManyToMany(() => User, (user) => user.collections)
+  @ManyToMany(() => UserEntity, (user) => user.collections)
   @JoinTable()
-  users: Array<User>;
+  users: Array<UserEntity>;
 
-  @OneToMany(() => Image, (image) => image.collection)
-  images: Array<Image>;
+  @OneToMany(() => ImageEntity, (image) => image.collection)
+  images: Array<ImageEntity>;
 
-  @OneToMany(() => Schema, (schema) => schema.collection)
-  schemas: Array<Schema>;
+  @OneToMany(() => SchemaEntity, (schema) => schema.collection)
+  schemas: Array<SchemaEntity>;
 }
+
+export type CollectionModel = Pick<CollectionEntity, "id" | "name" | "description">;

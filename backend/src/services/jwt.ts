@@ -3,7 +3,7 @@ import * as jwt from "jsonwebtoken";
 import { Singleton } from "typescript-ioc";
 import { getLogger, Logger } from "./logger";
 import { config } from "../config";
-import { User } from "../entities/user";
+import { UserEntity } from "../entities/user";
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 @Singleton
@@ -21,7 +21,7 @@ export class JwtService {
     });
   }
 
-  verify(token: string): Promise<User> {
+  verify(token: string): Promise<UserEntity> {
     this.log.info(`Verifying token`, token);
     const getKey = (header, callback): void => {
       this.jwksClient.getSigningKey(header.kid, (err, key) => {
