@@ -1,30 +1,13 @@
 import * as assert from "assert";
 import * as Boom from "@hapi/boom";
-import * as MockExpressRequest from "mock-express-request";
-import { Container } from "typescript-ioc";
 import { AuthController } from "../../src/controllers/authentification";
-import { UserEntity } from "../../src/entities/user";
-import { DbService } from "../../src/services/db";
-
-const requestAuth = new MockExpressRequest({ headers: { Authorization: "Bearer QWERTYUIOP" } });
-const requestBadAuth = new MockExpressRequest({ headers: { Authorization: "Bearer POIUYTREWQ" } });
-const requestAnonym = new MockExpressRequest({});
+import { dbInitWithUser, requestAnonym, requestJhon, requestBadAuth, jhon } from "../utils";
 
 const controller = new AuthController();
 
 describe("Test Controller Auth", () => {
   before(async () => {
-    // init the db connection
-    await Container.get(DbService).initialize();
-
-    // Create / update test user
-    const user = new UserEntity();
-    user.email = "jhon.doe@yopmail.com";
-    user.firstname = "John";
-    user.lastname = "Doe";
-    user.access_token = "QWERTYUIOP";
-    user.expires_at = new Date(Date.now() + 60 * 1000);
-    await user.save();
+    await dbInitWithUser();
   });
 
   it("Validate without `client_id` should failed", async () => {
@@ -93,10 +76,10 @@ describe("Test Controller Auth", () => {
   });
 
   it("Whoami with a valid token should return the user's profile", async () => {
-    let result = await controller.whoami(requestAuth);
-    assert.equal(result.email, "jhon.doe@yopmail.com");
-    assert.equal(result.firstname, "John");
-    assert.equal(result.lastname, "Doe");
+    let result = await controller.whoami(requestJhon);
+    assert.equal(result.email, jhon.email);
+    assert.equal(result.firstname, jhon.firstname);
+    assert.equal(result.lastname, jhon.lastname);
   });
 
   it("Whoami with an invalid token should return a 401", async () => {

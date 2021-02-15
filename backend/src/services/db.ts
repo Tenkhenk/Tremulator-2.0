@@ -13,20 +13,24 @@ export class DbService {
   // logger
   private log: Logger = getLogger("DbService");
   // Db connection
-  private connection: Connection;
+  public connection: Connection;
 
   async initialize(): Promise<void> {
-    try {
-      const connection = await createConnection({
-        type: "postgres",
-        entities: [AnnotationEntity, CollectionEntity, ImageEntity, SchemaEntity, UserEntity],
-        ...config.db,
-      });
-      this.log.info("Database connection is OK");
-      this.connection = connection;
-    } catch (e) {
-      this.log.error("Database connection failed", e);
-      throw e;
+    if (!this.connection) {
+      try {
+        const connection = await createConnection({
+          type: "postgres",
+          entities: [AnnotationEntity, CollectionEntity, ImageEntity, SchemaEntity, UserEntity],
+          ...config.db,
+        });
+        this.log.info("Database connection is OK");
+        this.connection = connection;
+      } catch (e) {
+        this.log.error("Database connection failed", e);
+        throw e;
+      }
+    } else {
+      this.log.info("Database is already initialized");
     }
   }
 

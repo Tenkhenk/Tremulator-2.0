@@ -123,6 +123,7 @@ export class AuthService {
       }
 
       // verify that the token is in the cache
+      console.log("token is ", token);
       if (token) {
         const user = await UserEntity.findOne({ where: { access_token: token } });
         if (user) {
