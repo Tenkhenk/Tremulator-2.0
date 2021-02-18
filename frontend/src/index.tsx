@@ -14,15 +14,13 @@ import Footer from "./layout/footer";
 import Header from "./layout/header";
 
 ReactDOM.render(
-  <div id="app-wrapper">
     <Router>
       <Header />
-      <main className="container">
+      <main className="container" role="main">
         <RouterWrapper routes={routes} />
       </main>
       <Footer />
-    </Router>
-  </div>,
+    </Router>,
   document.getElementById("root"),
 );
 

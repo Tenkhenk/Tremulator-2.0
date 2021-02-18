@@ -10,9 +10,9 @@ class Footer extends React.Component {
    */
   render() {
     return (
-      <footer>
+      <footer className="footer">
         <div className="container">
-          <p>&copy;Tremulator - v{packageJson.version}</p>
+          <span>&copy;Tremulator - v{packageJson.version} - This server is hosted by Florida State University.</span>
         </div>
       </footer>
     );
