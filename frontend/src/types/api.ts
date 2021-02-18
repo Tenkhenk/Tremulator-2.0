@@ -4,11 +4,59 @@
  */
 
 export interface paths {
+  "/annotations": {
+    post: operations["Create"];
+  };
+  "/annotations/{id}": {
+    get: operations["Get"];
+    put: operations["Update"];
+    delete: operations["Delete"];
+  };
   "/auth/validate_code": {
     post: operations["Validate_code"];
   };
   "/auth/whoami": {
     get: operations["Whoami"];
+  };
+  "/collections": {
+    /** Make a search in the collections. */
+    get: operations["Search"];
+    /** Creates a new collection. */
+    post: operations["Create"];
+  };
+  "/collections/{id}": {
+    /** Retrieves a collection by its ID. */
+    get: operations["Get"];
+    /** Update a collection */
+    put: operations["Update"];
+    /** Delete a collection */
+    delete: operations["Delete"];
+  };
+  "/collections/{id}/users": {
+    /** Search users (in firstanme, lastname and email) that have access to the collection. */
+    get: operations["UsersSearch"];
+    /**
+     * Add a user (via its email) to the collection.
+     * The email must match a valid a user, otherwise a 400 is returned.
+     */
+    put: operations["UserAdd"];
+    /**
+     * Remove a user (via its email) from the collection.
+     * If the email is the one of the collection's owner, a 403 is returned.
+     */
+    delete: operations["UserDelete"];
+  };
+  "/collections/{collectionId}/images": {
+    /** Upload and create an image in the collection. */
+    post: operations["Upload"];
+  };
+  "/collections/{collectionId}/images/{id}": {
+    /** Get an image from the collection. */
+    get: operations["Get"];
+    /** Update an image from the collection. */
+    put: operations["Update"];
+    /** Delete an image from the collection. */
+    delete: operations["Delete"];
   };
   "/misc/ping": {
     get: operations["Ping"];
@@ -18,77 +66,14 @@ export interface paths {
   };
 }
 
-export interface operations {
-  Validate_code: {
-    parameters: {};
-    requestBody: {
-      "application/json": components["schemas"]["ValidateCodeRequest"];
-    };
-    responses: {
-      /**
-       * Ok
-       */
-      "200": {
-        "application/json": components["schemas"]["ValidateCodeResponse"];
-      };
-      /**
-       * Internal Error
-       */
-      "500": unknown;
-    };
-  };
-  Whoami: {
-    parameters: {};
-    responses: {
-      /**
-       * Ok
-       */
-      "200": {
-        "application/json": components["schemas"]["User"];
-      };
-      /**
-       * Unauthorized
-       */
-      "401": unknown;
-      /**
-       * Forbidden
-       */
-      "403": unknown;
-      /**
-       * Internal Error
-       */
-      "500": unknown;
-    };
-  };
-  Ping: {
-    parameters: {};
-    responses: {
-      /**
-       * Ok
-       */
-      "200": {
-        "application/json": string;
-      };
-    };
-  };
-  Echo: {
-    parameters: {};
-    requestBody: {
-      "application/json": { [key: string]: any };
-    };
-    responses: {
-      /**
-       * Ok
-       */
-      "200": {
-        "application/json": { [key: string]: any };
-      };
-    };
-  };
-}
-
 export interface components {
   schemas: {
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_AnnotationEntity.id-or-data_": {
+      id: number;
+      data: { [key: string]: any };
+    };
+    AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-data_"];
     ValidateCodeResponse: {
       access_token: string;
       expires_in: number;
@@ -103,13 +88,346 @@ export interface components {
       grant_type: string;
       redirect_uri?: string;
     };
-    User: {
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_UserEntity.email-or-firstname-or-lastname-or-avatar-or-access_token-or-expires_at_": {
       email: string;
       firstname: string;
       lastname: string;
       avatar: string;
       access_token: string;
-      expires_at: number;
+      expires_at: string;
+    };
+    UserModel: components["schemas"]["Pick_UserEntity.email-or-firstname-or-lastname-or-avatar-or-access_token-or-expires_at_"];
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_CollectionEntity.id-or-name-or-description_": {
+      id: number;
+      name: string;
+      description: string;
+    };
+    CollectionModel: components["schemas"]["Pick_CollectionEntity.id-or-name-or-description_"];
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_CollectionModel.Exclude_keyofCollectionModel.id__": {
+      name: string;
+      description: string;
+    };
+    "Omit_CollectionModel.id_": components["schemas"]["Pick_CollectionModel.Exclude_keyofCollectionModel.id__"];
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_ImageEntity.id-or-name-or-url_": {
+      id: number;
+      name: string;
+      url: string;
+    };
+    ImageModel: components["schemas"]["Pick_ImageEntity.id-or-name-or-url_"];
+  };
+  responses: {};
+  parameters: {};
+  requestBodies: {};
+  headers: {};
+}
+
+export interface operations {
+  /** Creates a new collection. */
+  Create: {
+    parameters: {};
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["CollectionModel"];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Omit_CollectionModel.id_"];
+      };
+    };
+  };
+  /** Get an image from the collection. */
+  Get: {
+    parameters: {
+      path: {
+        collectionId: number;
+        id: number;
+      };
+    };
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ImageModel"];
+        };
+      };
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+  };
+  /** Update an image from the collection. */
+  Update: {
+    parameters: {
+      path: {
+        collectionId: number;
+        id: number;
+      };
+    };
+    responses: {
+      /** No content */
+      204: never;
+      /** Bad request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not found */
+      404: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+  };
+  /** Delete an image from the collection. */
+  Delete: {
+    parameters: {
+      path: {
+        collectionId: number;
+        id: number;
+      };
+    };
+    responses: {
+      /** No content */
+      204: never;
+      /** Bad request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not found */
+      404: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+  };
+  Validate_code: {
+    parameters: {};
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ValidateCodeResponse"];
+        };
+      };
+      /** Internal Error */
+      500: unknown;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ValidateCodeRequest"];
+      };
+    };
+  };
+  Whoami: {
+    parameters: {};
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["UserModel"];
+        };
+      };
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+  };
+  /** Make a search in the collections. */
+  Search: {
+    parameters: {
+      query: {
+        search?: string;
+        skip?: number;
+        limit?: number;
+      };
+    };
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["CollectionModel"][];
+        };
+      };
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+  };
+  /** Search users (in firstanme, lastname and email) that have access to the collection. */
+  UsersSearch: {
+    parameters: {
+      path: {
+        id: number;
+      };
+      query: {
+        search?: string;
+        skip?: number;
+        limit?: number;
+      };
+    };
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["UserModel"][];
+        };
+      };
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+  };
+  /**
+   * Add a user (via its email) to the collection.
+   * The email must match a valid a user, otherwise a 400 is returned.
+   */
+  UserAdd: {
+    parameters: {
+      path: {
+        id: number;
+      };
+    };
+    responses: {
+      /** No content */
+      204: never;
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+    requestBody: {
+      content: {
+        "application/json": string;
+      };
+    };
+  };
+  /**
+   * Remove a user (via its email) from the collection.
+   * If the email is the one of the collection's owner, a 403 is returned.
+   */
+  UserDelete: {
+    parameters: {
+      path: {
+        id: number;
+      };
+    };
+    responses: {
+      /** No content */
+      204: never;
+      /** Bad request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not found */
+      404: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+    requestBody: {
+      content: {
+        "application/json": string;
+      };
+    };
+  };
+  /** Upload and create an image in the collection. */
+  Upload: {
+    parameters: {
+      path: {
+        collectionId: number;
+      };
+    };
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ImageModel"];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+    requestBody: {
+      content: {
+        "multipart/form-data": {
+          file?: string;
+        };
+      };
+    };
+  };
+  Ping: {
+    parameters: {};
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": string;
+        };
+      };
+    };
+  };
+  Echo: {
+    parameters: {};
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": { [key: string]: any };
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": { [key: string]: any };
+      };
     };
   };
 }
