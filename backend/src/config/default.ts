@@ -3,6 +3,9 @@ export const config_default = {
   port: process.env.PORT ? Number(process.env.PORT) : 4000,
   error_with_stack: true,
   upload_path: "/data",
+  smtp: {
+    jsonTransport: true,
+  },
   logs: {
     console_level: process.env.CONSOLE_LOG_LEVEL || "info",
     file_level: process.env.CONSOLE_FILE_LEVEL || "error",

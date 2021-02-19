@@ -1,6 +1,6 @@
 {
   "logs": {
-    "console_level": "debug"
+    "console_level": "error"
   },
   "db": {
     "host": "localhost",

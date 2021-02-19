@@ -95,50 +95,47 @@ export class AuthService {
    * if it's not found, throw an exception (badRequest or Unauthorized).
    * Otherwise, it returns the user 's profile.
    */
-  verify(request: express.Request): Promise<UserEntity> {
-    return new Promise(async (resolve, reject) => {
-      let token: string;
+  async verify(request: express.Request): Promise<UserEntity> {
+    let token: string;
 
-      // test if bearer token is in query parameter
-      if (request.query && request.query["access_token"]) {
-        this.log.info(`Found token in query parameters`);
-        token = request.query["access_token"] as string;
-      }
+    // test if bearer token is in query parameter
+    if (request.query && request.query["access_token"]) {
+      this.log.info(`Found token in query parameters`);
+      token = request.query["access_token"] as string;
+    }
 
-      // test bearer token in the body as "access_token"
-      if (request.body && request.body["access_token"]) {
-        this.log.info(`Found token in body`);
+    // test bearer token in the body as "access_token"
+    if (request.body && request.body["access_token"]) {
+      this.log.info(`Found token in body`);
+      if (token) throw Boom.badRequest("Bearer token can only be define at one place (@see RFC6750)");
+      token = request.body["access_token"];
+    }
+
+    // test bearer token in the authorization header
+    if (request.headers.authorization) {
+      const parts = request.headers.authorization.split(" ");
+      if (parts.length === 2 && parts[0] === "Bearer") {
+        this.log.info(`Found token in headers`);
         if (token) throw Boom.badRequest("Bearer token can only be define at one place (@see RFC6750)");
-        token = request.body["access_token"];
+        token = parts[1];
       }
+    }
 
-      // test bearer token in the authorization header
-      if (request.headers.authorization) {
-        const parts = request.headers.authorization.split(" ");
-        if (parts.length === 2 && parts[0] === "Bearer") {
-          this.log.info(`Found token in headers`);
-          if (token) throw Boom.badRequest("Bearer token can only be define at one place (@see RFC6750)");
-          token = parts[1];
-        }
-      }
-
-      // verify that the token is in the cache
-      console.log("token is ", token);
-      if (token) {
-        const user = await UserEntity.findOne({ where: { access_token: token } });
-        if (user) {
-          if (Date.now() <= user.expires_at.getTime()) {
-            this.log.info(`Token found in db, user is`, user);
-            resolve(user);
-          } else {
-            reject(Boom.unauthorized(`Token is expired`));
-          }
+    // verify that the token is in the cache
+    if (token) {
+      const user = await UserEntity.findOne({ where: { access_token: token } });
+      if (user) {
+        if (Date.now() <= user.expires_at.getTime()) {
+          this.log.info(`Token found in db, user is`, user);
+          return user;
         } else {
-          reject(Boom.unauthorized("Bad access token"));
+          throw Boom.unauthorized(`Token is expired`);
         }
       } else {
-        reject(Boom.unauthorized("Bearer token not present"));
+        throw Boom.unauthorized("Bad access token");
       }
-    });
+    } else {
+      throw Boom.unauthorized("Bearer token not present");
+    }
   }
 }

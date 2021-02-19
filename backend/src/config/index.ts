@@ -1,4 +1,5 @@
 import { merge } from "lodash";
+import { TransportOptions } from "nodemailer";
 import { config_default } from "./default";
 import * as config_dev from "./dev.json";
 import * as config_test from "./test.json";
@@ -11,6 +12,8 @@ export interface Configuration {
   error_with_stack: boolean;
   // Path to the upload folder
   upload_path: string;
+  // Smtp configuration
+  smtp: TransportOptions;
   // Logging configuration
   logs: {
     // debug, info, warn, error

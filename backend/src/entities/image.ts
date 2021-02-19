@@ -12,9 +12,12 @@ export class ImageEntity extends BaseEntity {
   @IsNotEmpty()
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   @IsUrl()
   url: string;
+
+  @Column({ nullable: true })
+  path: string;
 
   @ManyToOne(() => CollectionEntity, (collection) => collection.images)
   collection: CollectionEntity;

@@ -3,7 +3,7 @@ import { Inject } from "typescript-ioc";
 import { DefaultController, ExpressAuthRequest } from "./default";
 import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
-import { ImageModel } from "../entities/image";
+import { ImageModel, ImageEntity } from "../entities/image";
 
 @Tags("Collections", "Images")
 @Route("collections")
@@ -16,7 +16,7 @@ export class ImagesController extends DefaultController {
   /**
    * Upload and create an image in the collection.
    */
-  @Post("{collectionId}/images")
+  @Post("{collectionId}/images/upload")
   @Security("auth")
   @Response("201", "Created")
   @Response("400", "Bad Request")
@@ -27,7 +27,12 @@ export class ImagesController extends DefaultController {
   public async upload(@Request() req: ExpressAuthRequest, @Path() collectionId: number): Promise<ImageModel> {
     // Get the collection
     const collection = await this.getCollection(req, collectionId);
-    await this.handleFileUpload(req, "file");
+    const files = await this.handleFileUpload(req, ["file"], `${collectionId}`);
+    if (!files[0]) throw new Error("Failed to save file");
+    const file = files[0];
+
+    const image = new ImageEntity();
+
     return null;
   }
 

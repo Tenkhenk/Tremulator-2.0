@@ -13,6 +13,16 @@ import { config } from "../config";
 // Express request with user
 export type ExpressAuthRequest = express.Request & { user: UserEntity };
 
+// Custom file type
+export type File = {
+  originalname: string;
+  fieldname: string;
+  encoding: string;
+  mimetype: string;
+  size: string;
+  path: string;
+};
+
 const log: Logger = getLogger("DefaultController");
 
 export class DefaultController extends Controller {
@@ -52,17 +62,46 @@ export class DefaultController extends Controller {
   }
 
   /**
-   * Handle a file upload.
+   * Handle files upload.
    */
-  protected handleFileUpload(request: express.Request, fieldname: string): Promise<void> {
-    const multerSingle = multer().single(fieldname);
+  protected handleFileUpload(
+    request: express.Request,
+    fieldsname: Array<string>,
+    path_prefix = "",
+  ): Promise<Array<File>> {
+    const acceptedFields: multer.Field[] = fieldsname.map((name) => ({ name: name, maxCount: 1 }));
+    const multerhandler = multer().fields(acceptedFields);
     return new Promise((resolve, reject) => {
-      multerSingle(request, undefined, async (error) => {
+      multerhandler(request, undefined, async (error) => {
         if (error) reject(error);
-        if (!request.file) reject("File not present");
-        console.log(request.file);
-        fs.writeFileSync(path.join(config.upload_path, request.file.originalname), request.file.buffer);
-        resolve();
+        if (!request.files) reject("Files not present");
+
+        // Iterate over files
+        const result = [];
+        Object.keys(request.files).forEach((field) => {
+          if (request.files[field] && request.files[field][0]) {
+            const file = request.files[field][0];
+            const dir = path.join(config.upload_path, path_prefix);
+            const filePath = path.join(dir, `/${Date.now()}-${file.originalname}`);
+
+            // Create the path if it doesn't exist
+            if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+
+            fs.writeFile(filePath, file.buffer, (err) => {
+              reject(err);
+            });
+
+            result.push({
+              originalname: file.originalname,
+              fieldname: file.fieldname,
+              encoding: file.encoding,
+              mimetype: file.mimetype,
+              size: file.size,
+              path: filePath,
+            });
+          }
+        });
+        resolve(result);
       });
     });
   }
