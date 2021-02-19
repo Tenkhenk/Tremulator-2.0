@@ -15,12 +15,14 @@ export function useUser(): { user: User | null; manager: UserManager } {
   const value = localStorage.getItem(`oidc.user:${config.auth.authority}:${config.auth.client_id}`);
   if (value) {
     const oidcUser: OIDCUser = JSON.parse(value) as OIDCUser;
-    user = {
-      email: oidcUser.profile.email || "",
-      avatar: oidcUser.profile.picture || "",
-      firstname: oidcUser.profile.given_name || "",
-      lastname: oidcUser.profile.family_name || "",
-    };
+    if (oidcUser.expires_at > Date.now()) {
+      user = {
+        email: oidcUser.profile.email || "",
+        avatar: oidcUser.profile.picture || "",
+        firstname: oidcUser.profile.given_name || "",
+        lastname: oidcUser.profile.family_name || "",
+      };
+    }
   }
   return { user, manager };
 }
