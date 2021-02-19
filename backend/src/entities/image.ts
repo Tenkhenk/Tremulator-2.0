@@ -22,7 +22,7 @@ export class ImageEntity extends BaseEntity {
   @ManyToOne(() => CollectionEntity, (collection) => collection.images)
   collection: CollectionEntity;
 
-  @OneToMany(() => AnnotationEntity, (annotation) => annotation.image)
+  @OneToMany(() => AnnotationEntity, (annotation) => annotation.image, { onDelete: "CASCADE" })
   annotations: Array<AnnotationEntity>;
 }
 

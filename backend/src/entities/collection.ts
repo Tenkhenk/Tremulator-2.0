@@ -32,10 +32,10 @@ export class CollectionEntity extends BaseEntity {
   @JoinTable()
   users: Array<UserEntity>;
 
-  @OneToMany(() => ImageEntity, (image) => image.collection)
+  @OneToMany(() => ImageEntity, (image) => image.collection, { onDelete: "CASCADE" })
   images: Array<ImageEntity>;
 
-  @OneToMany(() => SchemaEntity, (schema) => schema.collection)
+  @OneToMany(() => SchemaEntity, (schema) => schema.collection, { onDelete: "CASCADE" })
   schemas: Array<SchemaEntity>;
 }
 

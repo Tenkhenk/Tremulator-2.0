@@ -11,6 +11,9 @@ export class SchemaEntity extends BaseEntity {
 
   @ManyToOne(() => CollectionEntity, (collection) => collection.schemas)
   collection: CollectionEntity;
+
+  @OneToMany(() => AnnotationEntity, (annotation) => annotation.schema, { onDelete: "CASCADE" })
+  annotations: Array<AnnotationEntity>;
 }
 
 export type SchemaModel = Pick<SchemaEntity, "id" | "schema">;
