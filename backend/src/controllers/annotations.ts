@@ -4,7 +4,7 @@ import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
 import { AnnotationModel } from "../entities/annotation";
 
-@Tags("Collections", "Images", "Annotations")
+@Tags("Annotations")
 @Route("annotations")
 export class AnnotationsController extends Controller {
   // logger

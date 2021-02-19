@@ -10,10 +10,15 @@ export interface Configuration {
   port: number;
   // Should we display stack on error
   error_with_stack: boolean;
-  // Path to the upload folder
-  upload_path: string;
   // Smtp configuration
   smtp: TransportOptions;
+  // Data configuration
+  data: {
+    // Path to the upload folder
+    path: string;
+    // List of allowed mime-types for images
+    mime_types: Array<string>;
+  };
   // Logging configuration
   logs: {
     // debug, info, warn, error

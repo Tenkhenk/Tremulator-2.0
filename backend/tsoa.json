@@ -16,7 +16,7 @@
     "specMerging": "recursive",
     "spec": {
       "paths": {
-        "/collections/{collectionId}/images": {
+        "/collections/{collectionId}/images/upload": {
           "post": {
             "parameters": [
               {
@@ -36,9 +36,12 @@
                   "schema": {
                     "type": "object",
                     "properties": {
-                      "file": {
-                        "type": "string",
-                        "format": "binary"
+                      "files": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "format": "binary"
+                        }
                       }
                     }
                   }

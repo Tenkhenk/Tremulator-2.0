@@ -2,7 +2,10 @@
 export const config_default = {
   port: process.env.PORT ? Number(process.env.PORT) : 4000,
   error_with_stack: true,
-  upload_path: "/data",
+  data: {
+    path: "/data",
+    mime_types: ["image/jpeg", "image/jpg", "image/png", "image/tiff"],
+  },
   smtp: {
     jsonTransport: true,
   },

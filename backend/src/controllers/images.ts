@@ -1,11 +1,15 @@
 import { Body, Controller, Get, Post, Put, Delete, Route, Response, Request, Query, Path, Security, Tags } from "tsoa";
 import { Inject } from "typescript-ioc";
+import * as Boom from "@hapi/boom";
+import { plainToClass } from "class-transformer";
+import { validate } from "class-validator";
+import { config } from "../config";
 import { DefaultController, ExpressAuthRequest } from "./default";
 import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
 import { ImageModel, ImageEntity } from "../entities/image";
 
-@Tags("Collections", "Images")
+@Tags("Images")
 @Route("collections")
 export class ImagesController extends DefaultController {
   // logger
@@ -14,7 +18,7 @@ export class ImagesController extends DefaultController {
   private db: DbService;
 
   /**
-   * Upload and create an image in the collection.
+   * Create images in the collection by uploading a files (via an array of files).
    */
   @Post("{collectionId}/images/upload")
   @Security("auth")
@@ -24,16 +28,71 @@ export class ImagesController extends DefaultController {
   @Response("403", "Forbidden")
   @Response("404", "Not Found")
   @Response("500", "Internal Error")
-  public async upload(@Request() req: ExpressAuthRequest, @Path() collectionId: number): Promise<ImageModel> {
+  public async upload(@Request() req: ExpressAuthRequest, @Path() collectionId: number): Promise<Array<ImageModel>> {
     // Get the collection
     const collection = await this.getCollection(req, collectionId);
-    const files = await this.handleFileUpload(req, ["file"], `${collectionId}`);
-    if (!files[0]) throw new Error("Failed to save file");
-    const file = files[0];
 
-    const image = new ImageEntity();
+    // Handle the uploaded files
+    const files = await this.handleArrayFileUpload(req, "files", `${collectionId}`);
 
-    return null;
+    const result = await Promise.all(
+      files.map(async (file) => {
+        // Save the image
+        const image = new ImageEntity();
+        image.name = file.originalname;
+        image.url = `/iiif/2/${file.path.replace(config.data.path + "/", "").replace(/\//, "%2F")}/info.json`;
+        image.path = file.path;
+        image.collection = collection;
+        await image.save();
+
+        return image;
+      }),
+    );
+
+    this.setStatus(201);
+    return result;
+  }
+
+  /**
+   * Create images in the collection by specifying a list of url to download.
+   */
+  @Post("{collectionId}/images/download")
+  @Security("auth")
+  @Response("201", "Created")
+  @Response("400", "Bad Request")
+  @Response("401", "Unauthorized")
+  @Response("403", "Forbidden")
+  @Response("404", "Not Found")
+  @Response("500", "Internal Error")
+  public async download(
+    @Request() req: ExpressAuthRequest,
+    @Path() collectionId: number,
+    @Body() body: { urls: Array<string> },
+  ): Promise<Array<ImageModel>> {
+    // Get the collection
+    const collection = await this.getCollection(req, collectionId);
+
+    if (!body || !body.urls || !Array.isArray(body.urls)) throw Boom.badRequest("Bad value for urls");
+
+    const result = await Promise.all(
+      body.urls.map(async (url) => {
+        // Handle the uploaded file
+        const file = await this.handleFileDownload(url, `${collectionId}`);
+
+        // Save the image
+        const image = new ImageEntity();
+        image.name = file.originalname;
+        image.url = `/iiif/2/${file.path.replace(config.data.path + "/", "").replace(/\//, "%2F")}/info.json`;
+        image.path = file.path;
+        image.collection = collection;
+        await image.save();
+
+        return image;
+      }),
+    );
+
+    this.setStatus(201);
+    return result;
   }
 
   /**
@@ -52,13 +111,13 @@ export class ImagesController extends DefaultController {
     @Path() collectionId: number,
     @Path() id: number,
   ): Promise<ImageModel> {
-    // Get the collection
-    const collection = await this.getCollection(req, collectionId);
-    return null;
+    // Retrieve the image
+    const image = await this.getImage(req, collectionId, id);
+    return image;
   }
 
   /**
-   * Update an image from the collection.
+   * Update an image from the collection (just the metadata).
    */
   @Put("{collectionId}/images/{id}")
   @Security("auth")
@@ -72,10 +131,18 @@ export class ImagesController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() id: number,
+    @Body() body: Omit<ImageModel, "id">,
   ): Promise<void> {
-    // Get the collection
-    const collection = await this.getCollection(req, collectionId);
-    return null;
+    // Retrieve the image
+    const image = await this.getImage(req, collectionId, id);
+
+    // Validate the body
+    const errors = await validate(plainToClass(ImageEntity, body));
+    this.classValidationErrorToHttpError(errors);
+
+    // Update the image
+    await this.db.getRepository(ImageEntity).save(Object.assign(body, { id }));
+    this.setStatus(204);
   }
 
   /**
@@ -94,8 +161,11 @@ export class ImagesController extends DefaultController {
     @Path() collectionId: number,
     @Path() id: number,
   ): Promise<void> {
-    // Get the collection
-    const collection = await this.getCollection(req, collectionId);
-    return null;
+    // Retrieve the image
+    const image = await this.getImage(req, collectionId, id);
+
+    // Delete
+    await image.remove();
+    this.setStatus(204);
   }
 }

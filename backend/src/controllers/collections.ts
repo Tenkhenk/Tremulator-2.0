@@ -78,6 +78,7 @@ export class CollectionsController extends DefaultController {
 
     // Find the user
     const current = await UserEntity.findOne(req.user.email);
+
     // Save & return the collection
     const collection = await this.db.getRepository(CollectionEntity).save({ ...body, owner: current });
     this.setStatus(201);
@@ -114,7 +115,7 @@ export class CollectionsController extends DefaultController {
   public async update(
     @Request() req: ExpressAuthRequest,
     @Path() id: number,
-    @Body() body: CollectionModel,
+    @Body() body: Omit<CollectionModel, "id">,
   ): Promise<void> {
     // Get the collection
     const collection = await this.getCollection(req, id);
