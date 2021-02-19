@@ -164,6 +164,9 @@ export class CollectionsController extends DefaultController {
     @Query() skip = 0,
     @Query() limit = 0,
   ): Promise<Array<UserModel>> {
+    // Get the collection
+    const collection = await this.getCollection(req, id);
+
     const result = await this.db
       .getRepository(UserEntity)
       .createQueryBuilder("user")
