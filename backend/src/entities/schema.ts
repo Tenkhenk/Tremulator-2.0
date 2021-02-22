@@ -1,5 +1,6 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
 import { CollectionEntity } from "./collection";
+import { AnnotationEntity } from "./annotation";
 
 @Entity("schema")
 export class SchemaEntity extends BaseEntity {
