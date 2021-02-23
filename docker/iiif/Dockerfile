@@ -21,9 +21,11 @@ RUN apt-get install -y \
   wget
 
 WORKDIR /opt/iiif
+RUN mkdir -p /opt/iiif/cache
 
 RUN wget https://github.com/cantaloupe-project/cantaloupe/releases/download/v${IIIF_CANTALOUPE_VERSION}/cantaloupe-${IIIF_CANTALOUPE_VERSION}.zip
 RUN unzip cantaloupe-${IIIF_CANTALOUPE_VERSION}.zip
+RUN rm cantaloupe-${IIIF_CANTALOUPE_VERSION}.zip
 EXPOSE 8080
 
 ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
