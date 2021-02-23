@@ -36,6 +36,12 @@ export const config_default = {
       userinfo_endpoint: "https://openidconnect.googleapis.com/v1/userinfo",
       revocation_endpoint: "https://oauth2.googleapis.com/revoke",
       jwks_uri: "https://www.googleapis.com/oauth2/v3/certs",
+      end_session_endpoint:
+        window.location.protocol +
+        "//" +
+        window.location.hostname +
+        (window.location.port ? ":" + window.location.port : "") +
+        "/auth/logout",
     },
   },
 };
