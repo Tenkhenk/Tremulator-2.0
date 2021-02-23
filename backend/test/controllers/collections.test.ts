@@ -29,7 +29,7 @@ describe("Test Controller Collections", () => {
     };
     const result = await createCollection(requestJhon, collection);
 
-    // Check the reposne
+    // Check the reponse
     assert.equal(result.name, collection.name);
     assert.equal(result.description, collection.description);
     assert.equal(result.id > 0, true);

@@ -141,7 +141,7 @@ export class ImagesController extends DefaultController {
     this.classValidationErrorToHttpError(errors);
 
     // Update the image
-    await this.db.getRepository(ImageEntity).save(Object.assign(body, { id }));
+    await this.db.getRepository(ImageEntity).update(id, body);
     this.setStatus(204);
   }
 

@@ -126,7 +126,7 @@ export class CollectionsController extends DefaultController {
     this.classValidationErrorToHttpError(errors);
 
     // Update the collection
-    await this.db.getRepository(CollectionEntity).save(Object.assign(body, { id }));
+    await this.db.getRepository(CollectionEntity).update(id, body);
     this.setStatus(204);
   }
 

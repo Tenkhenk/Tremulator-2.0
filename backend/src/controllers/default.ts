@@ -81,6 +81,7 @@ export class DefaultController extends Controller {
    */
   protected classValidationErrorToHttpError(errors: Array<ValidationError>): void {
     if (errors && errors.length > 0) {
+      log.error("Validation failed", errors);
       throw Boom.badRequest(`Validation failed for field(s) ${errors.map((e) => e.property).join(",")}`);
     }
   }

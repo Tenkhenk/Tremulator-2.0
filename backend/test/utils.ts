@@ -6,6 +6,7 @@ import { DbService } from "../src/services/db";
 import { UserEntity } from "../src/entities/user";
 import { CollectionModel, CollectionEntity } from "../src/entities/collection";
 import { ImageModel, ImageEntity } from "../src/entities/image";
+import { SchemaModel, SchemaEntity } from "../src/entities/schema";
 
 // Export user
 export const jhon = {
@@ -73,4 +74,26 @@ export async function createImage(collection: CollectionModel): Promise<ImageMod
   });
 
   return image;
+}
+
+export async function createSchema(collection: CollectionModel): Promise<SchemaModel> {
+  // Get collection entity
+  const collectionEntity = await Container.get(DbService).getRepository(CollectionEntity).findOne(collection.id);
+
+  const schema = await Container.get(DbService)
+    .getRepository(SchemaEntity)
+    .save({
+      name: faker.lorem.words(),
+      schema: {
+        type: "object",
+        properties: {
+          foo: { type: "number", minimum: 0 },
+          bar: { type: "string" },
+        },
+        required: ["foo", "bar"],
+      },
+      collection: collectionEntity,
+    });
+
+  return schema;
 }
