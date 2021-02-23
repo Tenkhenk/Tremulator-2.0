@@ -13,7 +13,13 @@ const Header = () => {
 
         {oidcUser &&
           <div>
-            <i className="fas fa-user"></i><span className="ml-3 mr-3">{oidcUser.profile.firstname} {oidcUser.profile.lastname}</span><button onClick={() => logout()} title="sign out"><i className="fas fa-sign-out-alt" title="signout"></i></button>
+            {oidcUser.profile.picture ? <img className="profile" src={oidcUser.profile.picture}></img>: <i className="fas fa-user"></i>}
+            <span className="ml-3 mr-3">
+              {oidcUser.profile.name}
+            </span>
+            <button onClick={() => logout()} title="sign out">
+              <i className="fas fa-sign-out-alt" title="signout"></i>
+            </button>
           </div>
         }
         {!oidcUser && <button onClick={() => login()}><i className="fas fa-sign-in-alt"></i><span className="ml-3">Sign in</span></button>}
