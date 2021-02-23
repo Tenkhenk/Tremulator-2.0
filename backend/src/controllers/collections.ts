@@ -16,6 +16,7 @@ import { UserModel, UserEntity } from "../entities/user";
 export class CollectionsController extends DefaultController {
   // logger
   private log: Logger = getLogger("CollectionsController");
+
   @Inject
   private db: DbService;
 
@@ -206,11 +207,15 @@ export class CollectionsController extends DefaultController {
     // Check input
     if (!isEmail(email)) throw Boom.badRequest("Bad email");
 
+    // TODO: What to do if user is not found ? send an email ?
+
     // Do the job
     if (email !== collection.owner.email) {
       const userToAdd = await UserEntity.findOne(email);
+
       // if the user is not found, we send a 400
       if (!userToAdd) throw Boom.badRequest("Bad email");
+
       // Add the user to the collection
       collection.users.push(userToAdd);
       await collection.save();
