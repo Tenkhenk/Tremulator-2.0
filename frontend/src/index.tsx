@@ -16,9 +16,15 @@ import Header from "./layout/header";
 import {config} from "./config/index";
 import { AuthenticationProvider, oidcLog } from '@axa-fr/react-oidc-context';
 
+class LocalStorage {
+  constructor() {
+    return window.localStorage;
+  }
+}
+
 ReactDOM.render(
     <Router>
-      <AuthenticationProvider configuration={config.auth} loggerLevel={oidcLog.DEBUG}>
+      <AuthenticationProvider configuration={config.auth} UserStore={LocalStorage} loggerLevel={oidcLog.DEBUG}>
         <Header />
         <main className="container" role="main">
           <RouterWrapper routes={routes} />
