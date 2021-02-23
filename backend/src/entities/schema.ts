@@ -23,4 +23,4 @@ export class SchemaEntity extends BaseEntity {
   annotations: Array<AnnotationEntity>;
 }
 
-export type SchemaModel = Pick<SchemaEntity, "id" | "name" | "schema">;
+export type SchemaModel = Pick<SchemaEntity, "id" | "name"> & { schema: any };

@@ -45,7 +45,7 @@ describe("Test Controller Schema", () => {
 
   it("Get a schema should work", async () => {
     // Create a schema
-    const schema = await createSchema(collection);
+    const schema = await createSchema(collection.id);
 
     const result = await controller.get(requestJhon, collection.id, schema.id);
 
@@ -98,7 +98,7 @@ describe("Test Controller Schema", () => {
 
   it("Update a schema should work", async () => {
     // Create a schema
-    const schema = await createSchema(collection);
+    const schema = await createSchema(collection.id);
 
     // Do the call
     await assert.doesNotReject(
@@ -120,7 +120,7 @@ describe("Test Controller Schema", () => {
 
   it("Update a schema on a collection that I'm not part of should return a forbidden", async () => {
     // Create a schema
-    const schema = await createSchema(collection);
+    const schema = await createSchema(collection.id);
 
     await assert.rejects(
       controller.update(requestJane, collection.id, schema.id, Object.assign({}, schema, { name: "TEST", schema: {} })),
@@ -130,7 +130,7 @@ describe("Test Controller Schema", () => {
 
   it("Update a schema with an invalid json schema should return a bad request", async () => {
     // Create a schema
-    const schema = await createSchema(collection);
+    const schema = await createSchema(collection.id);
 
     await assert.rejects(
       controller.update(
@@ -148,10 +148,10 @@ describe("Test Controller Schema", () => {
 
   it("Delete a schema should work", async () => {
     // Create a schema
-    const schema = await createSchema(collection);
+    const schema = await createSchema(collection.id);
 
     // Delete the schema
-    const result = await controller.delete(requestJhon, collection.id, schema.id);
+    await controller.delete(requestJhon, collection.id, schema.id);
 
     // Check that schema doesn't exist
     await assert.rejects(controller.get(requestJhon, collection.id, schema.id), Boom.notFound("Schema not found"));
@@ -163,7 +163,7 @@ describe("Test Controller Schema", () => {
 
   it("Delete a schema on a collection that I'm not part of should return a forbidden", async () => {
     // Create a schema
-    const schema = await createSchema(collection);
+    const schema = await createSchema(collection.id);
 
     await assert.rejects(controller.delete(requestJane, collection.id, schema.id), Boom.forbidden());
   });

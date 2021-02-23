@@ -7,6 +7,7 @@ import { UserEntity } from "../src/entities/user";
 import { CollectionModel, CollectionEntity } from "../src/entities/collection";
 import { ImageModel, ImageEntity } from "../src/entities/image";
 import { SchemaModel, SchemaEntity } from "../src/entities/schema";
+import { AnnotationModel, AnnotationEntity } from "../src/entities/annotation";
 
 // Export user
 export const jhon = {
@@ -62,9 +63,9 @@ export async function createCollection(
   return await controller.create(request, col);
 }
 
-export async function createImage(collection: CollectionModel): Promise<ImageModel> {
+export async function createImage(collectionId: number): Promise<ImageModel> {
   // Get collection entity
-  const collectionEntity = await Container.get(DbService).getRepository(CollectionEntity).findOne(collection.id);
+  const collectionEntity = await Container.get(DbService).getRepository(CollectionEntity).findOne(collectionId);
 
   const image = await Container.get(DbService).getRepository(ImageEntity).save({
     name: faker.lorem.words(),
@@ -76,9 +77,9 @@ export async function createImage(collection: CollectionModel): Promise<ImageMod
   return image;
 }
 
-export async function createSchema(collection: CollectionModel): Promise<SchemaModel> {
+export async function createSchema(collectionId: number): Promise<SchemaModel> {
   // Get collection entity
-  const collectionEntity = await Container.get(DbService).getRepository(CollectionEntity).findOne(collection.id);
+  const collectionEntity = await Container.get(DbService).getRepository(CollectionEntity).findOne(collectionId);
 
   const schema = await Container.get(DbService)
     .getRepository(SchemaEntity)
@@ -96,4 +97,43 @@ export async function createSchema(collection: CollectionModel): Promise<SchemaM
     });
 
   return schema;
+}
+
+export async function createAnnotation(
+  collectionId: number,
+  imageId: number,
+  schemaId: number,
+): Promise<AnnotationModel> {
+  // Get collection entity
+  const collectionEntity = await Container.get(DbService).getRepository(CollectionEntity).findOne(collectionId);
+  // Get collection entity
+  const imageEntity = await Container.get(DbService).getRepository(ImageEntity).findOne(imageId);
+  // Get schema entity
+  const schemaEntity = await Container.get(DbService).getRepository(SchemaEntity).findOne(schemaId);
+
+  const geom = {
+    type: "Polygon",
+    coordinates: [
+      [
+        [100.0, 0.0],
+        [101.0, 0.0],
+        [101.0, 1.0],
+        [100.0, 1.0],
+        [100.0, 0.0],
+      ],
+    ],
+  };
+  const annotation = await Container.get(DbService)
+    .getRepository(AnnotationEntity)
+    .save({
+      data: {
+        foo: 42,
+        bar: faker.lorem.words(),
+      },
+      geometry: geom,
+      image: imageEntity,
+      schema: schemaEntity,
+    });
+
+  return annotation;
 }

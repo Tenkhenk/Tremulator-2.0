@@ -38,7 +38,6 @@ export class SchemaController extends DefaultController {
     const collection = await this.getCollection(req, collectionId);
 
     // Validate the body
-    // TODO: check the validity of the json schema
     try {
       const ajv = new Ajv();
       await ajv.compile(body.schema);
@@ -106,7 +105,6 @@ export class SchemaController extends DefaultController {
     if (!schema || schema.collection.id !== collectionId) throw Boom.notFound("Schema not found");
 
     // Validate the body
-    // TODO: check the validity of the json schema
     try {
       const ajv = new Ajv();
       await ajv.compile(body.schema);

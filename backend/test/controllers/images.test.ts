@@ -35,7 +35,7 @@ describe("Test Controller Images", () => {
   });
 
   it("Get an image should work", async () => {
-    const image = await createImage(collection);
+    const image = await createImage(collection.id);
     const result = await controller.get(requestJhon, collection.id, image.id);
 
     // Check the reponse
@@ -45,7 +45,7 @@ describe("Test Controller Images", () => {
   });
 
   it("Update an image should work", async () => {
-    const image = await createImage(collection);
+    const image = await createImage(collection.id);
 
     // update the image
     await controller.update(requestJhon, collection.id, image.id, Object.assign({}, image, { name: "TEST" }));
@@ -57,7 +57,7 @@ describe("Test Controller Images", () => {
   });
 
   it("Delete an image should work", async () => {
-    const image = await createImage(collection);
+    const image = await createImage(collection.id);
 
     // delete the image
     await assert.doesNotReject(controller.delete(requestJhon, collection.id, image.id));
@@ -71,7 +71,7 @@ describe("Test Controller Images", () => {
   });
 
   it("Get an image on a collection that I'm not part of, should return a forbidden", async () => {
-    const image = await createImage(collection);
+    const image = await createImage(collection.id);
     await assert.rejects(controller.get(requestJane, collection.id, image.id), Boom.forbidden());
   });
 
@@ -80,7 +80,7 @@ describe("Test Controller Images", () => {
   });
 
   it("Update an image of a collection that I'm not part of, should return a forbidden", async () => {
-    const image = await createImage(collection);
+    const image = await createImage(collection.id);
     await assert.rejects(
       controller.update(requestJane, collection.id, image.id, Object.assign({}, image, { name: "TEST" })),
       Boom.forbidden(),
@@ -88,7 +88,7 @@ describe("Test Controller Images", () => {
   });
 
   it("Delete an image of a collection that I'm not part of, should return a forbidden", async () => {
-    const image = await createImage(collection);
+    const image = await createImage(collection.id);
     await assert.rejects(controller.delete(requestJane, collection.id, image.id), Boom.forbidden());
   });
 });

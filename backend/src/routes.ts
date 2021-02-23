@@ -30,6 +30,16 @@ const models: TsoaRoute.Models = {
         "type": {"ref":"Pick_AnnotationEntity.id-or-data_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_AnnotationModel.Exclude_keyofAnnotationModel.id__": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"data":{"dataType":"any","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Omit_AnnotationModel.id_": {
+        "dataType": "refAlias",
+        "type": {"ref":"Pick_AnnotationModel.Exclude_keyofAnnotationModel.id__","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ValidateCodeResponse": {
         "dataType": "refObject",
         "properties": {
@@ -104,19 +114,19 @@ const models: TsoaRoute.Models = {
         "type": {"ref":"Pick_ImageModel.Exclude_keyofImageModel.id__","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_SchemaEntity.id-or-schema_": {
+    "Pick_SchemaEntity.id-or-name_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"double","required":true},"schema":{"dataType":"any","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"double","required":true},"name":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "SchemaModel": {
         "dataType": "refAlias",
-        "type": {"ref":"Pick_SchemaEntity.id-or-schema_","validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_SchemaEntity.id-or-name_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"schema":{"dataType":"any","required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_SchemaModel.Exclude_keyofSchemaModel.id__": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"schema":{"dataType":"any","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"schema":{"dataType":"any","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Omit_SchemaModel.id_": {
@@ -134,10 +144,15 @@ export function RegisterRoutes(app: express.Router) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
-        app.post('/api/v1/annotations',
+        app.post('/api/v1/annotations/:collectionId/images/:imageId/annotations',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
+                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                    collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
+                    imageId: {"in":"path","name":"imageId","required":true,"dataType":"double"},
+                    body: {"in":"body","name":"body","required":true,"ref":"Omit_AnnotationModel.id_"},
+                    schemaId: {"in":"query","name":"schemaId","dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -156,10 +171,13 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/api/v1/annotations/:id',
+        app.get('/api/v1/annotations/:collectionId/images/:imageId/annotations/:id',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
+                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                    collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
+                    imageId: {"in":"path","name":"imageId","required":true,"dataType":"double"},
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
@@ -179,11 +197,16 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/api/v1/annotations/:id',
+        app.put('/api/v1/annotations/:collectionId/images/:imageId/annotations/:id',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
+                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                    collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
+                    imageId: {"in":"path","name":"imageId","required":true,"dataType":"double"},
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                    body: {"in":"body","name":"body","required":true,"ref":"Omit_AnnotationModel.id_"},
+                    schemaId: {"in":"query","name":"schemaId","dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -202,10 +225,14 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.delete('/api/v1/annotations/:id',
+        app.delete('/api/v1/annotations/:collectionId/images/:imageId/annotations/:id',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
+                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                    collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
+                    imageId: {"in":"path","name":"imageId","required":true,"dataType":"double"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
