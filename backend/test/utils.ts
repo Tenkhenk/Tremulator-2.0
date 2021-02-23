@@ -4,7 +4,8 @@ import * as faker from "faker";
 import { CollectionsController } from "../src/controllers/collections";
 import { DbService } from "../src/services/db";
 import { UserEntity } from "../src/entities/user";
-import { CollectionModel } from "../src/entities/collection";
+import { CollectionModel, CollectionEntity } from "../src/entities/collection";
+import { ImageModel, ImageEntity } from "../src/entities/image";
 
 // Export user
 export const jhon = {
@@ -58,4 +59,18 @@ export async function createCollection(
       };
   const controller = new CollectionsController();
   return await controller.create(request, col);
+}
+
+export async function createImage(collection: CollectionModel): Promise<ImageModel> {
+  // Get collection entity
+  const collectionEntity = await Container.get(DbService).getRepository(CollectionEntity).findOne(collection.id);
+
+  const image = await Container.get(DbService).getRepository(ImageEntity).save({
+    name: faker.lorem.words(),
+    url: faker.internet.url(),
+    path: faker.system.filePath(),
+    collection: collectionEntity,
+  });
+
+  return image;
 }

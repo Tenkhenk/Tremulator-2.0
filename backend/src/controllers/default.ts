@@ -68,7 +68,7 @@ export class DefaultController extends Controller {
     const collection = await this.getCollection(req, collectionId);
 
     // Retrieve the image
-    const image = await ImageEntity.findOne(id);
+    const image = await ImageEntity.findOne(id, { relations: ["collection"] });
 
     // Check
     if (!image || image.collection.id !== collectionId) throw Boom.notFound("Image not found");
