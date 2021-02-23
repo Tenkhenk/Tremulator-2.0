@@ -16,7 +16,7 @@ services:
 
   # Postgres server
   db:
-    image: postgres:${POSTGRES_VERSION}
+    image: postgis/postgis:${POSTGRES_VERSION}
     restart: ${RESTART_POLICY}
     volumes:
       - ${PROJECT_PATH}/docker/db/data:/var/lib/postgresql/data/pgdata
