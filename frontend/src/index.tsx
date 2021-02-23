@@ -12,14 +12,19 @@ import { routes } from "./router/routes";
 // Layout
 import Footer from "./layout/footer";
 import Header from "./layout/header";
+// OIDC
+import {config} from "./config/index";
+import { AuthenticationProvider, oidcLog } from '@axa-fr/react-oidc-context';
 
 ReactDOM.render(
     <Router>
-      <Header />
-      <main className="container" role="main">
-        <RouterWrapper routes={routes} />
-      </main>
-      <Footer />
+      <AuthenticationProvider configuration={config.auth} loggerLevel={oidcLog.DEBUG}>
+        <Header />
+        <main className="container" role="main">
+          <RouterWrapper routes={routes} />
+        </main>
+        <Footer />
+      </AuthenticationProvider>
     </Router>,
   document.getElementById("root"),
 );

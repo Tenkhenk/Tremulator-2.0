@@ -16,7 +16,13 @@ export const config_default = {
       "//" +
       window.location.hostname +
       (window.location.port ? ":" + window.location.port : "") +
-      "/auth/logout",
+      "/",
+    silent_redirect_uri:
+      window.location.protocol +
+      "//" +
+      window.location.hostname +
+      (window.location.port ? ":" + window.location.port : "") +
+      "/authentication/silent_callback",
     scope: "openid profile email",
     response_type: "code",
     filterProtocolClaims: true,

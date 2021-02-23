@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { config } from "../config";
-import { manager } from "./user";
+import { AuthenticationContext } from '@axa-fr/react-oidc-context';
 
 interface APIResult<T> {
   loading: boolean;
@@ -16,10 +16,12 @@ export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }):
   const [data, setData] = useState<R | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+  const {oidcUser} = useContext(AuthenticationContext);
 
   useEffect(() => {
+    
     const main = async () => {
-      const user = await manager.getUser();
+      
       setData(null);
       setLoading(true);
       setError(null);
@@ -29,7 +31,7 @@ export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }):
           params: urlParams,
           url: `${config.api_path}${path}`,
           responseType: "json",
-          headers: user ? { Authorization: `${user.token_type} ${user.access_token}` } : {},
+          headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
         });
         setData(response.data as R);
       } catch (e) {
@@ -39,7 +41,7 @@ export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }):
       }
     };
     main();
-  }, [path, urlParams]);
+  }, [path, urlParams, oidcUser]);
 
   return { loading, error, data };
 }
@@ -53,19 +55,19 @@ export function usePost<P, R>(
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<R | null>(null);
+  const {oidcUser} = useContext(AuthenticationContext);
 
   async function post(body: P, urlParams: { [key: string]: unknown } = {}): Promise<APIResult<R>> {
     setData(null);
     setLoading(true);
     setError(null);
     try {
-      const user = await manager.getUser();
       const response = await axios({
         method: "POST",
         url: `${config.api_path}${path}`,
         responseType: "json",
         params: urlParams,
-        headers: user ? { Authorization: `${user.token_type} ${user.access_token}` } : {},
+        headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
         data: body,
       });
       setData(response.data as R);

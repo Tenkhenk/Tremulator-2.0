@@ -1,5 +1,4 @@
 import { PageHome } from "../pages/home";
-import { PagePrivate } from "../pages/private";
 import { PageLogout } from "../pages/auth/logout";
 import { PageAuthCallback } from "../pages/auth/callback";
 import { CollectionList } from "../pages/collection-list";
@@ -29,19 +28,10 @@ export const routes: RouteDefinition[] = [
         redirect: "/callback",
         routes: [
           {
-            path: "/logout",
-            component: PageLogout,
-          },
-          {
             path: "/callback",
-            component: PageAuthCallback,
+            redirect: "/authentication/callback"
           },
         ],
-      },
-      {
-        path: "/private",
-        secured: true,
-        component: PagePrivate,
       },
       {
         path: "/collections",

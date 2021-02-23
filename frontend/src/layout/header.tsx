@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useContext} from "react";
 import { Link } from "react-router-dom";
-import { useUser } from "../hooks/user";
+import { AuthenticationContext } from '@axa-fr/react-oidc-context';
+
 const Header = () => {
-  const {user} = useUser();
+  const {oidcUser, logout, login} = useContext(AuthenticationContext);
   return (
     <header>
       <nav className="navbar container-fluid">
@@ -10,12 +11,12 @@ const Header = () => {
           Tr.
         </Link>
 
-        {user &&
+        {oidcUser &&
           <div>
-            <i className="fas fa-user"></i><span className="ml-3 mr-3">{user?.firstname} {user?.lastname}</span><Link to={"/auth/logout"} title="sign out"><i className="fas fa-sign-out-alt" title="signout"></i></Link>
+            <i className="fas fa-user"></i><span className="ml-3 mr-3">{oidcUser.profile.firstname} {oidcUser.profile.lastname}</span><button onClick={() => logout()} title="sign out"><i className="fas fa-sign-out-alt" title="signout"></i></button>
           </div>
         }
-        {!user && <Link to={"/collections"} ><button><i className="fas fa-sign-in-alt"></i><span className="ml-3">Sign in</span></button></Link>}
+        {!oidcUser && <button onClick={() => login()}><i className="fas fa-sign-in-alt"></i><span className="ml-3">Sign in</span></button>}
       </nav>
     </header>
   );

@@ -10,7 +10,7 @@ export const manager = new UserManager({
 /**
  * Hook to retrieve the connected user and the oidc user manager.
  */
-export function useUser(): { user: User | null; manager: UserManager } {
+export function DEPRECATEDuseUser(): { user: User | null; manager: UserManager } {
   let user: User | null = null;
   const value = localStorage.getItem(`oidc.user:${config.auth.authority}:${config.auth.client_id}`);
   if (value) {

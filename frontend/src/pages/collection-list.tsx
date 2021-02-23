@@ -1,12 +1,12 @@
 import React from "react";
-import { useUser } from "../hooks/user";
+
 import { useGet } from "../hooks/api";
 import { components } from "../types/api";
 import { Link } from "react-router-dom";
 
 interface Props {}
 export const CollectionList: React.FC<Props> = (props: Props) => {
-  const { user } = useUser();
+
   const { data, loading, error } = useGet<components['schemas']['CollectionModel'][]>("/collections");
   return (
     <>
