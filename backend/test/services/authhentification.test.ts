@@ -30,7 +30,6 @@ describe("Testing Service Auth", () => {
     assert.equal(user.email, "jhon.doe@yopmail.com");
   });
   it("Multiple token in request should fail", async () => {
-    console.log("coucou");
     await assert.rejects(
       service.verify(requestAuthMultiple),
       Boom.badRequest("Bearer token can only be define at one place (@see RFC6750)"),
