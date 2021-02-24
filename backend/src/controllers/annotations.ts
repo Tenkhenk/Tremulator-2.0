@@ -59,14 +59,14 @@ export class AnnotationsController extends DefaultController {
     const ajv = new Ajv();
     const validateJson = await ajv.compile(schema.schema);
     if (!validateJson(body.data)) {
-      this.log.error("Data validation failed", validateJson.errors);
+      this.log.info("Data validation failed", validateJson.errors);
       throw Boom.badRequest("Data validation failed");
     }
     const errors = await validate(plainToClass(AnnotationEntity, body));
     this.classValidationErrorToHttpError(errors);
 
     // Save & return the collection
-    const annotation = await this.db.getRepository(AnnotationEntity).save(body);
+    const annotation = await this.db.getRepository(AnnotationEntity).save(body as AnnotationEntity);
     this.setStatus(201);
     return annotation;
   }
@@ -109,42 +109,26 @@ export class AnnotationsController extends DefaultController {
     @Path() imageId: number,
     @Path() id: number,
     @Body() body: Omit<AnnotationModel, "id">,
-    @Query() schemaId?: number,
   ): Promise<void> {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, imageId);
 
     // Search the annotation
-    const annotation = await AnnotationEntity.findOne(id, { relations: ["image"] });
+    const annotation = await AnnotationEntity.findOne(id, { relations: ["image", "schema"] });
     if (!annotation || annotation.image.id !== image.id) throw Boom.notFound("Annotation not found");
-
-    // Retrieve the list of schema of the collection
-    const schemas = await SchemaEntity.find({ where: { collection: collectionId } });
-
-    // Take the schema specified in params
-    // If not specified and the collection has only one schema, we take it
-    let schema: SchemaEntity | null = null;
-    if (schemaId) {
-      schema = schemas.find((item) => item.id === schemaId);
-    } else {
-      if (schemas.length === 1) {
-        schema = schemas[0];
-      }
-    }
-    if (!schema) throw Boom.badRequest("Schema is mandatory");
 
     // Validate the body
     const ajv = new Ajv();
-    const validateJson = await ajv.compile(schema.schema);
+    const validateJson = await ajv.compile(annotation.schema.schema);
     if (!validateJson(body.data)) {
-      this.log.error("Data validation failed", validateJson.errors);
+      this.log.info("Data validation failed", validateJson.errors);
       throw Boom.badRequest("Data validation failed");
     }
     const errors = await validate(plainToClass(AnnotationEntity, body));
     this.classValidationErrorToHttpError(errors);
 
     // Save & return the collection
-    await this.db.getRepository(AnnotationEntity).update(id, body);
+    await this.db.getRepository(AnnotationEntity).update(id, body as AnnotationEntity);
     this.setStatus(204);
   }
 

@@ -112,7 +112,6 @@ describe("Test Controller Annotations", () => {
         image.id,
         annotation.id,
         Object.assign({}, annotation, { data: { foo: 10, bar: "TEST" } }),
-        schema.id,
       ),
     );
 
@@ -124,7 +123,7 @@ describe("Test Controller Annotations", () => {
 
   it("Update an unexisting annotation should return a not found", async () => {
     await assert.rejects(
-      controller.update(requestJhon, collection.id, image.id, -1, annotationTemplate, schema.id),
+      controller.update(requestJhon, collection.id, image.id, -1, annotationTemplate),
       Boom.notFound("Annotation not found"),
     );
   });
@@ -134,7 +133,7 @@ describe("Test Controller Annotations", () => {
     const annotation = await createAnnotation(collection.id, image.id, schema.id);
 
     await assert.rejects(
-      controller.update(requestJane, collection.id, image.id, annotation.id, annotationTemplate, schema.id),
+      controller.update(requestJane, collection.id, image.id, annotation.id, annotationTemplate),
       Boom.forbidden(),
     );
   });

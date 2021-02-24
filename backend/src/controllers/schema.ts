@@ -10,7 +10,7 @@ import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
 import { SchemaModel, SchemaEntity } from "../entities/schema";
 
-@Tags("Images")
+@Tags("Schema")
 @Route("schema")
 export class SchemaController extends DefaultController {
   // logger

@@ -1,5 +1,6 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { IsNotEmpty } from "class-validator";
+import { Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon } from "geojson";
 import { ImageEntity } from "./image";
 import { SchemaEntity } from "./schema";
 
@@ -13,7 +14,7 @@ export class AnnotationEntity extends BaseEntity {
 
   @Column({ type: "geometry", nullable: false })
   @IsNotEmpty()
-  geometry;
+  geometry: Point | MultiPoint | LineString | MultiLineString | Polygon | MultiPolygon;
 
   @ManyToOne(() => ImageEntity, (image) => image.annotations)
   image: ImageEntity;
@@ -22,4 +23,6 @@ export class AnnotationEntity extends BaseEntity {
   schema: SchemaEntity;
 }
 
-export type AnnotationModel = Pick<AnnotationEntity, "id" | "data" | "geometry">;
+export type AnnotationModel = Pick<AnnotationEntity, "id" | "data"> & {
+  geometry: { type: string; coordinates: Array<any> };
+};

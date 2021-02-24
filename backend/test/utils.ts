@@ -133,7 +133,7 @@ export async function createAnnotation(
       geometry: geom,
       image: imageEntity,
       schema: schemaEntity,
-    });
+    } as AnnotationEntity);
 
   return annotation;
 }
