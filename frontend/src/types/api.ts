@@ -4,10 +4,10 @@
  */
 
 export interface paths {
-  "/annotations": {
+  "/annotations/{collectionId}/images/{imageId}/annotations": {
     post: operations["Create"];
   };
-  "/annotations/{id}": {
+  "/annotations/{collectionId}/images/{imageId}/annotations/{id}": {
     get: operations["Get"];
     put: operations["Update"];
     delete: operations["Delete"];
@@ -46,14 +46,18 @@ export interface paths {
      */
     delete: operations["UserDelete"];
   };
-  "/collections/{collectionId}/images": {
-    /** Upload and create an image in the collection. */
+  "/collections/{collectionId}/images/upload": {
+    /** Create images in the collection by uploading a files (via an array of files). */
     post: operations["Upload"];
+  };
+  "/collections/{collectionId}/images/download": {
+    /** Create images in the collection by specifying a list of url to download. */
+    post: operations["Download"];
   };
   "/collections/{collectionId}/images/{id}": {
     /** Get an image from the collection. */
     get: operations["Get"];
-    /** Update an image from the collection. */
+    /** Update an image from the collection (just the metadata). */
     put: operations["Update"];
     /** Delete an image from the collection. */
     delete: operations["Delete"];
@@ -64,6 +68,18 @@ export interface paths {
   "/misc/echo": {
     post: operations["Echo"];
   };
+  "/schema/{collectionId}/schema": {
+    /** Create a schema for a collection. */
+    post: operations["Create"];
+  };
+  "/schema/{collectionId}/schema/{id}": {
+    /** Get a schema from the collection. */
+    get: operations["Get"];
+    /** Update a schema from the collection. */
+    put: operations["Update"];
+    /** Delete an schema from the collection and its related annotations. */
+    delete: operations["Delete"];
+  };
 }
 
 export interface components {
@@ -73,7 +89,21 @@ export interface components {
       id: number;
       data: { [key: string]: any };
     };
-    AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-data_"];
+    AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-data_"] & {
+      geometry: {
+        coordinates: { [key: string]: any }[];
+        type: string;
+      };
+    };
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_AnnotationModel.Exclude_keyofAnnotationModel.id__": {
+      data: { [key: string]: any };
+      geometry: {
+        coordinates: { [key: string]: any }[];
+        type: string;
+      };
+    };
+    "Omit_AnnotationModel.id_": components["schemas"]["Pick_AnnotationModel.Exclude_keyofAnnotationModel.id__"];
     ValidateCodeResponse: {
       access_token: string;
       expires_in: number;
@@ -118,6 +148,26 @@ export interface components {
       url: string;
     };
     ImageModel: components["schemas"]["Pick_ImageEntity.id-or-name-or-url_"];
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_ImageModel.Exclude_keyofImageModel.id__": {
+      name: string;
+      url: string;
+    };
+    "Omit_ImageModel.id_": components["schemas"]["Pick_ImageModel.Exclude_keyofImageModel.id__"];
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_SchemaEntity.id-or-name_": {
+      id: number;
+      name: string;
+    };
+    SchemaModel: components["schemas"]["Pick_SchemaEntity.id-or-name_"] & {
+      schema: { [key: string]: { [key: string]: any } };
+    };
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_SchemaModel.Exclude_keyofSchemaModel.id__": {
+      name: string;
+      schema: { [key: string]: { [key: string]: any } };
+    };
+    "Omit_SchemaModel.id_": components["schemas"]["Pick_SchemaModel.Exclude_keyofSchemaModel.id__"];
   };
   responses: {};
   parameters: {};
@@ -126,14 +176,18 @@ export interface components {
 }
 
 export interface operations {
-  /** Creates a new collection. */
+  /** Create a schema for a collection. */
   Create: {
-    parameters: {};
+    parameters: {
+      path: {
+        collectionId: number;
+      };
+    };
     responses: {
       /** Ok */
       200: {
         content: {
-          "application/json": components["schemas"]["CollectionModel"];
+          "application/json": components["schemas"]["SchemaModel"];
         };
       };
       /** Created */
@@ -142,16 +196,20 @@ export interface operations {
       400: unknown;
       /** Unauthorized */
       401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
       /** Internal Error */
       500: unknown;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Omit_CollectionModel.id_"];
+        "application/json": components["schemas"]["Omit_SchemaModel.id_"];
       };
     };
   };
-  /** Get an image from the collection. */
+  /** Get a schema from the collection. */
   Get: {
     parameters: {
       path: {
@@ -163,7 +221,7 @@ export interface operations {
       /** Ok */
       200: {
         content: {
-          "application/json": components["schemas"]["ImageModel"];
+          "application/json": components["schemas"]["SchemaModel"];
         };
       };
       /** Bad Request */
@@ -178,7 +236,7 @@ export interface operations {
       500: unknown;
     };
   };
-  /** Update an image from the collection. */
+  /** Update a schema from the collection. */
   Update: {
     parameters: {
       path: {
@@ -200,8 +258,13 @@ export interface operations {
       /** Internal Error */
       500: unknown;
     };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["Omit_SchemaModel.id_"];
+      };
+    };
   };
-  /** Delete an image from the collection. */
+  /** Delete an schema from the collection and its related annotations. */
   Delete: {
     parameters: {
       path: {
@@ -368,7 +431,7 @@ export interface operations {
       };
     };
   };
-  /** Upload and create an image in the collection. */
+  /** Create images in the collection by uploading a files (via an array of files). */
   Upload: {
     parameters: {
       path: {
@@ -379,7 +442,7 @@ export interface operations {
       /** Ok */
       200: {
         content: {
-          "application/json": components["schemas"]["ImageModel"];
+          "application/json": components["schemas"]["ImageModel"][];
         };
       };
       /** Created */
@@ -398,7 +461,42 @@ export interface operations {
     requestBody: {
       content: {
         "multipart/form-data": {
-          file?: string;
+          files?: string[];
+        };
+      };
+    };
+  };
+  /** Create images in the collection by specifying a list of url to download. */
+  Download: {
+    parameters: {
+      path: {
+        collectionId: number;
+      };
+    };
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ImageModel"][];
+        };
+      };
+      /** Created */
+      201: unknown;
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          urls: string[];
         };
       };
     };
