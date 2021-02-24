@@ -6,6 +6,7 @@ import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import * as Boom from "@hapi/boom";
 import Ajv from "ajv";
+import * as gjv from "geojson-validation";
 import { DefaultController, ExpressAuthRequest } from "./default";
 import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
@@ -56,14 +57,17 @@ export class AnnotationsController extends DefaultController {
     if (!schema) throw Boom.badRequest("Schema is mandatory");
 
     // Validate the body
+    const errors = await validate(plainToClass(AnnotationEntity, body));
+    this.classValidationErrorToHttpError(errors);
+    // validate the data
     const ajv = new Ajv();
     const validateJson = await ajv.compile(schema.schema);
     if (!validateJson(body.data)) {
       this.log.info("Data validation failed", validateJson.errors);
       throw Boom.badRequest("Data validation failed");
     }
-    const errors = await validate(plainToClass(AnnotationEntity, body));
-    this.classValidationErrorToHttpError(errors);
+    // validate geojson
+    if (!gjv.valid(body.geometry)) throw Boom.badRequest("Geometry is invalid");
 
     // Save & return the collection
     const annotation = await this.db.getRepository(AnnotationEntity).save(body as AnnotationEntity);
@@ -118,14 +122,17 @@ export class AnnotationsController extends DefaultController {
     if (!annotation || annotation.image.id !== image.id) throw Boom.notFound("Annotation not found");
 
     // Validate the body
+    const errors = await validate(plainToClass(AnnotationEntity, body));
+    this.classValidationErrorToHttpError(errors);
+    // Validate data
     const ajv = new Ajv();
     const validateJson = await ajv.compile(annotation.schema.schema);
     if (!validateJson(body.data)) {
       this.log.info("Data validation failed", validateJson.errors);
       throw Boom.badRequest("Data validation failed");
     }
-    const errors = await validate(plainToClass(AnnotationEntity, body));
-    this.classValidationErrorToHttpError(errors);
+    // validate geojson
+    if (!gjv.valid(body.geometry)) throw Boom.badRequest("Geometry is invalid");
 
     // Save & return the collection
     await this.db.getRepository(AnnotationEntity).update(id, body as AnnotationEntity);
