@@ -2,7 +2,8 @@ import { PageHome } from "../pages/home";
 import { PageLogout } from "../pages/auth/logout";
 import { PageAuthCallback } from "../pages/auth/callback";
 import { CollectionList } from "../pages/collection-list";
-import { CollectionForm } from "../pages/collection-form";
+import { CollectionNew } from "../pages/collection-new";
+import { CollectionEdit } from "../pages/collection-edit";
 
 // Definition of a route
 export interface RouteDefinition {
@@ -41,7 +42,12 @@ export const routes: RouteDefinition[] = [
           {
             path: "/new",
             secured: true,
-            component: CollectionForm,
+            component: CollectionNew,
+          },
+          {
+            path: "/:id/edit",
+            secured: true,
+            component: CollectionEdit,
           }
         ],
       },

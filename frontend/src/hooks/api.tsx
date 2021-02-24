@@ -81,3 +81,39 @@ export function usePost<P, R>(
 
   return [post, { loading, error, data }];
 }
+
+/**
+ * API hook for PUT
+ */
+export function usePut<P, R>(
+  path: string,
+): [(data: P, urlParams?: { [key: string]: unknown }) => Promise<APIResult<R>>, APIResult<R>] {
+  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<R | null>(null);
+  const {oidcUser} = useContext(AuthenticationContext);
+
+  async function put(body: P, urlParams: { [key: string]: unknown } = {}): Promise<APIResult<R>> {
+    setData(null);
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios({
+        method: "PUT",
+        url: `${config.api_path}${path}`,
+        responseType: "json",
+        params: urlParams,
+        headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
+        data: body,
+      });
+      setData(response.data as R);
+    } catch (e) {
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+    return { loading, error, data };
+  }
+
+  return [put, { loading, error, data }];
+}
