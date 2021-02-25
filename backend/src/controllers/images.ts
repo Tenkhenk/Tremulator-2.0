@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Put, Delete, Route, Response, Request, Query, Path, Security, Tags } from "tsoa";
 import { Inject } from "typescript-ioc";
+import * as fs from "fs";
 import * as Boom from "@hapi/boom";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
@@ -166,6 +167,7 @@ export class ImagesController extends DefaultController {
 
     // Delete
     await image.remove();
+    fs.unlinkSync(image.path);
     this.setStatus(204);
   }
 }
