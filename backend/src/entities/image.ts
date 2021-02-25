@@ -29,7 +29,11 @@ export class ImageEntity extends BaseEntity {
 
   @AfterRemove()
   removeFile() {
-    fs.unlinkSync(this.path);
+    try {
+      fs.unlinkSync(this.path);
+    } catch (e) {
+      // silent exception
+    }
   }
 }
 
