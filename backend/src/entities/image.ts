@@ -1,6 +1,7 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { AfterRemove, BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
 import { IsNotEmpty, IsUrl } from "class-validator";
 import { pick } from "lodash";
+import * as fs from "fs";
 import { collectionEntityToModel, CollectionEntity, CollectionModel } from "./collection";
 import { annotationEntityToModel, AnnotationEntity, AnnotationModel } from "./annotation";
 
@@ -23,8 +24,13 @@ export class ImageEntity extends BaseEntity {
   @ManyToOne(() => CollectionEntity, (collection) => collection.images)
   collection: CollectionEntity;
 
-  @OneToMany(() => AnnotationEntity, (annotation) => annotation.image, { onDelete: "CASCADE" })
+  @OneToMany(() => AnnotationEntity, (annotation) => annotation.image, { cascade: true, onDelete: "CASCADE" })
   annotations: Array<AnnotationEntity>;
+
+  @AfterRemove()
+  removeFile() {
+    fs.unlinkSync(this.path);
+  }
 }
 
 /**

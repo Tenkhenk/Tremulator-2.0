@@ -20,7 +20,7 @@ export class SchemaEntity extends BaseEntity {
   @ManyToOne(() => CollectionEntity, (collection) => collection.schemas)
   collection: CollectionEntity;
 
-  @OneToMany(() => AnnotationEntity, (annotation) => annotation.schema, { onDelete: "CASCADE" })
+  @OneToMany(() => AnnotationEntity, (annotation) => annotation.schema, { cascade: true, onDelete: "CASCADE" })
   annotations: Array<AnnotationEntity>;
 }
 

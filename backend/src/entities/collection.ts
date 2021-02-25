@@ -32,10 +32,10 @@ export class CollectionEntity extends BaseEntity {
   @ManyToMany(() => UserEntity, (user) => user.collections)
   users: Array<UserEntity>;
 
-  @OneToMany(() => ImageEntity, (image) => image.collection, { onDelete: "CASCADE" })
+  @OneToMany(() => ImageEntity, (image) => image.collection, { cascade: true, onDelete: "CASCADE" })
   images: Array<ImageEntity>;
 
-  @OneToMany(() => SchemaEntity, (schema) => schema.collection, { onDelete: "CASCADE" })
+  @OneToMany(() => SchemaEntity, (schema) => schema.collection, { cascade: true, onDelete: "CASCADE" })
   schemas: Array<SchemaEntity>;
 }
 
