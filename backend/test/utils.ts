@@ -24,6 +24,13 @@ export const jane = {
   access_token: "QWERTYUIOP",
   expires_at: new Date(Date.now() + 60 * 1000),
 };
+export const ann = {
+  email: "ann.onym@yopmail.com",
+  firstname: "Ann",
+  lastname: "Onym",
+  access_token: "QWERTYUIOP",
+  expires_at: new Date(Date.now() + 60 * 1000),
+};
 
 // Mock request
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,6 +42,10 @@ export const requestJane = new MockExpressRequest({
   headers: { Authorization: "Bearer QWERTYUIOP" },
   user: jane,
 });
+export const requestAnn = new MockExpressRequest({
+  headers: { Authorization: "Bearer QWERTYUIOP" },
+  user: ann,
+});
 export const requestBadAuth = new MockExpressRequest({ headers: { Authorization: "Bearer POIUYTREWQ" } });
 export const requestAnonym = new MockExpressRequest({});
 
@@ -45,6 +56,7 @@ export async function dbInitWithUser(): Promise<void> {
   await Container.get(DbService).initialize();
   await Container.get(DbService).getRepository(UserEntity).save(jhon);
   await Container.get(DbService).getRepository(UserEntity).save(jane);
+  await Container.get(DbService).getRepository(UserEntity).save(ann);
 }
 
 // Function to create items

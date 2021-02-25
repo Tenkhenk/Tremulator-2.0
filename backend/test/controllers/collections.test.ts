@@ -1,7 +1,17 @@
 import * as assert from "assert";
 import * as Boom from "@hapi/boom";
 import * as faker from "faker";
-import { createCollection, dbInitWithUser, jhon, jane, requestAnonym, requestJhon, requestJane } from "../utils";
+import {
+  createCollection,
+  dbInitWithUser,
+  jhon,
+  jane,
+  ann,
+  requestAnonym,
+  requestJhon,
+  requestJane,
+  requestAnn,
+} from "../utils";
 import { CollectionsController } from "../../src/controllers/collections";
 import { CollectionEntity } from "../../src/entities/collection";
 
@@ -67,19 +77,37 @@ describe("Test Controller Collections", () => {
     assert.equal(dbColl === undefined, true);
   });
 
-  it("Add / Delete a user on a collection should work", async () => {
+  it("Delete collection by a member should fail", async () => {
     // Create a collection
     const collection = await createCollection(requestJhon);
+    // Add Jane to the collection
+    await assert.doesNotReject(controller.userAdd(requestJhon, collection.id, { email: jane.email }));
 
+    // API call
+    await assert.rejects(
+      controller.delete(requestJane, collection.id),
+      Boom.forbidden("Only available for collection's owner"),
+    );
+  });
+
+  it("Add / Delete a user on a collection by member should fail", async () => {
+    // Create a collection
+    const collection = await createCollection(requestJhon);
     // Add Jane to the collection
     await assert.doesNotReject(controller.userAdd(requestJhon, collection.id, { email: jane.email }));
     // Test if Jane has acces to the collection
     await assert.doesNotReject(controller.get(requestJane, collection.id));
 
-    // Remove Jane from the collection
-    await assert.doesNotReject(controller.userDelete(requestJhon, collection.id, { email: jane.email }));
-    // Test if Jane has NOT acces to the collection
-    await assert.rejects(controller.get(requestJane, collection.id), Boom.forbidden());
+    // Test if Jane can remove Jhon
+    await assert.rejects(
+      controller.userDelete(requestJane, collection.id, { email: jhon.email }),
+      Boom.forbidden("Only available for collection's owner"),
+    );
+    // Test if Jane can add Ann
+    await assert.rejects(
+      controller.userAdd(requestJane, collection.id, { email: ann.email }),
+      Boom.forbidden("Only available for collection's owner"),
+    );
   });
 
   it("Search collection with a user that has no collection should return an empty result", async () => {

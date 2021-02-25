@@ -157,7 +157,7 @@ export class CollectionsController extends DefaultController {
     const collection = await this.getCollection(req, id);
 
     // check if the current user is the owner
-    if (collection.owner.email !== req.user.email) throw Boom.forbidden("Only the owner of a collection can delete it");
+    if (collection.owner.email !== req.user.email) throw Boom.forbidden("Only available for collection's owner");
 
     // Delete
     await collection.remove();
