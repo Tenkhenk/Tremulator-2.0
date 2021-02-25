@@ -131,7 +131,7 @@ export class ImagesController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() id: number,
-    @Body() body: Omit<ImageModel, "id">,
+    @Body() body: ImageModel,
   ): Promise<void> {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, id);

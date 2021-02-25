@@ -20,7 +20,7 @@ import {
 } from "../entities/annotation";
 
 @Tags("Annotations")
-@Route("annotations")
+@Route("collections")
 export class AnnotationsController extends DefaultController {
   // logger
   private log: Logger = getLogger("AnnotationsController");
@@ -120,7 +120,7 @@ export class AnnotationsController extends DefaultController {
     @Path() collectionId: number,
     @Path() imageId: number,
     @Path() id: number,
-    @Body() body: Omit<AnnotationModel, "id">,
+    @Body() body: AnnotationModel,
   ): Promise<void> {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, imageId);

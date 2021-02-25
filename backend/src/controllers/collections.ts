@@ -126,7 +126,7 @@ export class CollectionsController extends DefaultController {
   public async update(
     @Request() req: ExpressAuthRequest,
     @Path() id: number,
-    @Body() body: Omit<CollectionModel, "id">,
+    @Body() body: CollectionModel,
   ): Promise<void> {
     // Get the collection
     const collection = await this.getCollection(req, id);

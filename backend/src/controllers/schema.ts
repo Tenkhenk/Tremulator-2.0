@@ -101,7 +101,7 @@ export class SchemaController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() id: number,
-    @Body() body: Omit<SchemaModel, "id">,
+    @Body() body: SchemaModel,
   ): Promise<void> {
     // Get the collection
     const collection = await this.getCollection(req, collectionId);
@@ -122,7 +122,7 @@ export class SchemaController extends DefaultController {
     this.classValidationErrorToHttpError(errors);
 
     // Save the schema
-    await this.db.getRepository(SchemaEntity).update(schema.id, body);
+    await this.db.getRepository(SchemaEntity).update(id, body);
     this.setStatus(204);
   }
 

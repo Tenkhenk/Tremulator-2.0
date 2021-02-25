@@ -113,7 +113,7 @@ describe("Test Controller Schema", () => {
 
   it("Update an unexisting schema should return a not found", async () => {
     await assert.rejects(
-      controller.update(requestJhon, collection.id, -1, { name: "TEST", schema: {} }),
+      controller.update(requestJhon, collection.id, -1, { id: -1, name: "TEST", schema: {} }),
       Boom.notFound("Schema not found"),
     );
   });

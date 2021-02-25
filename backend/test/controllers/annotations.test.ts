@@ -123,7 +123,7 @@ describe("Test Controller Annotations", () => {
 
   it("Update an unexisting annotation should return a not found", async () => {
     await assert.rejects(
-      controller.update(requestJhon, collection.id, image.id, -1, annotationTemplate),
+      controller.update(requestJhon, collection.id, image.id, -1, { id: -1, ...annotationTemplate }),
       Boom.notFound("Annotation not found"),
     );
   });
@@ -133,7 +133,10 @@ describe("Test Controller Annotations", () => {
     const annotation = await createAnnotation(collection.id, image.id, schema.id);
 
     await assert.rejects(
-      controller.update(requestJane, collection.id, image.id, annotation.id, annotationTemplate),
+      controller.update(requestJane, collection.id, image.id, annotation.id, {
+        id: annotation.id,
+        ...annotationTemplate,
+      }),
       Boom.forbidden(),
     );
   });
