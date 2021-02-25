@@ -25,9 +25,9 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"double","required":true},"data":{"dataType":"any","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AnnotationModelLight": {
+    "AnnotationModel": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_AnnotationEntity.id-or-data_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"schemaId":{"dataType":"double","required":true},"imageId":{"dataType":"double","required":true},"geometry":{"dataType":"nestedObjectLiteral","nestedProperties":{"coordinates":{"dataType":"array","array":{"dataType":"any"},"required":true},"type":{"dataType":"string","required":true}},"required":true}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_AnnotationEntity.id-or-data_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"geometry":{"dataType":"nestedObjectLiteral","nestedProperties":{"coordinates":{"dataType":"array","array":{"dataType":"any"},"required":true},"type":{"dataType":"string","required":true}},"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_AnnotationModel.Exclude_keyofAnnotationModel.id__": {
@@ -50,24 +50,19 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_SchemaEntity.id-or-name_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"schema":{"dataType":"nestedObjectLiteral","nestedProperties":{},"additionalProperties":{"dataType":"any"},"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "SchemaModelLight": {
-        "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"SchemaModel"},{"dataType":"nestedObjectLiteral","nestedProperties":{"nbAnnotation":{"dataType":"double","required":true}}}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_ImageEntity.id-or-name-or-url_": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"id":{"dataType":"double","required":true},"name":{"dataType":"string","required":true},"url":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ImageModelLight": {
+    "ImageModel": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_ImageEntity.id-or-name-or-url_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"nbAnnotations":{"dataType":"double","required":true}}}],"validators":{}},
+        "type": {"ref":"Pick_ImageEntity.id-or-name-or-url_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AnnotationModelFull": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_AnnotationEntity.id-or-data_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"image":{"ref":"ImageModelLight","required":true},"schema":{"ref":"SchemaModelLight","required":true},"geometry":{"dataType":"nestedObjectLiteral","nestedProperties":{"coordinates":{"dataType":"array","array":{"dataType":"any"},"required":true},"type":{"dataType":"string","required":true}},"required":true}}}],"validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_AnnotationEntity.id-or-data_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"image":{"ref":"ImageModel","required":true},"schema":{"ref":"SchemaModel","required":true},"geometry":{"dataType":"nestedObjectLiteral","nestedProperties":{"coordinates":{"dataType":"array","array":{"dataType":"any"},"required":true},"type":{"dataType":"string","required":true}},"required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ValidateCodeResponse": {
@@ -129,29 +124,14 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"email":{"dataType":"string","required":true},"firstname":{"dataType":"string","required":true},"lastname":{"dataType":"string","required":true},"avatar":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "UserModelLight": {
+    "UserModel": {
         "dataType": "refAlias",
         "type": {"ref":"Pick_UserEntity.email-or-firstname-or-lastname-or-avatar_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CollectionModelFull": {
         "dataType": "refAlias",
-        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_CollectionEntity.id-or-name-or-description_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"schemas":{"dataType":"array","array":{"dataType":"refAlias","ref":"SchemaModelLight"},"required":true},"images":{"dataType":"array","array":{"dataType":"refAlias","ref":"ImageModelLight"},"required":true},"users":{"dataType":"array","array":{"dataType":"refAlias","ref":"UserModelLight"},"required":true},"owner":{"ref":"UserModelLight","required":true}}}],"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ImageModel": {
-        "dataType": "refAlias",
-        "type": {"ref":"Pick_ImageEntity.id-or-name-or-url_","validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_ImageModel.Exclude_keyofImageModel.id__": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"name":{"dataType":"string","required":true},"url":{"dataType":"string","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Omit_ImageModel.id_": {
-        "dataType": "refAlias",
-        "type": {"ref":"Pick_ImageModel.Exclude_keyofImageModel.id__","validators":{}},
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"Pick_CollectionEntity.id-or-name-or-description_"},{"dataType":"nestedObjectLiteral","nestedProperties":{"schemas":{"dataType":"array","array":{"dataType":"refAlias","ref":"SchemaModel"},"required":true},"images":{"dataType":"array","array":{"dataType":"refAlias","ref":"ImageModel"},"required":true},"users":{"dataType":"array","array":{"dataType":"refAlias","ref":"UserModel"},"required":true},"owner":{"ref":"UserModel","required":true}}}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Pick_SchemaModel.Exclude_keyofSchemaModel.id__": {
@@ -164,6 +144,11 @@ const models: TsoaRoute.Models = {
         "type": {"ref":"Pick_SchemaModel.Exclude_keyofSchemaModel.id__","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SchemaModelFull": {
+        "dataType": "refAlias",
+        "type": {"dataType":"intersection","subSchemas":[{"ref":"SchemaModel"},{"dataType":"nestedObjectLiteral","nestedProperties":{"annotations":{"dataType":"array","array":{"dataType":"refAlias","ref":"AnnotationModel"},"required":true},"collection":{"ref":"CollectionModel","required":true}}}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
 const validationService = new ValidationService(models);
 
@@ -174,7 +159,7 @@ export function RegisterRoutes(app: express.Router) {
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
-        app.post('/api/v1/annotations/:collectionId/images/:imageId/annotations',
+        app.post('/api/v1/collections/:collectionId/images/:imageId/annotations',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
@@ -201,7 +186,7 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.get('/api/v1/annotations/:collectionId/images/:imageId/annotations/:id',
+        app.get('/api/v1/collections/:collectionId/images/:imageId/annotations/:id',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
@@ -227,7 +212,7 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.put('/api/v1/annotations/:collectionId/images/:imageId/annotations/:id',
+        app.put('/api/v1/collections/:collectionId/images/:imageId/annotations/:id',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
@@ -235,7 +220,7 @@ export function RegisterRoutes(app: express.Router) {
                     collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
                     imageId: {"in":"path","name":"imageId","required":true,"dataType":"double"},
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    body: {"in":"body","name":"body","required":true,"ref":"Omit_AnnotationModel.id_"},
+                    body: {"in":"body","name":"body","required":true,"ref":"AnnotationModel"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -254,7 +239,7 @@ export function RegisterRoutes(app: express.Router) {
             promiseHandler(controller, promise, response, next);
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        app.delete('/api/v1/annotations/:collectionId/images/:imageId/annotations/:id',
+        app.delete('/api/v1/collections/:collectionId/images/:imageId/annotations/:id',
             authenticateMiddleware([{"auth":[]}]),
             function (request: any, response: any, next: any) {
             const args = {
@@ -405,7 +390,7 @@ export function RegisterRoutes(app: express.Router) {
             const args = {
                     req: {"in":"request","name":"req","required":true,"dataType":"object"},
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    body: {"in":"body","name":"body","required":true,"ref":"Omit_CollectionModel.id_"},
+                    body: {"in":"body","name":"body","required":true,"ref":"CollectionModel"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -456,7 +441,7 @@ export function RegisterRoutes(app: express.Router) {
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
                     search: {"default":"","in":"query","name":"search","dataType":"string"},
                     skip: {"default":0,"in":"query","name":"skip","dataType":"double"},
-                    limit: {"default":0,"in":"query","name":"limit","dataType":"double"},
+                    limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -606,7 +591,7 @@ export function RegisterRoutes(app: express.Router) {
                     req: {"in":"request","name":"req","required":true,"dataType":"object"},
                     collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    body: {"in":"body","name":"body","required":true,"ref":"Omit_ImageModel.id_"},
+                    body: {"in":"body","name":"body","required":true,"ref":"ImageModel"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
@@ -750,7 +735,7 @@ export function RegisterRoutes(app: express.Router) {
                     req: {"in":"request","name":"req","required":true,"dataType":"object"},
                     collectionId: {"in":"path","name":"collectionId","required":true,"dataType":"double"},
                     id: {"in":"path","name":"id","required":true,"dataType":"double"},
-                    body: {"in":"body","name":"body","required":true,"ref":"Omit_SchemaModel.id_"},
+                    body: {"in":"body","name":"body","required":true,"ref":"SchemaModel"},
             };
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
