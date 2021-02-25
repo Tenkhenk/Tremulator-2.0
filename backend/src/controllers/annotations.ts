@@ -10,9 +10,14 @@ import * as gjv from "geojson-validation";
 import { DefaultController, ExpressAuthRequest } from "./default";
 import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
-import { CollectionEntity, CollectionModel } from "../entities/collection";
 import { SchemaEntity } from "../entities/schema";
-import { AnnotationEntity, AnnotationModel } from "../entities/annotation";
+import {
+  AnnotationEntity,
+  annotationEntityToModel,
+  annotationEntityToModelFull,
+  AnnotationModel,
+  AnnotationModelFull,
+} from "../entities/annotation";
 
 @Tags("Annotations")
 @Route("annotations")
@@ -70,9 +75,12 @@ export class AnnotationsController extends DefaultController {
     if (!gjv.valid(body.geometry)) throw Boom.badRequest("Geometry is invalid");
 
     // Save & return the collection
-    const annotation = await this.db.getRepository(AnnotationEntity).save(body as AnnotationEntity);
+    const annotation = await this.db
+      .getRepository(AnnotationEntity)
+      .save({ ...(body as AnnotationEntity), image, schema });
     this.setStatus(201);
-    return annotation;
+
+    return annotationEntityToModel(annotation);
   }
 
   @Get("{collectionId}/images/{imageId}/annotations/{id}")
@@ -88,15 +96,15 @@ export class AnnotationsController extends DefaultController {
     @Path() collectionId: number,
     @Path() imageId: number,
     @Path() id: number,
-  ): Promise<AnnotationModel> {
+  ): Promise<AnnotationModelFull> {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, imageId);
 
     // Search the annotation
-    const annotation = await AnnotationEntity.findOne(id, { relations: ["image"] });
+    const annotation = await AnnotationEntity.findOne(id, { relations: ["image", "schema"] });
     if (!annotation || annotation.image.id !== image.id) throw Boom.notFound("Annotation not found");
 
-    return annotation;
+    return annotationEntityToModelFull(annotation);
   }
 
   @Put("{collectionId}/images/{imageId}/annotations/{id}")

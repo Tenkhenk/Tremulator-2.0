@@ -8,8 +8,14 @@ import * as Boom from "@hapi/boom";
 import { DefaultController, ExpressAuthRequest } from "./default";
 import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
-import { CollectionModel, CollectionEntity } from "../entities/collection";
-import { UserModel, UserEntity } from "../entities/user";
+import {
+  collectionEntityToModel,
+  collectionEntityToModelFull,
+  CollectionModel,
+  CollectionModelFull,
+  CollectionEntity,
+} from "../entities/collection";
+import { userEntityToModel, UserModel, UserEntity } from "../entities/user";
 
 @Tags("Collections")
 @Route("collections")
@@ -38,12 +44,13 @@ export class CollectionsController extends DefaultController {
     const result = await this.db
       .getRepository(CollectionEntity)
       .createQueryBuilder("collection")
+      .leftJoinAndSelect("collection.owner", "owner")
       .leftJoinAndSelect("collection.users", "user")
       .where(
         `
         (collection.ownerEmail = :email OR user.email = :email)
         ${
-          search !== ""
+          search.trim() !== ""
             ? `AND
         (
           to_tsvector('simple', collection.name) @@ to_tsquery('simple', :query) OR
@@ -57,7 +64,8 @@ export class CollectionsController extends DefaultController {
       .limit(limit)
       .offset(skip)
       .getMany();
-    return result;
+
+    return result.map((c) => collectionEntityToModel(c));
   }
 
   /**
@@ -83,7 +91,7 @@ export class CollectionsController extends DefaultController {
     // Save & return the collection
     const collection = await this.db.getRepository(CollectionEntity).save({ ...body, owner: current });
     this.setStatus(201);
-    return collection;
+    return collectionEntityToModel(collection);
   }
 
   /**
@@ -97,9 +105,11 @@ export class CollectionsController extends DefaultController {
   @Response("403", "Forbidden")
   @Response("404", "Not Found")
   @Response("500", "Internal Error")
-  public async get(@Request() req: ExpressAuthRequest, @Path() id: number): Promise<CollectionModel> {
-    // Get the collection
-    return this.getCollection(req, id);
+  public async get(@Request() req: ExpressAuthRequest, @Path() id: number): Promise<CollectionModelFull> {
+    // Get the collection and check rights
+    const collection = await this.getCollection(req, id, ["users", "owner", "schemas", "images"]);
+
+    return collectionEntityToModelFull(collection);
   }
 
   /**
@@ -131,7 +141,8 @@ export class CollectionsController extends DefaultController {
   }
 
   /**
-   * Delete a collection
+   * Delete a collection.
+   * Only the owner of a collection can delete it.
    */
   @Delete("{id}")
   @Security("auth")
@@ -144,6 +155,9 @@ export class CollectionsController extends DefaultController {
   public async delete(@Request() req: ExpressAuthRequest, @Path() id: number): Promise<void> {
     // Get the collection
     const collection = await this.getCollection(req, id);
+
+    // check if the current user is the owner
+    if (collection.owner.email !== req.user.email) throw Boom.forbidden("Only the owner of a collection can delete it");
 
     // Delete
     await collection.remove();
@@ -164,7 +178,7 @@ export class CollectionsController extends DefaultController {
     @Path() id: number,
     @Query() search = "",
     @Query() skip = 0,
-    @Query() limit = 0,
+    @Query() limit = 10,
   ): Promise<Array<UserModel>> {
     // Get the collection
     const collection = await this.getCollection(req, id);
@@ -174,19 +188,24 @@ export class CollectionsController extends DefaultController {
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.collections", "collection")
       .where(
-        `collection.id = :id AND
-         (
-           to_tsvector('simple', user.firstname) @@ to_tsquery('simple', :query) OR
-           to_tsvector('simple', user.lastname) @@ to_tsquery('simple', :query) OR
-           to_tsvector('simple', user.email) @@ to_tsquery('simple', :query) OR
-         )
+        `collection.id = :id
+         ${
+           search.trim() !== ""
+             ? ` AND (
+           to_tsvector('simple', "user"."firstname") @@ to_tsquery('simple', :query ) OR
+           to_tsvector('simple', "user"."lastname") @@ to_tsquery('simple', :query ) OR
+           to_tsvector('simple', "user"."email") @@ to_tsquery('simple', :query )
+         )`
+             : ""
+         }
+
         `,
         { id, query: search.trim().replace(/ /g, " & ") },
       )
       .limit(limit)
       .offset(skip)
       .getMany();
-    return result;
+    return result.map((u) => userEntityToModel(u));
   }
 
   /**
@@ -200,18 +219,23 @@ export class CollectionsController extends DefaultController {
   @Response("401", "Unauthorized")
   @Response("403", "Forbidden")
   @Response("500", "Internal Error")
-  public async userAdd(@Request() req: ExpressAuthRequest, @Path() id: number, @Body() email: string): Promise<void> {
+  public async userAdd(
+    @Request() req: ExpressAuthRequest,
+    @Path() id: number,
+    @Body() body: { email: string },
+  ): Promise<void> {
     // Get the collection
     const collection = await this.getCollection(req, id);
+    console.log(body);
 
     // Check input
-    if (!isEmail(email)) throw Boom.badRequest("Bad email");
+    if (!isEmail(body.email)) throw Boom.badRequest("Bad email");
 
     // TODO: What to do if user is not found ? send an email ?
 
     // Do the job
-    if (email !== collection.owner.email) {
-      const userToAdd = await UserEntity.findOne(email);
+    if (body.email !== collection.owner.email) {
+      const userToAdd = await UserEntity.findOne(body.email);
 
       // if the user is not found, we send a 400
       if (!userToAdd) throw Boom.badRequest("Bad email");
@@ -238,17 +262,17 @@ export class CollectionsController extends DefaultController {
   public async userDelete(
     @Request() req: ExpressAuthRequest,
     @Path() id: number,
-    @Body() email: string,
+    @Body() body: { email: string },
   ): Promise<void> {
     // Get the collection
     const collection = await this.getCollection(req, id);
 
     // Check input
-    if (!isEmail(email)) throw Boom.badRequest("Bad email");
+    if (!isEmail(body.email)) throw Boom.badRequest("Bad email");
 
     // We can't remove the owner
-    if (email === collection.owner.email) throw Boom.badRequest("Can't remove the owner of a collection");
-    collection.users = collection.users.filter((u) => u.email !== email);
+    if (body.email === collection.owner.email) throw Boom.badRequest("Can't remove the owner of a collection");
+    collection.users = collection.users.filter((u) => u.email !== body.email);
     await collection.save();
     this.setStatus(204);
   }

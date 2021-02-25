@@ -7,7 +7,7 @@ import { config } from "../config";
 import { DefaultController, ExpressAuthRequest } from "./default";
 import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
-import { ImageModel, ImageEntity } from "../entities/image";
+import { imageEntityToModel, imageEntityToModelFull, ImageModel, ImageModelFull, ImageEntity } from "../entities/image";
 
 @Tags("Images")
 @Route("collections")
@@ -50,7 +50,7 @@ export class ImagesController extends DefaultController {
     );
 
     this.setStatus(201);
-    return result;
+    return result.map((i) => imageEntityToModel(i));
   }
 
   /**
@@ -92,7 +92,7 @@ export class ImagesController extends DefaultController {
     );
 
     this.setStatus(201);
-    return result;
+    return result.map((i) => imageEntityToModel(i));
   }
 
   /**
@@ -112,8 +112,8 @@ export class ImagesController extends DefaultController {
     @Path() id: number,
   ): Promise<ImageModel> {
     // Retrieve the image
-    const image = await this.getImage(req, collectionId, id);
-    return image;
+    const image = await this.getImage(req, collectionId, id, ["collection", "annotations"]);
+    return imageEntityToModelFull(image);
   }
 
   /**

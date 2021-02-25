@@ -1,7 +1,8 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
 import { IsNotEmpty, IsUrl } from "class-validator";
-import { CollectionEntity } from "./collection";
-import { AnnotationEntity } from "./annotation";
+import { pick } from "lodash";
+import { collectionEntityToModel, CollectionEntity, CollectionModel } from "./collection";
+import { annotationEntityToModel, AnnotationEntity, AnnotationModel } from "./annotation";
 
 @Entity("image")
 export class ImageEntity extends BaseEntity {
@@ -26,4 +27,25 @@ export class ImageEntity extends BaseEntity {
   annotations: Array<AnnotationEntity>;
 }
 
+/**
+ * Object model: just the table properties
+ */
 export type ImageModel = Pick<ImageEntity, "id" | "name" | "url">;
+export function imageEntityToModel(item: ImageEntity): ImageModel {
+  return pick(item, ["id", "name", "url"]);
+}
+
+/**
+ * Object full
+ */
+export type ImageModelFull = ImageModel & {
+  collection: CollectionModel;
+  annotations: Array<AnnotationModel>;
+};
+export function imageEntityToModelFull(item: ImageEntity): ImageModelFull {
+  return {
+    ...pick(item, ["id", "name", "url"]),
+    collection: collectionEntityToModel(item.collection),
+    annotations: item.annotations?.map((a) => annotationEntityToModel(a)) || [],
+  };
+}

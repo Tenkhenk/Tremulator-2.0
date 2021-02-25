@@ -55,7 +55,7 @@ describe("Test Controller Collections", () => {
     assert.equal(dbColl.owner.email, jhon.email);
   });
 
-  it("Delete collection  by the owner should work", async () => {
+  it("Delete collection by the owner should work", async () => {
     // Create a collection
     const collection = await createCollection(requestJhon);
 
@@ -72,12 +72,12 @@ describe("Test Controller Collections", () => {
     const collection = await createCollection(requestJhon);
 
     // Add Jane to the collection
-    await assert.doesNotReject(controller.userAdd(requestJhon, collection.id, jane.email));
+    await assert.doesNotReject(controller.userAdd(requestJhon, collection.id, { email: jane.email }));
     // Test if Jane has acces to the collection
     await assert.doesNotReject(controller.get(requestJane, collection.id));
 
     // Remove Jane from the collection
-    await assert.doesNotReject(controller.userDelete(requestJhon, collection.id, jane.email));
+    await assert.doesNotReject(controller.userDelete(requestJhon, collection.id, { email: jane.email }));
     // Test if Jane has NOT acces to the collection
     await assert.rejects(controller.get(requestJane, collection.id), Boom.forbidden());
   });

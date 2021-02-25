@@ -5,7 +5,7 @@ import * as express from "express";
 import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
 import { AuthService, ValidateCodeRequest, ValidateCodeResponse } from "../services/authentification";
-import { UserEntity, UserModel } from "../entities/user";
+import { UserEntity, UserModelFull, userEntityToModelFull } from "../entities/user";
 
 /**
  * Endpoint used in the OpenId code flow to validate the receive Authorization code
@@ -46,10 +46,10 @@ export class AuthController extends Controller {
   @Response("401", "Unauthorized")
   @Response("403", "Forbidden")
   @Response("500", "Internal Error")
-  public async whoami(@Request() req: express.Request): Promise<UserModel> {
+  public async whoami(@Request() req: express.Request): Promise<UserModelFull> {
     // get the user
     const user: UserEntity = await this.auth.verify(req);
     this.log.debug(`User is `, user);
-    return user;
+    return userEntityToModelFull(user);
   }
 }

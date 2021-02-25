@@ -35,9 +35,13 @@ export class DefaultController extends Controller {
    * @throw  A 404 if the collection is not found, or a 403 if the user is not allowed
    * @returns {CollectionEntity}
    */
-  protected async getCollection(req: ExpressAuthRequest, id: number): Promise<CollectionEntity> {
+  protected async getCollection(
+    req: ExpressAuthRequest,
+    id: number,
+    relations = ["users", "owner"],
+  ): Promise<CollectionEntity> {
     // Search the collection in DB
-    const collection = await CollectionEntity.findOne(id, { relations: ["users", "owner"] });
+    const collection = await CollectionEntity.findOne(id, { relations });
 
     // if nothing is found => 404
     if (!collection) throw Boom.notFound("Collection not found");
@@ -63,12 +67,17 @@ export class DefaultController extends Controller {
    * @throw  A 404 if the collection is not found, or a 403 if the user is not allowed
    * @returns {ImageEntity}
    */
-  protected async getImage(req: ExpressAuthRequest, collectionId: number, id: number): Promise<ImageEntity> {
+  protected async getImage(
+    req: ExpressAuthRequest,
+    collectionId: number,
+    id: number,
+    relations = ["collection"],
+  ): Promise<ImageEntity> {
     // Search the collection in DB
     const collection = await this.getCollection(req, collectionId);
 
     // Retrieve the image
-    const image = await ImageEntity.findOne(id, { relations: ["collection"] });
+    const image = await ImageEntity.findOne(id, { relations });
 
     // Check
     if (!image || image.collection.id !== collectionId) throw Boom.notFound("Image not found");

@@ -8,7 +8,13 @@ import { config } from "../config";
 import { DefaultController, ExpressAuthRequest } from "./default";
 import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
-import { SchemaModel, SchemaEntity } from "../entities/schema";
+import {
+  schemaEntityToModel,
+  schemaEntityToModelFull,
+  SchemaModel,
+  SchemaModelFull,
+  SchemaEntity,
+} from "../entities/schema";
 
 @Tags("Schema")
 @Route("schema")
@@ -49,9 +55,9 @@ export class SchemaController extends DefaultController {
     this.classValidationErrorToHttpError(errors);
 
     // Save & return the collection
-    const schema = await this.db.getRepository(SchemaEntity).save(body);
+    const schema = await this.db.getRepository(SchemaEntity).save({ ...body, collection: collection });
     this.setStatus(201);
-    return schema;
+    return schemaEntityToModel(schema);
   }
 
   /**
@@ -69,15 +75,15 @@ export class SchemaController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() id: number,
-  ): Promise<SchemaModel> {
+  ): Promise<SchemaModelFull> {
     // Get the collection
     const collection = await this.getCollection(req, collectionId);
 
     // Get the schema by its id, and check the collection
-    const schema = await this.db.getRepository(SchemaEntity).findOne(id, { relations: ["collection"] });
+    const schema = await this.db.getRepository(SchemaEntity).findOne(id, { relations: ["collection", "annotations"] });
     if (!schema || schema.collection.id !== collection.id) throw Boom.notFound("Schema not found");
 
-    return schema;
+    return schemaEntityToModelFull(schema);
   }
 
   /**
