@@ -6,6 +6,7 @@ export const config_default = {
     path: "/data",
     mime_types: ["image/jpeg", "image/jpg", "image/png", "image/tiff"],
   },
+  noreply_address: "noreply@tremulator.com",
   smtp: {
     jsonTransport: true,
   },

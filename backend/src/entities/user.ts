@@ -19,6 +19,12 @@ export class UserEntity extends BaseEntity {
   avatar: string;
 
   @Column({ nullable: true })
+  is_admin: boolean;
+
+  @Column({ nullable: true })
+  is_lock: boolean;
+
+  @Column({ nullable: true })
   access_token: string;
 
   @Column({ nullable: true })

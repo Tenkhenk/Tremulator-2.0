@@ -12,6 +12,8 @@ export interface Configuration {
   error_with_stack: boolean;
   // Smtp configuration
   smtp: TransportOptions;
+  // Email adddress
+  noreply_address: string;
   // Data configuration
   data: {
     // Path to the upload folder

@@ -16,7 +16,11 @@ export async function expressAuthentication(
     if (securityName === "auth") {
       try {
         const user = await auth.verify(request);
-        resolve(user);
+        if (user.is_lock === true) {
+          reject("Account locked");
+        } else {
+          resolve(user);
+        }
       } catch (e) {
         reject(e);
       }
