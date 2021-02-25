@@ -183,6 +183,9 @@ export class CollectionsController extends DefaultController {
     // Get the collection
     const collection = await this.getCollection(req, id);
 
+    // check if the current user is the owner
+    if (collection.owner.email !== req.user.email) throw Boom.forbidden("Only available for collection's owner");
+
     const result = await this.db
       .getRepository(UserEntity)
       .createQueryBuilder("user")
@@ -226,7 +229,9 @@ export class CollectionsController extends DefaultController {
   ): Promise<void> {
     // Get the collection
     const collection = await this.getCollection(req, id);
-    console.log(body);
+
+    // check if the current user is the owner
+    if (collection.owner.email !== req.user.email) throw Boom.forbidden("Only available for collection's owner");
 
     // Check input
     if (!isEmail(body.email)) throw Boom.badRequest("Bad email");
@@ -266,6 +271,9 @@ export class CollectionsController extends DefaultController {
   ): Promise<void> {
     // Get the collection
     const collection = await this.getCollection(req, id);
+
+    // check if the current user is the owner
+    if (collection.owner.email !== req.user.email) throw Boom.forbidden("Only available for collection's owner");
 
     // Check input
     if (!isEmail(body.email)) throw Boom.badRequest("Bad email");
