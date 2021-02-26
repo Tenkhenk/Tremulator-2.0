@@ -4,10 +4,10 @@
  */
 
 export interface paths {
-  "/annotations/{collectionId}/images/{imageId}/annotations": {
+  "/collections/{collectionId}/images/{imageId}/annotations": {
     post: operations["Create"];
   };
-  "/annotations/{collectionId}/images/{imageId}/annotations/{id}": {
+  "/collections/{collectionId}/images/{imageId}/annotations/{id}": {
     get: operations["Get"];
     put: operations["Update"];
     delete: operations["Delete"];
@@ -29,7 +29,10 @@ export interface paths {
     get: operations["Get"];
     /** Update a collection */
     put: operations["Update"];
-    /** Delete a collection */
+    /**
+     * Delete a collection.
+     * Only the owner of a collection can delete it.
+     */
     delete: operations["Delete"];
   };
   "/collections/{id}/users": {
@@ -68,6 +71,9 @@ export interface paths {
   "/misc/echo": {
     post: operations["Echo"];
   };
+  "/misc/lock_user": {
+    put: operations["Lock_user"];
+  };
   "/schema/{collectionId}/schema": {
     /** Create a schema for a collection. */
     post: operations["Create"];
@@ -89,6 +95,7 @@ export interface components {
       id: number;
       data: { [key: string]: any };
     };
+    /** Object model: just the table properties */
     AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-data_"] & {
       geometry: {
         coordinates: { [key: string]: any }[];
@@ -104,6 +111,33 @@ export interface components {
       };
     };
     "Omit_AnnotationModel.id_": components["schemas"]["Pick_AnnotationModel.Exclude_keyofAnnotationModel.id__"];
+    AnnotationModelWithoutId: components["schemas"]["Omit_AnnotationModel.id_"];
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_SchemaEntity.id-or-name_": {
+      id: number;
+      name: string;
+    };
+    /** Object model: just the table properties */
+    SchemaModel: components["schemas"]["Pick_SchemaEntity.id-or-name_"] & {
+      schema: { [key: string]: { [key: string]: any } };
+    };
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_ImageEntity.id-or-name-or-url_": {
+      id: number;
+      name: string;
+      url: string;
+    };
+    /** Object model: just the table properties */
+    ImageModel: components["schemas"]["Pick_ImageEntity.id-or-name-or-url_"];
+    /** Object full : model with the deps in model format */
+    AnnotationModelFull: components["schemas"]["Pick_AnnotationEntity.id-or-data_"] & {
+      image: components["schemas"]["ImageModel"];
+      schema: components["schemas"]["SchemaModel"];
+      geometry: {
+        coordinates: { [key: string]: any }[];
+        type: string;
+      };
+    };
     ValidateCodeResponse: {
       access_token: string;
       expires_in: number;
@@ -127,13 +161,15 @@ export interface components {
       access_token: string;
       expires_at: string;
     };
-    UserModel: components["schemas"]["Pick_UserEntity.email-or-firstname-or-lastname-or-avatar-or-access_token-or-expires_at_"];
+    /** Object full */
+    UserModelFull: components["schemas"]["Pick_UserEntity.email-or-firstname-or-lastname-or-avatar-or-access_token-or-expires_at_"];
     /** From T, pick a set of properties whose keys are in the union K */
     "Pick_CollectionEntity.id-or-name-or-description_": {
       id: number;
       name: string;
       description: string;
     };
+    /** Object model: just the table properties */
     CollectionModel: components["schemas"]["Pick_CollectionEntity.id-or-name-or-description_"];
     /** From T, pick a set of properties whose keys are in the union K */
     "Pick_CollectionModel.Exclude_keyofCollectionModel.id__": {
@@ -141,26 +177,22 @@ export interface components {
       description: string;
     };
     "Omit_CollectionModel.id_": components["schemas"]["Pick_CollectionModel.Exclude_keyofCollectionModel.id__"];
+    CollectionModelWithoutId: components["schemas"]["Omit_CollectionModel.id_"];
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_ImageEntity.id-or-name-or-url_": {
-      id: number;
-      name: string;
-      url: string;
+    "Pick_UserEntity.email-or-firstname-or-lastname-or-avatar_": {
+      email: string;
+      firstname: string;
+      lastname: string;
+      avatar: string;
     };
-    ImageModel: components["schemas"]["Pick_ImageEntity.id-or-name-or-url_"];
-    /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_ImageModel.Exclude_keyofImageModel.id__": {
-      name: string;
-      url: string;
-    };
-    "Omit_ImageModel.id_": components["schemas"]["Pick_ImageModel.Exclude_keyofImageModel.id__"];
-    /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_SchemaEntity.id-or-name_": {
-      id: number;
-      name: string;
-    };
-    SchemaModel: components["schemas"]["Pick_SchemaEntity.id-or-name_"] & {
-      schema: { [key: string]: { [key: string]: any } };
+    /** Object summary */
+    UserModel: components["schemas"]["Pick_UserEntity.email-or-firstname-or-lastname-or-avatar_"];
+    /** Object full */
+    CollectionModelFull: components["schemas"]["Pick_CollectionEntity.id-or-name-or-description_"] & {
+      schemas: components["schemas"]["SchemaModel"][];
+      images: components["schemas"]["ImageModel"][];
+      users: components["schemas"]["UserModel"][];
+      owner: components["schemas"]["UserModel"];
     };
     /** From T, pick a set of properties whose keys are in the union K */
     "Pick_SchemaModel.Exclude_keyofSchemaModel.id__": {
@@ -168,6 +200,12 @@ export interface components {
       schema: { [key: string]: { [key: string]: any } };
     };
     "Omit_SchemaModel.id_": components["schemas"]["Pick_SchemaModel.Exclude_keyofSchemaModel.id__"];
+    SchemaModelWithoutId: components["schemas"]["Omit_SchemaModel.id_"];
+    /** Object full */
+    SchemaModelFull: components["schemas"]["SchemaModel"] & {
+      annotations: components["schemas"]["AnnotationModel"][];
+      collection: components["schemas"]["CollectionModel"];
+    };
   };
   responses: {};
   parameters: {};
@@ -205,7 +243,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Omit_SchemaModel.id_"];
+        "application/json": components["schemas"]["SchemaModelWithoutId"];
       };
     };
   };
@@ -221,7 +259,7 @@ export interface operations {
       /** Ok */
       200: {
         content: {
-          "application/json": components["schemas"]["SchemaModel"];
+          "application/json": components["schemas"]["SchemaModelFull"];
         };
       };
       /** Bad Request */
@@ -260,7 +298,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["Omit_SchemaModel.id_"];
+        "application/json": components["schemas"]["SchemaModel"];
       };
     };
   };
@@ -311,7 +349,7 @@ export interface operations {
       /** Ok */
       200: {
         content: {
-          "application/json": components["schemas"]["UserModel"];
+          "application/json": components["schemas"]["UserModelFull"];
         };
       };
       /** Unauthorized */
@@ -397,7 +435,9 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": string;
+        "application/json": {
+          email: string;
+        };
       };
     };
   };
@@ -427,7 +467,9 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": string;
+        "application/json": {
+          email: string;
+        };
       };
     };
   };
@@ -525,6 +567,25 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": { [key: string]: any };
+      };
+    };
+  };
+  Lock_user: {
+    parameters: {};
+    responses: {
+      /** No content */
+      204: never;
+      /** Bad request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          lock?: boolean;
+          email: string;
+        };
       };
     };
   };
