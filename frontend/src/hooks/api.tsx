@@ -117,3 +117,38 @@ export function usePut<P, R>(
 
   return [put, { loading, error, data }];
 }
+
+/**
+ * API hook for PUT
+ */
+export function useDelete<R>(
+  path: string,
+): [(urlParams?: { [key: string]: unknown }) => Promise<APIResult<R>>, APIResult<R>] {
+  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<R | null>(null);
+  const {oidcUser} = useContext(AuthenticationContext);
+
+  async function del(urlParams: { [key: string]: unknown } = {}): Promise<APIResult<R>> {
+    setData(null);
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios({
+        method: "DELETE",
+        url: `${config.api_path}${path}`,
+        responseType: "json",
+        params: urlParams,
+        headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {}
+      });
+      setData(response.data as R);
+    } catch (e) {
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+    return { loading, error, data };
+  }
+
+  return [del, { loading, error, data }];
+}

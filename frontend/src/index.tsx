@@ -12,9 +12,11 @@ import { routes } from "./router/routes";
 // Layout
 import Footer from "./layout/footer";
 import Header from "./layout/header";
-// OIDC
+import Alert from "./components/alert";
+// contexts
 import {config} from "./config/index";
 import { AuthenticationProvider, oidcLog } from '@axa-fr/react-oidc-context';
+import {AppContextProvider} from "./context/app-context-provider";
 
 class LocalStorage {
   constructor() {
@@ -24,13 +26,16 @@ class LocalStorage {
 
 ReactDOM.render(
     <Router>
-      <AuthenticationProvider configuration={config.auth} UserStore={LocalStorage} loggerLevel={oidcLog.DEBUG}>
-        <Header />
-        <main className="container" role="main">
-          <RouterWrapper routes={routes} />
-        </main>
-        <Footer />
-      </AuthenticationProvider>
+      <AppContextProvider>
+        <AuthenticationProvider configuration={config.auth} UserStore={LocalStorage} loggerLevel={oidcLog.DEBUG}>
+          <Header />
+          <Alert/>
+          <main className="container" role="main">
+            <RouterWrapper routes={routes} />
+          </main>
+          <Footer />
+        </AuthenticationProvider>
+      </AppContextProvider>
     </Router>,
   document.getElementById("root"),
 );
