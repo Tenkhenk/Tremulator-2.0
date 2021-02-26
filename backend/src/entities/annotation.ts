@@ -30,6 +30,8 @@ export class AnnotationEntity extends BaseEntity {
 export type AnnotationModel = Pick<AnnotationEntity, "id" | "data"> & {
   geometry: { type: string; coordinates: Array<any> };
 };
+// usefull type for creation
+export type AnnotationModelWithoutId = Omit<AnnotationModel, "id">;
 export function annotationEntityToModel(item: AnnotationEntity): AnnotationModel {
   return pick(item, ["id", "data", "geometry"]);
 }

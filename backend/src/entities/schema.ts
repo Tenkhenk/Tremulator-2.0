@@ -28,6 +28,8 @@ export class SchemaEntity extends BaseEntity {
  * Object model: just the table properties
  */
 export type SchemaModel = Pick<SchemaEntity, "id" | "name"> & { schema: { [key: string]: any } };
+// usefull type for creation
+export type SchemaModelWithoutId = Omit<SchemaModel, "id">;
 export function schemaEntityToModel(item: SchemaEntity): SchemaModel {
   return pick(item, ["id", "name", "schema"]);
 }

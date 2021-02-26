@@ -43,6 +43,8 @@ export class CollectionEntity extends BaseEntity {
  * Object model: just the table properties
  */
 export type CollectionModel = Pick<CollectionEntity, "id" | "name" | "description">;
+// usefull type for creation
+export type CollectionModelWithoutId = Omit<CollectionModel, "id">;
 export function collectionEntityToModel(item: CollectionEntity): CollectionModel {
   return pick(item, ["id", "name", "description"]);
 }

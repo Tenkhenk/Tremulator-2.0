@@ -16,6 +16,7 @@ import {
   annotationEntityToModel,
   annotationEntityToModelFull,
   AnnotationModel,
+  AnnotationModelWithoutId,
   AnnotationModelFull,
 } from "../entities/annotation";
 
@@ -40,7 +41,7 @@ export class AnnotationsController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() imageId: number,
-    @Body() body: Omit<AnnotationModel, "id">,
+    @Body() body: AnnotationModelWithoutId,
     @Query() schemaId?: number,
   ): Promise<AnnotationModel> {
     // Retrieve the image

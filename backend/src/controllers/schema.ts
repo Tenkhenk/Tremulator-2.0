@@ -12,6 +12,7 @@ import {
   schemaEntityToModel,
   schemaEntityToModelFull,
   SchemaModel,
+  SchemaModelWithoutId,
   SchemaModelFull,
   SchemaEntity,
 } from "../entities/schema";
@@ -38,7 +39,7 @@ export class SchemaController extends DefaultController {
   public async create(
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
-    @Body() body: Omit<SchemaModel, "id">,
+    @Body() body: SchemaModelWithoutId,
   ): Promise<SchemaModel> {
     // Get the collection and check rights
     const collection = await this.getCollection(req, collectionId);

@@ -12,6 +12,7 @@ import {
   collectionEntityToModel,
   collectionEntityToModelFull,
   CollectionModel,
+  CollectionModelWithoutId,
   CollectionModelFull,
   CollectionEntity,
 } from "../entities/collection";
@@ -79,7 +80,7 @@ export class CollectionsController extends DefaultController {
   @Response("500", "Internal Error")
   public async create(
     @Request() req: ExpressAuthRequest,
-    @Body() body: Omit<CollectionModel, "id">,
+    @Body() body: CollectionModelWithoutId,
   ): Promise<CollectionModel> {
     // Validate the body
     const errors = await validate(plainToClass(CollectionEntity, body));
