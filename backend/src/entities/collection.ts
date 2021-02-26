@@ -1,4 +1,5 @@
 import {
+  BeforeRemove,
   BaseEntity,
   Entity,
   PrimaryGeneratedColumn,
@@ -10,9 +11,15 @@ import {
 } from "typeorm";
 import { IsNotEmpty } from "class-validator";
 import { pick } from "lodash";
+import * as fs from "fs";
+import { config } from "../config";
 import { schemaEntityToModel, SchemaEntity, SchemaModel } from "./schema";
 import { imageEntityToModel, ImageEntity, ImageModel } from "./image";
 import { userEntityToModel, UserEntity, UserModel } from "./user";
+import { getLogger, Logger } from "../services/logger";
+
+// logger
+const log: Logger = getLogger("collection");
 
 @Entity("collection")
 export class CollectionEntity extends BaseEntity {
@@ -37,13 +44,23 @@ export class CollectionEntity extends BaseEntity {
 
   @OneToMany(() => SchemaEntity, (schema) => schema.collection, { cascade: true, onDelete: "CASCADE" })
   schemas: Array<SchemaEntity>;
+
+  @BeforeRemove()
+  removeCollectionDirectory() {
+    try {
+      fs.rmdirSync(`${config.data.path}/${this.id}`, { recursive: true });
+    } catch (e) {
+      // silent exception, we just log it
+      log.error("Failed to delete collection folder", e);
+    }
+  }
 }
 
 /**
  * Object model: just the table properties
  */
 export type CollectionModel = Pick<CollectionEntity, "id" | "name" | "description">;
-// usefull type for creation
+// Usefull type for creation
 export type CollectionModelWithoutId = Omit<CollectionModel, "id">;
 export function collectionEntityToModel(item: CollectionEntity): CollectionModel {
   return pick(item, ["id", "name", "description"]);

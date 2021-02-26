@@ -31,6 +31,6 @@ export const config_default = {
     password: process.env.POSTGRES_PASSWORD || "postgres",
     database: process.env.POSTGRES_DB || "tremulator",
     synchronize: true,
-    logging: true,
+    logging: false,
   },
 };

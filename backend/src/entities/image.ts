@@ -4,6 +4,10 @@ import { pick } from "lodash";
 import * as fs from "fs";
 import { collectionEntityToModel, CollectionEntity, CollectionModel } from "./collection";
 import { annotationEntityToModel, AnnotationEntity, AnnotationModel } from "./annotation";
+import { getLogger, Logger } from "../services/logger";
+
+// logger
+const log: Logger = getLogger("image");
 
 @Entity("image")
 export class ImageEntity extends BaseEntity {
@@ -32,7 +36,8 @@ export class ImageEntity extends BaseEntity {
     try {
       fs.unlinkSync(this.path);
     } catch (e) {
-      // silent exception
+      // silent exception, we just log it
+      log.error("Failed to delete image file", e);
     }
   }
 }
