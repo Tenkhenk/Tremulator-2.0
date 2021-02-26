@@ -1,6 +1,5 @@
 import React, { useEffect, useContext } from "react";
 import { Redirect } from "react-router-dom";
-import { manager } from "../../hooks/user";
 import { AuthenticationContext} from "@axa-fr/react-oidc-context";
 
 interface Props {}
