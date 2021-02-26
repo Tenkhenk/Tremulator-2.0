@@ -5,8 +5,7 @@ import { CollectionType } from "../types/index";
 import { Link } from "react-router-dom";
 
 interface Props {}
-export const CollectionList: React.FC<Props> = (props: Props) => {
-
+export const CollectionList: React.FC<Props> = (props: Props) => { 
   const { data, loading, error } = useGet<CollectionType[]>("/collections");
   return (
     <>
@@ -17,7 +16,7 @@ export const CollectionList: React.FC<Props> = (props: Props) => {
       {!loading && !error && data && data.length > 0 &&
         <div>  
             {data.map(collection => (
-              <div key={collection.id}>{collection.name} <Link to={`/collections/${collection.id}/edit`} title="edit"><i className="fas fa-edit"></i></Link></div>
+              <div key={collection.id}><Link to={`/collections/${collection.id}`}>{collection.name}</Link> <Link to={`/collections/${collection.id}/edit`} title="edit"><i className="fas fa-edit"></i></Link></div>
             ))}
         </div>}
       {/* Collection creation */}

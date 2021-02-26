@@ -4,6 +4,7 @@ export type UserType = Omit<components["schemas"]["UserModel"], "access_token" |
 export type CollectionType = components["schemas"]["CollectionModel"];
 export type NewCollectionType = components["schemas"]["CollectionModelWithoutId"];
 export type CollectionFullType = components["schemas"]["CollectionModelFull"];
+export type ImageType = components["schemas"]["ImageModel"];
 
 export interface AlertMessage {
   message: string;
