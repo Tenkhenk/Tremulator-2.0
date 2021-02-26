@@ -17,10 +17,10 @@ export class SchemaEntity extends BaseEntity {
   @Column({ type: "json" })
   schema: JSONSchema7;
 
-  @ManyToOne(() => CollectionEntity, (collection) => collection.schemas)
+  @ManyToOne(() => CollectionEntity, (collection) => collection.schemas, { onDelete: "CASCADE" })
   collection: CollectionEntity;
 
-  @OneToMany(() => AnnotationEntity, (annotation) => annotation.schema, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => AnnotationEntity, (annotation) => annotation.schema)
   annotations: Array<AnnotationEntity>;
 }
 

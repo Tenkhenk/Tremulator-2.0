@@ -21,10 +21,10 @@ export class ImageEntity extends BaseEntity {
   @Column({ nullable: true })
   path: string;
 
-  @ManyToOne(() => CollectionEntity, (collection) => collection.images)
+  @ManyToOne(() => CollectionEntity, (collection) => collection.images, { onDelete: "CASCADE" })
   collection: CollectionEntity;
 
-  @OneToMany(() => AnnotationEntity, (annotation) => annotation.image, { cascade: true, onDelete: "CASCADE" })
+  @OneToMany(() => AnnotationEntity, (annotation) => annotation.image)
   annotations: Array<AnnotationEntity>;
 
   @AfterRemove()

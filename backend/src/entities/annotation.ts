@@ -17,10 +17,10 @@ export class AnnotationEntity extends BaseEntity {
   @IsNotEmpty()
   geometry: Point | MultiPoint | LineString | MultiLineString | Polygon | MultiPolygon;
 
-  @ManyToOne(() => ImageEntity, (image) => image.annotations)
+  @ManyToOne(() => ImageEntity, (image) => image.annotations, { onDelete: "CASCADE" })
   image: ImageEntity;
 
-  @ManyToOne(() => SchemaEntity)
+  @ManyToOne(() => SchemaEntity, { onDelete: "CASCADE" })
   schema: SchemaEntity;
 }
 
