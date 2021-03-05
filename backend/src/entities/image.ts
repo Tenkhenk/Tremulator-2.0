@@ -25,6 +25,9 @@ export class ImageEntity extends BaseEntity {
   @Column({ nullable: true })
   path: string;
 
+  @Column({ nullable: true })
+  order: number;
+
   @ManyToOne(() => CollectionEntity, (collection) => collection.images, { onDelete: "CASCADE" })
   collection: CollectionEntity;
 

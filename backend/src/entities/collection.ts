@@ -80,7 +80,7 @@ export function collectionEntityToModelFull(item: CollectionEntity): CollectionM
     ...pick(item, ["id", "name", "description"]),
     owner: userEntityToModel(item.owner),
     users: item.users?.map((u) => userEntityToModel(u)),
-    images: item.images?.map((i) => imageEntityToModel(i)) || [],
+    images: item.images?.sort((a, b) => (b.order || b.id) - (a.order || a.id)).map((i) => imageEntityToModel(i)) || [],
     schemas: item.schemas?.map((s) => schemaEntityToModel(s)) || [],
   };
 }

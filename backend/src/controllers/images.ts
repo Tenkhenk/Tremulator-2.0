@@ -18,6 +18,63 @@ export class ImagesController extends DefaultController {
   private db: DbService;
 
   /**
+   * Update the images order on the collection.
+   * You should send an array of image's id in the good order.
+   */
+  @Put("{collectionId}/images/order")
+  @Security("auth")
+  @Response("204", "No Content")
+  @Response("400", "Bad Request")
+  @Response("401", "Unauthorized")
+  @Response("403", "Forbidden")
+  @Response("404", "Not Found")
+  @Response("500", "Internal Error")
+  public async imagesOrder(
+    @Request() req: ExpressAuthRequest,
+    @Path() collectionId: number,
+    @Body() body: { order: Array<number> },
+  ): Promise<void> {
+    // Get the collection
+    const collection = await this.getCollection(req, collectionId, ["users", "owner", "images"]);
+
+    // Check if we have all the image of the collection
+    if (body.order.length !== collection.images.length)
+      throw Boom.badRequest("Incomplete order list, some images are missing");
+
+    // Check if all image are part of the collection
+    body.order.forEach((id) => {
+      if (collection.images.findIndex((image) => image.id === id) < 0)
+        throw Boom.badRequest(`Image ${id} doesn't exist in the collection ${collectionId}`);
+    });
+
+    // Update the order for each image
+    const queryRunner = this.db.connection.createQueryRunner();
+    // establish real database connection using our new query runner
+    await queryRunner.connect();
+    // lets now open a new transaction:
+    await queryRunner.startTransaction();
+    try {
+      await Promise.all(
+        collection.images.map(async (image) => {
+          image.order = body.order.findIndex((id) => id === image.id);
+          await queryRunner.manager.save(image);
+        }),
+      );
+      // commit transaction now:
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // since we have errors let's rollback changes we made
+      await queryRunner.rollbackTransaction();
+      throw err;
+    } finally {
+      // you need to release query runner which is manually created:
+      await queryRunner.release();
+    }
+
+    this.setStatus(204);
+  }
+
+  /**
    * Create images in the collection by uploading a files (via an array of files).
    */
   @Post("{collectionId}/images/upload")
