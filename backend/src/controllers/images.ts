@@ -3,6 +3,7 @@ import { Inject } from "typescript-ioc";
 import * as Boom from "@hapi/boom";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
+import { MoreThan, LessThan } from "typeorm";
 import { config } from "../config";
 import { DefaultController, ExpressAuthRequest } from "./default";
 import { getLogger, Logger } from "../services/logger";
@@ -171,6 +172,68 @@ export class ImagesController extends DefaultController {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, id, ["collection", "annotations"]);
     return imageEntityToModelFull(image);
+  }
+
+  /**
+   * Get the next image from the collection.
+   */
+  @Get("{collectionId}/images/{id}/next")
+  @Security("auth")
+  @Response("200", "Success")
+  @Response("204", "No Content")
+  @Response("400", "Bad Request")
+  @Response("401", "Unauthorized")
+  @Response("403", "Forbidden")
+  @Response("404", "Not Found")
+  @Response("500", "Internal Error")
+  public async next(
+    @Request() req: ExpressAuthRequest,
+    @Path() collectionId: number,
+    @Path() id: number,
+  ): Promise<ImageModel> {
+    // Retrieve the image
+    const image = await this.getImage(req, collectionId, id, ["collection", "annotations"]);
+
+    // Get the next image
+    const nextImage = await this.db.getRepository(ImageEntity).find({
+      relations: ["collection", "annotations"],
+      take: 1,
+      ...(image.order !== null
+        ? { where: { order: MoreThan(image.order) }, order: { order: "ASC" } }
+        : { where: { id: MoreThan(image.id) }, order: { id: "ASC" } }),
+    });
+    return nextImage[0] ? imageEntityToModelFull(nextImage[0]) : null;
+  }
+
+  /**
+   * Get the previous image from the collection.
+   */
+  @Get("{collectionId}/images/{id}/previous")
+  @Security("auth")
+  @Response("200", "Success")
+  @Response("204", "No Content")
+  @Response("400", "Bad Request")
+  @Response("401", "Unauthorized")
+  @Response("403", "Forbidden")
+  @Response("404", "Not Found")
+  @Response("500", "Internal Error")
+  public async previous(
+    @Request() req: ExpressAuthRequest,
+    @Path() collectionId: number,
+    @Path() id: number,
+  ): Promise<ImageModel> {
+    // Retrieve the image
+    const image = await this.getImage(req, collectionId, id, ["collection", "annotations"]);
+
+    // Get the next image
+    const nextImage = await this.db.getRepository(ImageEntity).find({
+      relations: ["collection", "annotations"],
+      take: 1,
+      ...(image.order !== null
+        ? { where: { order: LessThan(image.order) }, order: { order: "DESC" } }
+        : { where: { id: LessThan(image.id) }, order: { id: "DESC" } }),
+    });
+    return nextImage[0] ? imageEntityToModelFull(nextImage[0]) : null;
   }
 
   /**
