@@ -1,11 +1,11 @@
-import React, { ChangeEvent, FC, useContext, useEffect, useState, useMemo } from "react";
+import React, { ChangeEvent, FC, useContext, useEffect, useState, useMemo, CSSProperties } from "react";
 import { AppContext, AppContextType } from "../context/app-context";
 import {useDropzone} from 'react-dropzone';
 import {usePost} from '../hooks/api';
 import { CollectionFullType, ImageType } from "../types";
 import { useHistory } from "react-router-dom";
 
-const baseStyle = {
+const baseStyle:CSSProperties = {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
