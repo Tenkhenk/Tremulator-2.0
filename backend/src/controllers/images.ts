@@ -168,7 +168,7 @@ export class ImagesController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() id: number,
-  ): Promise<ImageModel> {
+  ): Promise<ImageModelFull> {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, id, ["collection", "annotations"]);
     return imageEntityToModelFull(image);
@@ -190,7 +190,7 @@ export class ImagesController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() id: number,
-  ): Promise<ImageModel> {
+  ): Promise<ImageModelFull> {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, id, ["collection", "annotations"]);
 
@@ -221,7 +221,7 @@ export class ImagesController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() id: number,
-  ): Promise<ImageModel> {
+  ): Promise<ImageModelFull> {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, id, ["collection", "annotations"]);
 
