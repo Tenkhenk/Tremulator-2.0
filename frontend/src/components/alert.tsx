@@ -11,14 +11,16 @@ const Alert: FC<Props> = (props:Props) => {
     const [timeoutInstance, setTimeoutInstance] = useState<any>()
     useEffect(() => {
         setVisible(true)
-        setTimeoutInstance(setTimeout(() => setVisible(false), 5000));
+        if (context.alertMessage.type !== "warning")
+            setTimeoutInstance(setTimeout(() => setVisible(false), 5000));
     },[context.alertMessage])
 
     return <div className={`alert alert-${context.alertMessage.type} `+(visible ? 'visible' : 'invisible')} role="alert">
             {context.alertMessage.message}
             <button type="button" className="close" aria-label="Close" 
                 onClick={() => {
-                    clearTimeout(timeoutInstance);
+                    if (context.alertMessage.type !== "warning")
+                        clearTimeout(timeoutInstance);
                     setVisible(false);}}>
                 <i className="fas fa-times"></i>
             </button>
