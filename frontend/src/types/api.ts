@@ -49,6 +49,13 @@ export interface paths {
      */
     delete: operations["UserDelete"];
   };
+  "/collections/{collectionId}/images/order": {
+    /**
+     * Update the images order on the collection.
+     * You should send an array of image's id in the good order.
+     */
+    put: operations["ImagesOrder"];
+  };
   "/collections/{collectionId}/images/upload": {
     /** Create images in the collection by uploading a files (via an array of files). */
     post: operations["Upload"];
@@ -64,6 +71,14 @@ export interface paths {
     put: operations["Update"];
     /** Delete an image from the collection. */
     delete: operations["Delete"];
+  };
+  "/collections/{collectionId}/images/{id}/next": {
+    /** Get the next image from the collection. */
+    get: operations["Next"];
+  };
+  "/collections/{collectionId}/images/{id}/previous": {
+    /** Get the previous image from the collection. */
+    get: operations["Previous"];
   };
   "/misc/ping": {
     get: operations["Ping"];
@@ -193,6 +208,11 @@ export interface components {
       images: components["schemas"]["ImageModel"][];
       users: components["schemas"]["UserModel"][];
       owner: components["schemas"]["UserModel"];
+    };
+    /** Object full */
+    ImageModelFull: components["schemas"]["ImageModel"] & {
+      annotations: components["schemas"]["AnnotationModel"][];
+      collection: components["schemas"]["CollectionModel"];
     };
     /** From T, pick a set of properties whose keys are in the union K */
     "Pick_SchemaModel.Exclude_keyofSchemaModel.id__": {
@@ -473,6 +493,38 @@ export interface operations {
       };
     };
   };
+  /**
+   * Update the images order on the collection.
+   * You should send an array of image's id in the good order.
+   */
+  ImagesOrder: {
+    parameters: {
+      path: {
+        collectionId: number;
+      };
+    };
+    responses: {
+      /** No content */
+      204: never;
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          order: number[];
+        };
+      };
+    };
+  };
   /** Create images in the collection by uploading a files (via an array of files). */
   Upload: {
     parameters: {
@@ -541,6 +593,64 @@ export interface operations {
           urls: string[];
         };
       };
+    };
+  };
+  /** Get the next image from the collection. */
+  Next: {
+    parameters: {
+      path: {
+        collectionId: number;
+        id: number;
+      };
+    };
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ImageModelFull"];
+        };
+      };
+      /** No Content */
+      204: never;
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+  };
+  /** Get the previous image from the collection. */
+  Previous: {
+    parameters: {
+      path: {
+        collectionId: number;
+        id: number;
+      };
+    };
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ImageModelFull"];
+        };
+      };
+      /** No Content */
+      204: never;
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
+      /** Forbidden */
+      403: unknown;
+      /** Not Found */
+      404: unknown;
+      /** Internal Error */
+      500: unknown;
     };
   };
   Ping: {
