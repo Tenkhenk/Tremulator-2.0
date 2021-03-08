@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {useHistory} from "react-router-dom";
+import {useHistory, Link} from "react-router-dom";
 import { AppContext } from "../context/app-context";
 import {useGet} from "../hooks/api";
 import {CollectionFullType, CollectionType, ImageType} from "../types/index";
@@ -35,7 +35,9 @@ return <div className="container-fluid">
                     </button></h3>
             </div>
             <div className="row">
-                {currentCollection.images.map((i:ImageType) => <div key={i.id}>{i.name} - {i.url} <img src={thumbnailURL(i.url)}/></div>)}
+                {currentCollection.images.map((i:ImageType) => <div key={i.id}>
+                    <Link to={`/collections/${currentCollection.id}/images/${i.id}`}>{i.name} - {i.url} <img src={thumbnailURL(i.url)}/></Link>
+                </div>)}
             </div>
             <div className="row">
                 <ImageUpload collection={currentCollection}></ImageUpload>
