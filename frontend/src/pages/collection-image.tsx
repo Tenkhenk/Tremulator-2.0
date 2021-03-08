@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import {useHistory} from "react-router-dom";
 import { AppContext } from "../context/app-context";
 import {useGet} from "../hooks/api";
-import { ImageType, CollectionFullType} from "../types/index";
+import { ImageFullType, CollectionFullType} from "../types/index";
 
 
 interface Props {
@@ -13,10 +13,10 @@ interface Props {
 
 export const CollectionImage: React.FC<Props> = (props:Props) => {
     const {collectionID, imageID} = props;
-    const [image, setImage] = useState<ImageType|null>(null);
+    const [image, setImage] = useState<ImageFullType|null>(null);
     const {setAlertMessage, setCurrentImageID, currentCollection, setCurrentCollection} = useContext(AppContext);
     const history = useHistory();
-    const {data:getImage, loading: imageLoading, error: imageError} = useGet<ImageType>(`/collections/${collectionID}/images/${imageID}`);
+    const {data:getImage, loading: imageLoading, error: imageError} = useGet<ImageFullType>(`/collections/${collectionID}/images/${imageID}`);
     
     const {data:getCollection, loading: collectionLoading, error: collectionError} = useGet<CollectionFullType>(`/collections/${collectionID}`);
     
@@ -45,7 +45,7 @@ export const CollectionImage: React.FC<Props> = (props:Props) => {
            
             {image && <>
                 <div className="row">
-                    <div className="col-3"><i className="fas fa-layout-wtf ml-3"></i>0 annotations</div>
+                    <div className="col-3"><i className="fas fa-layout-wtf ml-3"></i>{image.annotations.length} annotations</div>
                     <div className="col-6 text-center">{image.name || image.url}</div>
                     <div className="col-3 text-right">
                         <i className="fas fa-sliders-h mr-2"></i>
