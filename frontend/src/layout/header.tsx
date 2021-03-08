@@ -1,16 +1,18 @@
 import React, {useContext} from "react";
 import { Link } from "react-router-dom";
 import { AuthenticationContext } from '@axa-fr/react-oidc-context';
+import { AppContext } from "../context/app-context";
 
 const Header = () => {
   const {oidcUser, logout, login} = useContext(AuthenticationContext);
+  const {currentCollection} = useContext(AppContext);
   return (
     <header>
       <nav className="navbar container-fluid">
         <Link className="navbar-brand" to={"/"}>
           Tr.
         </Link>
-
+        {currentCollection && <h4><Link to={`/collections/${currentCollection.id}`}>{currentCollection.name}</Link> <Link to={`/collections/${currentCollection.id}/edit`} title="edit"><i className="fas fa-edit"></i></Link></h4>}
         {oidcUser &&
           <div>
             {oidcUser.profile.picture ? <img className="profile" src={oidcUser.profile.picture}></img>: <i className="fas fa-user"></i>}

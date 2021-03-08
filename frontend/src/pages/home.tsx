@@ -1,14 +1,16 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect} from "react";
 import {AuthenticationContext} from "@axa-fr/react-oidc-context"
 import { useGet, usePost } from "../hooks/api";
 import { useHistory } from "react-router-dom";
 import { CollectionList } from "./collection-list";
 import { Link } from "react-router-dom";
+import { AppContext } from "../context/app-context";
 
 interface Props {}
 export const PageHome: React.FC<Props> = (props: Props) => {
   const { oidcUser } = useContext(AuthenticationContext);
-
+  const {setCurrentCollection} = useContext(AppContext);
+  useEffect(()=> setCurrentCollection(null), [])
   return (
     <div className="d-flex flex-column">
       <h1 className="text-left w-100">

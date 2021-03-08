@@ -1,16 +1,17 @@
 import React, { Context, useState, PropsWithChildren, useRef } from "react";
 import { AppContext } from "./app-context";
-import { AlertMessage } from "../types/index";
+import { AlertMessage, CollectionFullType } from "../types/index";
 
 interface Props {
 }
 
 export const AppContextProvider: React.FC<Props> = (props: PropsWithChildren<Props>) => {
   const [alertMessage, setAlertMessage] = useState<AlertMessage>({message:"", type:""});
+  const [currentCollection, setCurrentCollection] = useState<CollectionFullType|null>(null);
   const { children } = props;
   const modalTarget = useRef<HTMLDivElement>(null);
 
-  return <AppContext.Provider value={{ alertMessage, modalTarget: modalTarget.current || undefined, setAlertMessage }}>
+  return <AppContext.Provider value={{ alertMessage, currentCollection, modalTarget: modalTarget.current || undefined, setAlertMessage, setCurrentCollection }}>
       {children}
       <div className="modal-container" ref={modalTarget} />
   </AppContext.Provider>;
