@@ -27,7 +27,7 @@ useEffect(()=>{
         setAlertMessage({message:error.message, type:"warning"})
 }, [error])
 
-const thumbnailURL= (iiifURL:string) => iiifURL.split('/').slice(0,-1).join('/')+'/full/70,/0/default.jpg'
+const thumbnailURL= (iiifURL:string) => iiifURL.split('/').slice(0,-1).join('/')+'/full/200,/0/default.jpg'
 
 return <div className="container-fluid">
         {currentCollection && <>
@@ -36,9 +36,17 @@ return <div className="container-fluid">
                         <i className="far fa-plus-square  fa-2x" aria-label="add a picture" title="add a picture"></i>
                     </button></h3>
             </div>
-            <div className="row">
-                {currentCollection.images.map((i:ImageType) => <div key={i.id}>
-                    <Link to={`/collections/${currentCollection.id}/images/${i.id}`}>{i.name} - {i.url} <img src={thumbnailURL(i.url)}/></Link>
+            <div className="d-flex flex-wrap">
+                {currentCollection.images.map((i:ImageType) => 
+                <div className="card m-3" key={i.id} style={{maxWidth:200}}>
+                    <Link to={`/collections/${currentCollection.id}/images/${i.id}`}>
+                        <img className="card-img-top"  src={thumbnailURL(i.url)}/>
+                        <div className="card-body">
+                            <p className="card-title">
+                                {i.name}
+                            </p>
+                        </div>
+                    </Link>
                 </div>)}
             </div>
             {isAddingPicture && 
