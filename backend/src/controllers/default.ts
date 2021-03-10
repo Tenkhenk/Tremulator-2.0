@@ -6,6 +6,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
 import axios from "axios";
+import { v4 as uuid } from "uuid";
 import { ValidationError } from "class-validator";
 import { UserEntity } from "../entities/user";
 import { CollectionEntity } from "../entities/collection";
@@ -180,13 +181,14 @@ export class DefaultController extends Controller {
   private async saveFile(path_prefix: string, filename: string, mimetype: string, data: Buffer): Promise<File> {
     return new Promise((resolve, reject) => {
       const dir = path.join(config.data.path, path_prefix);
-      const filePath = path.join(dir, `/${Date.now()}-${filename}`);
-
       // Create the path if it doesn't exist
       if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
       // Check if content type is allowed
-      if (!config.data.mime_types.includes(mimetype)) throw Boom.unsupportedMediaType();
+      if (!config.data.mime_types.includes(mimetype.toLowerCase())) throw Boom.unsupportedMediaType();
+
+      // Build file path
+      const filePath = path.join(dir, `/${uuid()}.${mimetype.toLowerCase().split("/").pop()}`);
 
       // Save the file
       fs.writeFile(filePath, data, (err) => {
