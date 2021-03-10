@@ -17,6 +17,8 @@ import Alert from "./components/alert";
 import {config} from "./config/index";
 import { AuthenticationProvider, oidcLog } from '@axa-fr/react-oidc-context';
 import {AppContextProvider} from "./context/app-context-provider";
+// auth
+import { Authenticating, Authenticated, NotAuthenticated, SessionLost} from './pages/auth/auth-messages';
 
 class LocalStorage {
   constructor() {
@@ -27,7 +29,14 @@ class LocalStorage {
 ReactDOM.render(
     <Router>
       <AppContextProvider>
-        <AuthenticationProvider configuration={config.auth} UserStore={LocalStorage} loggerLevel={oidcLog.DEBUG}>
+        <AuthenticationProvider 
+            configuration={config.auth} 
+            UserStore={LocalStorage}
+            loggerLevel={oidcLog.DEBUG}
+            authenticating={Authenticating}
+            callbackComponentOverride={Authenticated}
+            notAuthorized={NotAuthenticated}
+            sessionLostComponent={SessionLost}>
           <Header />
           <Alert/>
           <main className="container" role="main">
