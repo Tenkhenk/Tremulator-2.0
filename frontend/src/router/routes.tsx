@@ -25,16 +25,6 @@ export const routes: RouteDefinition[] = [
         component: PageHome,
       },
       {
-        path: "/auth",
-        redirect: "/callback",
-        routes: [
-          {
-            path: "/callback",
-            redirect: "/authentication/callback"
-          },
-        ],
-      },
-      {
         path: "/collections",
         secured: true,
         component: CollectionList,

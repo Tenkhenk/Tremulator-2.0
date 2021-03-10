@@ -10,7 +10,7 @@ export const config_default = {
       "//" +
       window.location.hostname +
       (window.location.port ? ":" + window.location.port : "") +
-      "/auth/callback",
+      "/authentication/callback",
     post_logout_redirect_uri:
       window.location.protocol +
       "//" +
