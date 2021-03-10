@@ -3,9 +3,10 @@ import {useHistory} from "react-router-dom";
 import ModalPortal from "../components/modal";
 import { AppContext } from "../context/app-context";
 import {useGet, useDelete} from "../hooks/api";
-import { ImageFullType, CollectionFullType, ImageType} from "../types/index";
+import { ImageFullType, CollectionFullType} from "../types/index";
+import Loader from '../components/loader';
 //leaflet IIIF
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer } from 'react-leaflet';
 import {IIIFLayer} from '../components/iiif-layer';
 import L from "leaflet";
 import 'leaflet-iiif';
@@ -20,10 +21,10 @@ interface Props {
 export const CollectionImage: React.FC<Props> = (props:Props) => {
     const {collectionID, imageID} = props;
     const [needsConfirmation, setNeedsConfirmation] = useState<boolean>(false);
-    const {setAlertMessage, setCurrentImageID, currentCollection, setCurrentCollection} = useContext(AppContext);
+    const {setAlertMessage, setCurrentImageID, setCurrentCollection} = useContext(AppContext);
     const history = useHistory();
     const {data:image, loading: imageLoading, error: imageError} = useGet<ImageFullType>(`/collections/${collectionID}/images/${imageID}`);
-    const {data:collection, loading: collectionLoading, error: collectionError} = useGet<CollectionFullType>(`/collections/${collectionID}`);
+    const {data:collection, error: collectionError} = useGet<CollectionFullType>(`/collections/${collectionID}`);
     const [deleteImage] = useDelete<any>(`/collections/${collectionID}/images/${imageID}`);
     
     setCurrentImageID(imageID);
@@ -31,19 +32,19 @@ export const CollectionImage: React.FC<Props> = (props:Props) => {
         if (collection){
             setCurrentCollection(collection);
         }
-    }, [collection])
+    }, [collection, setCurrentCollection])
 
     useEffect(()=>{
         if (imageError)
             setAlertMessage({message:imageError.message, type:"warning"})
         if (collectionError)
             setAlertMessage({message:collectionError.message, type:"warning"})
-    }, [imageError, collectionError]);
+    }, [imageError, collectionError, setAlertMessage]);
     
 
     return <div className="container-fluid">
-           
-            {image && <>
+            { imageLoading && <Loader/> }
+            {!imageLoading && image && <>
                 <div className="row">
                     <div className="col-3"><i className="fas fa-layout-wtf ml-3"></i>{image.annotations.length} annotations</div>
                     <div className="col-6 text-center">{image.name || image.url} <button className="btn" onClick={() => setNeedsConfirmation(true)}><i className="fas fa-trash-alt"></i></button></div>
