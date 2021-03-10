@@ -3,7 +3,7 @@ import {useHistory, Link} from "react-router-dom";
 import { AppContext } from "../context/app-context";
 import {useGet} from "../hooks/api";
 import {CollectionFullType, CollectionType, ImageType} from "../types/index";
-import ImageUpload from '../components/image-upload';
+import ImageUploadForms from '../components/image-upload-forms';
 import Modal from "../components/modal";
 
 interface Props {
@@ -51,7 +51,7 @@ return <div className="container-fluid">
             </div>
             {isAddingPicture && 
             <Modal title="Add pictures" onClose={() => setIsAddingPicture(false)}>
-                <ImageUpload collection={currentCollection}></ImageUpload>
+                <ImageUploadForms collection={currentCollection}/>
             </Modal>}
             
         </>}

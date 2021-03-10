@@ -40,6 +40,7 @@
     "react-dropzone": "^11.3.1",
     "react-leaflet": "^3.1.0",
     "react-router-dom": "^5.2.0",
+    "url-regex-safe": "^2.0.2",
     "web-vitals": "^0.2.4"
   },
   "devDependencies": {
@@ -53,6 +54,7 @@
     "@types/react": "^16.14.2",
     "@types/react-dom": "^16.9.10",
     "@types/react-router-dom": "^5.1.6",
+    "@types/url-regex-safe": "^1.0.0",
     "node-sass": "^4.0.0",
     "prettier": "^2.2.1",
     "react-scripts": "4.0.1",
