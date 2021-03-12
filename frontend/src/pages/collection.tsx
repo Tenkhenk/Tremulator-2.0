@@ -36,7 +36,7 @@ export const Collection: React.FC<Props> = (props: Props) => {
           <div className="row">
             <h3 className="col-4">
               {currentCollection.images.length} Pictures{" "}
-              <button onClick={() => setIsAddingPicture(true)} className="btn btn-primary btn-sm">
+              <button onClick={() => setIsAddingPicture(true)} className="btn btn-link btn-sm">
                 <i className="far fa-plus-square  fa-2x" aria-label="add a picture" title="add a picture"></i>
               </button>
             </h3>
