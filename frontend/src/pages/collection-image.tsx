@@ -46,7 +46,7 @@ export const CollectionImage: React.FC<Props> = (props:Props) => {
             { imageLoading && <Loader/> }
             {!imageLoading && image && <>
                 <div className="row">
-                    <div className="col-3"><i className="fas fa-layout-wtf ml-3"></i>{image.annotations.length} annotations</div>
+                    <div className="col-3"><i className="fas fa-vector-square mr-1"></i>{image.annotations.length} annotations</div>
                     <div className="col-6 text-center">{image.name || image.url} <button className="btn" onClick={() => setNeedsConfirmation(true)}><i className="fas fa-trash-alt"></i></button></div>
                     <div className="col-3 text-right">
                         <i className="fas fa-sliders-h mr-2"></i>
@@ -70,10 +70,16 @@ export const CollectionImage: React.FC<Props> = (props:Props) => {
                         <div className="text-center mt-3">
                             <button className="btn btn-secondary" onClick={()=> setNeedsConfirmation(false)}>No <i className="fas fa-window-close ml-1"></i></button>
                             <button className="btn btn-danger ml-2" onClick={async ()=>{
-                                await deleteImage().catch(error => setAlertMessage({message:error.message, type:"warning"})); 
-                                setAlertMessage({message:"Image deleted successfully.", type:"success"});
-                                setNeedsConfirmation(false);
-                                history.push(`/collections/${collectionID}`)}}><i className="fas fa-trash-alt mr-1"></i> Yes</button>
+                                try {
+                                    await deleteImage(); 
+                                    setAlertMessage({message:"Image deleted successfully.", type:"success"});
+                                    setNeedsConfirmation(false);
+                                    history.push(`/collections/${collectionID}`)
+                                }
+                                catch(error){
+                                    setAlertMessage({message:error.message, type:"warning"})
+                                }}}>
+                                    <i className="fas fa-trash-alt mr-1"></i> Yes</button>
                         </div>
                     </div>
                 </ModalPortal>}

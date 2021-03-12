@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { config } from "../config";
-import { AuthenticationContext } from '@axa-fr/react-oidc-context';
+import { AuthenticationContext } from "@axa-fr/react-oidc-context";
 
 interface APIResult<T> {
   loading: boolean;
@@ -16,12 +16,10 @@ export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }):
   const [data, setData] = useState<R | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
-  const {oidcUser} = useContext(AuthenticationContext);
+  const { oidcUser } = useContext(AuthenticationContext);
 
   useEffect(() => {
-    
     const main = async () => {
-      
       setData(null);
       setLoading(true);
       setError(null);
@@ -51,16 +49,17 @@ export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }):
  */
 export function usePost<P, R>(
   path: string,
-): [(data: P, urlParams?: { [key: string]: unknown }) => Promise<APIResult<R>>, APIResult<R>] {
+): [(data: P, urlParams?: { [key: string]: unknown }) => Promise<R>, APIResult<R>] {
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<R | null>(null);
-  const {oidcUser} = useContext(AuthenticationContext);
+  const { oidcUser } = useContext(AuthenticationContext);
 
-  async function post(body: P, urlParams: { [key: string]: unknown } = {}): Promise<APIResult<R>> {
+  async function post(body: P, urlParams: { [key: string]: unknown } = {}): Promise<R> {
     setData(null);
     setLoading(true);
     setError(null);
+    let data: R | null = null;
     try {
       const response = await axios({
         method: "POST",
@@ -70,13 +69,15 @@ export function usePost<P, R>(
         headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
         data: body,
       });
-      setData(response.data as R);
+      data = response.data as R;
+      setData(data);
     } catch (e) {
       setError(e);
+      throw e;
     } finally {
       setLoading(false);
     }
-    return { loading, error, data };
+    return data as R;
   }
 
   return [post, { loading, error, data }];
@@ -85,20 +86,20 @@ export function usePost<P, R>(
 /**
  * API hook for PUT
  */
-export function usePut<P, R>(
+export function usePut<P>(
   path: string,
-): [(data: P, urlParams?: { [key: string]: unknown }) => Promise<APIResult<R>>, APIResult<R>] {
+): [(data: P, urlParams?: { [key: string]: unknown }) => Promise<void>, APIResult<P>] {
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<R | null>(null);
-  const {oidcUser} = useContext(AuthenticationContext);
+  const [data, setData] = useState<P | null>(null);
+  const { oidcUser } = useContext(AuthenticationContext);
 
-  async function put(body: P, urlParams: { [key: string]: unknown } = {}): Promise<APIResult<R>> {
+  async function put(body: P, urlParams: { [key: string]: unknown } = {}): Promise<void> {
     setData(null);
-    setLoading(true);
     setError(null);
+    setLoading(true);
     try {
-      const response = await axios({
+      await axios({
         method: "PUT",
         url: `${config.api_path}${path}`,
         responseType: "json",
@@ -106,13 +107,14 @@ export function usePut<P, R>(
         headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
         data: body,
       });
-      setData(response.data as R);
+      setData(body);
     } catch (e) {
       setError(e);
+      throw e;
     } finally {
       setLoading(false);
     }
-    return { loading, error, data };
+    return;
   }
 
   return [put, { loading, error, data }];
@@ -121,15 +123,13 @@ export function usePut<P, R>(
 /**
  * API hook for PUT
  */
-export function useDelete<R>(
-  path: string,
-): [(urlParams?: { [key: string]: unknown }) => Promise<APIResult<R>>, APIResult<R>] {
+export function useDelete<R>(path: string): [(urlParams?: { [key: string]: unknown }) => Promise<void>, APIResult<R>] {
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<R | null>(null);
-  const {oidcUser} = useContext(AuthenticationContext);
+  const { oidcUser } = useContext(AuthenticationContext);
 
-  async function del(urlParams: { [key: string]: unknown } = {}): Promise<APIResult<R>> {
+  async function del(urlParams: { [key: string]: unknown } = {}): Promise<void> {
     setData(null);
     setLoading(true);
     setError(null);
@@ -139,15 +139,16 @@ export function useDelete<R>(
         url: `${config.api_path}${path}`,
         responseType: "json",
         params: urlParams,
-        headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {}
+        headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
       });
       setData(response.data as R);
     } catch (e) {
       setError(e);
+      throw e;
     } finally {
       setLoading(false);
     }
-    return { loading, error, data };
+    return;
   }
 
   return [del, { loading, error, data }];
