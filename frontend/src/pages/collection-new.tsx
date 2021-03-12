@@ -63,7 +63,6 @@ export const CollectionNew: React.FC<Props> = (props: Props) => {
           </button>
         </div>
       </div>
-      {error && error.message}
     </form>
   );
 };
