@@ -19,9 +19,12 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
   const [needsConfirmation, setNeedsConfirmation] = useState<boolean>(false);
   const [createSchema, setCreateSchema] = useState<boolean>(false);
   const [editSchema, setEditSchema] = useState<SchemaType | null>(null);
-  const { setAlertMessage, currentCollection: collection, setCurrentCollection: setCollection } = useContext(
-    AppContext,
-  );
+  const {
+    setAlertMessage,
+    currentCollection: collection,
+    setCurrentCollection: setCollection,
+    setCurrentImageID,
+  } = useContext(AppContext);
   const { oidcUser } = useContext(AuthenticationContext);
   const { data: getCollection, loading: getLoading, error: getError } = useGet<CollectionFullType>(
     `/collections/${id}`,
@@ -29,13 +32,13 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
   const [putCollection, { loading: putLoading }] = usePut<CollectionType>(`/collections/${id}`);
 
   const [deleteCollection] = useDelete<CollectionType>(`/collections/${id}`);
-
   // initialize collection
   useEffect(() => {
     if (getCollection) {
       setCollection(getCollection);
     }
-  }, [getCollection, setCollection]);
+    setCurrentImageID(null);
+  }, [getCollection, setCollection, setCurrentImageID]);
 
   // actions
   const updateCollection = async (e: FormEvent) => {

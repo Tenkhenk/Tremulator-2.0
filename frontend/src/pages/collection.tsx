@@ -13,14 +13,15 @@ interface Props {
 
 export const Collection: React.FC<Props> = (props: Props) => {
   const { id } = props;
-  const { setAlertMessage, currentCollection, setCurrentCollection } = useContext(AppContext);
+  const { setAlertMessage, currentCollection, setCurrentCollection, setCurrentImageID } = useContext(AppContext);
   const [isAddingPicture, setIsAddingPicture] = useState<Boolean>(false);
   const { data: getCollection, loading, error } = useGet<CollectionFullType>(`/collections/${id}`);
   useEffect(() => {
     if (getCollection) {
       setCurrentCollection(getCollection);
     }
-  }, [getCollection, setCurrentCollection]);
+    setCurrentImageID(null);
+  }, [getCollection, setCurrentCollection, setCurrentImageID]);
   useEffect(() => {
     if (error) setAlertMessage({ message: error.message, type: "warning" });
   }, [error, setAlertMessage]);

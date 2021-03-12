@@ -1,18 +1,21 @@
-import React, { FormEvent, useContext, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../context/app-context";
 import { usePost } from "../hooks/api";
 import { CollectionType, NewCollectionType } from "../types/index";
-import { Collection } from "./collection";
 
 interface Props {}
 
 export const CollectionNew: React.FC<Props> = (props: Props) => {
   const history = useHistory();
-  const { setAlertMessage } = useContext(AppContext);
+  const { setAlertMessage, setCurrentCollection, setCurrentImageID } = useContext(AppContext);
   const [newCollection, setCollection] = useState<CollectionType | NewCollectionType>({ name: "", description: "" });
   const [postCollection, { loading }] = usePost<NewCollectionType, CollectionType>("/collections");
-
+  // reset context
+  useEffect(() => {
+    setCurrentCollection(null);
+    setCurrentImageID(null);
+  }, [setCurrentImageID, setCurrentCollection]);
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     // create a new collection

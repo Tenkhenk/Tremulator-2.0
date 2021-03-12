@@ -1,5 +1,5 @@
 import { PageHome } from "../pages/home";
-import { CollectionList } from "../pages/collection-list";
+import { CollectionListPage } from "../pages/collection-list";
 import { CollectionNew } from "../pages/collection-new";
 import { CollectionEdit } from "../pages/collection-edit";
 import { Collection } from "../pages/collection";
@@ -27,7 +27,7 @@ export const routes: RouteDefinition[] = [
       {
         path: "/collections",
         secured: true,
-        component: CollectionList,
+        component: CollectionListPage,
         routes: [
           {
             path: "/new",
