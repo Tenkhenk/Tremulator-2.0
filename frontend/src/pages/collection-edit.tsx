@@ -1,12 +1,11 @@
 import React, { FormEvent, useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { usePut, useGet, useDelete } from "../hooks/api";
-import { CollectionType, CollectionFullType, SchemaType } from "../types/index";
+import { CollectionType, CollectionFullType } from "../types/index";
 import { omit } from "lodash";
 import { AuthenticationContext } from "@axa-fr/react-oidc-context";
 import { AppContext } from "../context/app-context";
 import ModalPortal from "../components/modal";
-import { AnnotationSchemaCreationForm, AnnotationSchemaEditionForm } from "../components/annotation-schema-form";
 
 interface Props {
   id: string;
@@ -17,8 +16,6 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
   const { id } = props;
   const history = useHistory();
   const [needsConfirmation, setNeedsConfirmation] = useState<boolean>(false);
-  const [createSchema, setCreateSchema] = useState<boolean>(false);
-  const [editSchema, setEditSchema] = useState<SchemaType | null>(null);
   const {
     setAlertMessage,
     currentCollection: collection,
@@ -118,70 +115,27 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
             <div className=" row">
               <div className="col-sm-12 mt-5">
                 <h3>
-                  <i className="fas fa-vector-square"></i> Annotations schema
+                  <i className="fas fa-vector-square"></i> {collection.schemas.length} annotations schema
+                  {collection.schemas.length > 1 && "s"}{" "}
+                  <Link className="mr-1" to={`/collections/${collection.id}/schemas/new`}>
+                    <i className="far fa-plus-square" aria-label="add a picture" title="add a picture"></i>
+                  </Link>
                 </h3>
               </div>
             </div>
             {collection.schemas.length > 0 && (
-              <div className=" row">
+              <div className="d-flex flex-wrap">
                 {collection.schemas.map((s) => (
-                  <div key={s.id} className="col-8">
-                    <h4 className="accordion-header" id="headingOne">
-                      <button
-                        className={`btn w-100 mt-1 ${
-                          !editSchema || editSchema.id !== s.id ? "btn-secondary" : "btn-primary"
-                        }`}
-                        onClick={() => setEditSchema((olds) => (olds && olds.id === s.id ? null : s))}
-                        type="button"
-                        aria-expanded="true"
-                        aria-controls="collapseOne"
-                      >
-                        {s.name}
-                      </button>
-                    </h4>
-                    <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="headingOne">
-                      <div className="accordion-body">
-                        {editSchema && editSchema.id === s.id && (
-                          <AnnotationSchemaEditionForm
-                            schema={editSchema}
-                            collection={collection}
-                            onSaved={(updatedSchema) => {
-                              //close modal
-                              setEditSchema(null);
-                              setCollection({
-                                ...collection,
-                                // replace schema by the updated one
-                                schemas: collection.schemas.map((s) => (s.id === updatedSchema.id ? updatedSchema : s)),
-                              });
-                            }}
-                          />
-                        )}
-                      </div>
+                  <div className="card m-2" key={s.id}>
+                    <div className="card-body">
+                      {s.name}{" "}
+                      <Link to={`/collections/${collection.id}/schemas/${s.id}/edit`}>
+                        <i className="fas fa-edit"></i>
+                      </Link>
                     </div>
                   </div>
                 ))}
               </div>
-            )}
-
-            <button className="btn btn-primary" onClick={() => setCreateSchema(true)}>
-              Create
-            </button>
-
-            {createSchema && (
-              <ModalPortal title="Edit Schema" onClose={() => setCreateSchema(false)}>
-                <AnnotationSchemaCreationForm
-                  collection={collection}
-                  onSaved={(createdSchema) => {
-                    //close modal
-                    setCreateSchema(false);
-                    setCollection({
-                      ...collection,
-                      // add created schema
-                      schemas: collection.schemas.concat(createdSchema),
-                    });
-                  }}
-                />
-              </ModalPortal>
             )}
           </div>
           {isOwner && (

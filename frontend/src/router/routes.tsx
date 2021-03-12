@@ -4,6 +4,8 @@ import { CollectionNew } from "../pages/collection-new";
 import { CollectionEdit } from "../pages/collection-edit";
 import { Collection } from "../pages/collection";
 import { CollectionImage } from "../pages/collection-image";
+import { AnnotationSchemaEdit } from "../pages/annotation-schema-edit";
+import { AnnotationSchemaNew } from "../pages/annotation-schema-new";
 
 // Definition of a route
 export interface RouteDefinition {
@@ -48,6 +50,27 @@ export const routes: RouteDefinition[] = [
             path: "/:collectionID/images/:imageID",
             secured: true,
             component: CollectionImage,
+          },
+          {
+            path: "/:collectionID/schemas",
+            secured: true,
+            routes: [
+              {
+                path: "/new",
+                secured: true,
+                component: AnnotationSchemaNew,
+              },
+              {
+                path: "/:schemaID/edit",
+                secured: true,
+                component: AnnotationSchemaEdit,
+              },
+              {
+                path: "/:schemaID",
+                secured: true,
+                redirect: "/:schemaID/edit",
+              },
+            ],
           },
         ],
       },

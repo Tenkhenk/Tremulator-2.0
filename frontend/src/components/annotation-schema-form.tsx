@@ -92,14 +92,14 @@ const AnnotationSchemaForm: React.FC<FormProps> = (props: FormProps) => {
   );
 };
 interface CreationProps {
-  collection: CollectionFullType;
+  collectionID: number;
   onSaved?: (newSchema: SchemaType) => void;
 }
 export const AnnotationSchemaCreationForm: React.FC<CreationProps> = (props: CreationProps) => {
-  const { collection, onSaved } = props;
+  const { collectionID, onSaved } = props;
   const { setAlertMessage } = useContext(AppContext);
 
-  const [postSchema, { loading }] = usePost<NewSchemaType, SchemaType>(`/schema/${collection.id}/schema/`);
+  const [postSchema, { loading }] = usePost<NewSchemaType, SchemaType>(`/schema/${collectionID}/schema/`);
   const createSchema = async (newSchema: NewSchemaType) => {
     // create by post
     try {
@@ -116,15 +116,15 @@ export const AnnotationSchemaCreationForm: React.FC<CreationProps> = (props: Cre
   return <AnnotationSchemaForm saveSchema={createSchema} loading={loading} />;
 };
 interface EditionProps {
-  collection: CollectionFullType;
+  collectionID: number;
   schema: SchemaType;
   onSaved?: (newSchema: SchemaType) => void;
 }
 export const AnnotationSchemaEditionForm: React.FC<EditionProps> = (props: EditionProps) => {
-  const { schema, collection, onSaved } = props;
+  const { schema, collectionID, onSaved } = props;
   const { setAlertMessage } = useContext(AppContext);
 
-  const [putSchema, { loading }] = usePut<SchemaType>(`/schema/${collection.id}/schema/${schema.id}`);
+  const [putSchema, { loading }] = usePut<SchemaType>(`/schema/${collectionID}/schema/${schema.id}`);
 
   const updateSchema = async (updatedSchema: SchemaType) => {
     // update by put
