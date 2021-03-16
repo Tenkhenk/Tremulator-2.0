@@ -34,11 +34,9 @@ export const CollectionList: React.FC<Props> = (props: Props) => {
             Ask for access to a collection's owner or create your own collection
           </p>
         )}
-        <Link to={"/collections/new"}>
-          <button className="btn btn-primary btn">
-            <i className="fas fa-folder-plus"></i>
-            <span className="ml-3">Create a collection</span>
-          </button>
+        <Link to={"/collections/new"} title="Create a new collection" className="btn btn-primary">
+          <i className="fas fa-folder-plus"></i>
+          <span className="ml-3">Create a collection</span>
         </Link>
       </div>
     </>
