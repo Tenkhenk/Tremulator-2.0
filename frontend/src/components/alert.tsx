@@ -1,7 +1,7 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/app-context";
 
-const Alert: FC<Props> = () => {
+const Alert: FC = () => {
   const context = useContext(AppContext);
 
   // State
