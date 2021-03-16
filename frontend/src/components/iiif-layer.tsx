@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 
@@ -8,8 +8,8 @@ interface Props {
 
 export const IIIFLayer: React.FC<Props> = (props: Props) => {
   const { url } = props;
-
   const map = useMap();
+
   useEffect(() => {
     const l = (L.tileLayer as any).iiif(url, {});
     l.addTo(map);
@@ -17,6 +17,6 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
     return () => {
       map.removeLayer(l);
     };
-  }, [url]);
+  }, [url, map]);
   return null;
 };

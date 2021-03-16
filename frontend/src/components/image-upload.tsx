@@ -1,5 +1,5 @@
-import React, { ChangeEvent, FC, useContext, useEffect, useState, useMemo, CSSProperties } from "react";
-import { AppContext, AppContextType } from "../context/app-context";
+import React, { useContext, useEffect, useState, useMemo, CSSProperties } from "react";
+import { AppContext } from "../context/app-context";
 import { useDropzone } from "react-dropzone";
 import { usePost } from "../hooks/api";
 import { CollectionFullType, ImageType } from "../types";

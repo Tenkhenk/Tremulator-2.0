@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { usePost, usePut } from "../hooks/api";
-import { CollectionFullType, SchemaType, NewSchemaType } from "../types/index";
+import { SchemaType, NewSchemaType } from "../types/index";
 import { AppContext } from "../context/app-context";
 
 interface FormProps {

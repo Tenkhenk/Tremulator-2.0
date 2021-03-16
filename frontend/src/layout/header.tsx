@@ -57,7 +57,7 @@ const Header = () => {
         {oidcUser && (
           <div>
             {oidcUser.profile.picture ? (
-              <img className="profile" src={oidcUser.profile.picture}></img>
+              <img className="profile" alt={`${oidcUser.profile.name}'s avatar`} src={oidcUser.profile.picture}></img>
             ) : (
               <i className="fas fa-user"></i>
             )}

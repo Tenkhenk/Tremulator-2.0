@@ -1,4 +1,4 @@
-import React, { Context, useState, PropsWithChildren, useRef } from "react";
+import React, { useState, PropsWithChildren, useRef } from "react";
 import { AppContext } from "./app-context";
 import { AlertMessage, CollectionFullType } from "../types/index";
 
