@@ -1,17 +1,24 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/app-context";
 
-interface Props {}
-
-const Alert: FC<Props> = (props: Props) => {
+const Alert: FC<Props> = () => {
   const context = useContext(AppContext);
 
+  // State
   const [visible, setVisible] = useState<Boolean>(false);
-  const [timeoutInstance, setTimeoutInstance] = useState<any>();
+  const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
+  // When message change
+  // => update the state
   useEffect(() => {
     setVisible(true);
-    if (context.alertMessage.type !== "warning") setTimeoutInstance(setTimeout(() => setVisible(false), 5000));
+    const id = context.alertMessage.type !== "warning" ? window.setTimeout(() => setVisible(false), 5000) : null;
+    setTimeoutId(id);
+
+    // cleanup
+    return () => {
+      if (id) window.clearTimeout(id);
+    };
   }, [context.alertMessage]);
 
   return (
@@ -21,8 +28,9 @@ const Alert: FC<Props> = (props: Props) => {
         type="button"
         className="close"
         aria-label="Close"
+        title="Close"
         onClick={() => {
-          if (context.alertMessage.type !== "warning") clearTimeout(timeoutInstance);
+          if (timeoutId) window.clearTimeout(timeoutId);
           setVisible(false);
         }}
       >
