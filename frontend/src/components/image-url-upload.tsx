@@ -9,13 +9,15 @@ interface Props {
 }
 const ImageURLUpload: React.FC<Props> = (props: Props) => {
   const { collection } = props;
+
   const history = useHistory();
   const { setAlertMessage } = useContext(AppContext);
-  const [imagesURLsText, setImagesURLsText] = useState<string>("");
-  const [imagesURLs, setImagesURLs] = useState<string[]>([]);
   const [postImageURLs, { loading }] = usePost<{ urls: string[] }, ImageType[]>(
     `/collections/${collection.id}/images/download`,
   );
+
+  const [imagesURLsText, setImagesURLsText] = useState<string>("");
+  const [imagesURLs, setImagesURLs] = useState<string[]>([]);
 
   useEffect(() => {
     const urls = imagesURLsText.match(urlRegexpSafe({ strict: true }));
