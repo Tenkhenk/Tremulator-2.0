@@ -1,7 +1,7 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/app-context";
 
-const Alert: FC = () => {
+export const Alert: FC = () => {
   const context = useContext(AppContext);
 
   // State
@@ -11,32 +11,37 @@ const Alert: FC = () => {
   // When message change
   // => update the state
   useEffect(() => {
-    setVisible(true);
-    const id = context.alertMessage.type !== "warning" ? window.setTimeout(() => setVisible(false), 5000) : null;
-    setTimeoutId(id);
-
+    let timeout: number | null = null;
+    if (context.alertMessage.message) {
+      setVisible(true);
+      timeout = context.alertMessage.type !== "warning" ? window.setTimeout(() => setVisible(false), 5000) : null;
+      setTimeoutId(timeout);
+    }
     // cleanup
     return () => {
-      if (id) window.clearTimeout(id);
+      if (timeout) window.clearTimeout(timeout);
     };
   }, [context.alertMessage]);
 
   return (
-    <div className={`alert alert-${context.alertMessage.type} ` + (visible ? "visible" : "invisible")} role="alert">
-      {context.alertMessage.message}
-      <button
-        type="button"
-        className="close"
-        aria-label="Close"
-        title="Close"
-        onClick={() => {
-          if (timeoutId) window.clearTimeout(timeoutId);
-          setVisible(false);
-        }}
-      >
-        <i className="fas fa-times"></i>
-      </button>
-    </div>
+    <>
+      {visible && (
+        <div className={`alert alert-${context.alertMessage.type} visible`} role="alert">
+          {context.alertMessage.message}
+          <button
+            type="button"
+            className="close"
+            aria-label="Close"
+            title="Close"
+            onClick={() => {
+              if (timeoutId) window.clearTimeout(timeoutId);
+              setVisible(false);
+            }}
+          >
+            <i className="fas fa-times"></i>
+          </button>
+        </div>
+      )}
+    </>
   );
 };
-export default Alert;
