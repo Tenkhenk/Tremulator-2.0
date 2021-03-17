@@ -5,19 +5,17 @@ import { createPortal } from "react-dom";
 interface Props {
   onClose: () => void;
   title?: string;
+  icon?: string;
 }
 
-const Modal: FC<Props> = ({ onClose, title, children }) => (
+const Modal: FC<Props> = ({ onClose, title, icon, children }) => (
   <div role="dialog" className="modal" style={{ display: "block" }}>
     <div className="modal-backdrop" style={{ opacity: 0.2 }} onClick={() => onClose()} />
     <div className="modal-dialog modal-dialog-centered" role="document" style={{ zIndex: 1050 }}>
       <div className="modal-content">
         <div className="modal-header">
-          {title && (
-            <h5 className="modal-title">
-              <span>{title}</span>
-            </h5>
-          )}
+          {icon && <i className={`far ${icon}`}></i>}
+          {title && <h5 className="modal-title">{title}</h5>}
           <button type="button" className="close" aria-label="Fermer" onClick={() => onClose()}>
             <i className="fas fa-times" />
           </button>

@@ -1,71 +1,60 @@
 import React, { FormEvent, useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import Form from "@rjsf/bootstrap-4";
 import { AppContext } from "../context/app-context";
 import { usePost } from "../hooks/api";
-import { CollectionType, NewCollectionType } from "../types/index";
+import { collectionSchema, collectionUiSchema, NewCollectionType, CollectionType } from "../types/index";
+import { PageHeader } from "../components/page-header";
+import Loader from "../components/loader";
 
 interface Props {}
 
 export const CollectionNew: React.FC<Props> = (props: Props) => {
   const history = useHistory();
-  const { setAlertMessage, setCurrentCollection, setCurrentImageID } = useContext(AppContext);
-  const [newCollection, setCollection] = useState<CollectionType | NewCollectionType>({ name: "", description: "" });
+
+  const { setAlertMessage } = useContext(AppContext);
+  const [collection, setCollection] = useState<NewCollectionType>({ name: "", description: "" });
   const [postCollection, { loading }] = usePost<NewCollectionType, CollectionType>("/collections");
-  // reset context
-  useEffect(() => {
-    setCurrentCollection(null);
-    setCurrentImageID(null);
-  }, [setCurrentImageID, setCurrentCollection]);
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
-    // create a new collection
-    if (newCollection.name !== "") {
-      try {
-        const createdCollection = await postCollection(newCollection);
-        setAlertMessage({ message: `Collection "${createdCollection.name}" created`, type: "success" });
-        history.push(`/collections/${createdCollection.id}/edit`);
-      } catch (error) {
-        setAlertMessage({ message: `Error when creating collection "${error.message}" created`, type: "success" });
-      }
+
+  const submit = async (item: NewCollectionType) => {
+    try {
+      const createdCollection = await postCollection(item);
+      setAlertMessage({ message: `Collection "${createdCollection.name}" created`, type: "success" });
+      history.push(`/collections/${createdCollection.id}/edit`);
+    } catch (error) {
+      setAlertMessage({ message: `Error when creating collection "${error.message}" created`, type: "success" });
     }
   };
 
   return (
-    <form onSubmit={submit}>
-      <div className="fromGroup row">
-        <label htmlFor="name" className="col-sm-2 col-form-label">
-          Name
-        </label>
-        <div className="col-sm-6">
-          <input
-            className="form-control"
-            value={newCollection.name}
-            type="text"
-            id="name"
-            onChange={(e) => setCollection({ ...newCollection, name: e.target.value })}
-          />
-        </div>
-      </div>
-      <div className="fromGroup row">
-        <label htmlFor="description" className="col-sm-2 col-form-label">
-          Description
-        </label>
-        <div className="col-sm-6">
-          <textarea
-            className="form-control"
-            id="description"
-            value={newCollection.description}
-            onChange={(e) => setCollection({ ...newCollection, description: e.target.value })}
-          />
-        </div>
-      </div>
-      <div className="fromGroup row">
-        <div className="col-sm-8">
-          <button className="btn btn-primary col-sm-2" type="submit" disabled={newCollection.name === ""}>
-            {loading ? "loading..." : "create"}
-          </button>
-        </div>
-      </div>
-    </form>
+    <>
+      {loading && <Loader />}
+      {!loading && (
+        <>
+          <PageHeader>
+            <h1>Create a collection</h1>
+          </PageHeader>
+
+          <div className="container-fluid">
+            <div className=" row">
+              <div className="col">
+                <Form
+                  schema={collectionSchema}
+                  uiSchema={collectionUiSchema}
+                  formData={collection}
+                  onSubmit={(e) => submit(e.formData)}
+                >
+                  <div className="form-group text-right">
+                    <button type="submit" className="btn btn-primary  ml-2">
+                      Submit
+                    </button>
+                  </div>
+                </Form>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+    </>
   );
 };

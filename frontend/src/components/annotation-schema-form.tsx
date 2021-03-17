@@ -91,6 +91,7 @@ const AnnotationSchemaForm: React.FC<FormProps> = (props: FormProps) => {
     </>
   );
 };
+
 interface CreationProps {
   collectionID: number;
   onSaved?: (newSchema: SchemaType) => void;
@@ -115,6 +116,7 @@ export const AnnotationSchemaCreationForm: React.FC<CreationProps> = (props: Cre
 
   return <AnnotationSchemaForm saveSchema={createSchema} loading={loading} />;
 };
+
 interface EditionProps {
   collectionID: number;
   schema: SchemaType;

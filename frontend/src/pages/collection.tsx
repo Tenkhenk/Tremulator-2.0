@@ -6,6 +6,8 @@ import { CollectionFullType, ImageType } from "../types/index";
 import ImageUploadForms from "../components/image-upload-forms";
 import Modal from "../components/modal";
 import Loader from "../components/loader";
+import { PageHeader } from "../components/page-header";
+import { ImageThumbnail } from "../components/image-thumbnail";
 
 interface Props {
   id: string;
@@ -13,53 +15,56 @@ interface Props {
 
 export const Collection: React.FC<Props> = (props: Props) => {
   const { id } = props;
-  const { setAlertMessage, currentCollection, setCurrentCollection, setCurrentImageID } = useContext(AppContext);
+  const { setAlertMessage } = useContext(AppContext);
+
   const [isAddingPicture, setIsAddingPicture] = useState<Boolean>(false);
-  const { data: getCollection, loading, error } = useGet<CollectionFullType>(`/collections/${id}`);
-  useEffect(() => {
-    if (getCollection) {
-      setCurrentCollection(getCollection);
-    }
-    setCurrentImageID(null);
-  }, [getCollection, setCurrentCollection, setCurrentImageID]);
+  const { data: collection, loading, error } = useGet<CollectionFullType>(`/collections/${id}`);
+
+  // WHen an error occurred
+  //  => we set it in the context
   useEffect(() => {
     if (error) setAlertMessage({ message: error.message, type: "warning" });
   }, [error, setAlertMessage]);
 
-  const thumbnailURL = (iiifURL: string) => iiifURL.split("/").slice(0, -1).join("/") + "/full/200,/0/default.jpg";
-
   return (
-    <div className="container-fluid">
+    <>
       {loading && <Loader />}
-      {currentCollection && (
+      {collection && (
         <>
+          <PageHeader>
+            <h1>
+              {collection.name}
+              <Link to={`/collections/${collection.id}/edit`} title={`Edit collection ${collection.name}`}>
+                <i className="fas fa-edit"></i>
+              </Link>
+            </h1>
+          </PageHeader>
+
           <div className="row">
-            <h3 className="col-4">
-              {currentCollection.images.length} Pictures{" "}
+            <h3 className="col">
+              {collection.images.length} Pictures{" "}
               <button onClick={() => setIsAddingPicture(true)} className="btn btn-link btn-sm">
-                <i className="far fa-plus-square  fa-2x" aria-label="add a picture" title="add a picture"></i>
+                <i className="far fa-plus-square fa-2x" aria-label="add a picture" title="add a picture"></i>
               </button>
             </h3>
           </div>
-          <div className="d-flex flex-wrap">
-            {currentCollection.images.map((i: ImageType) => (
-              <div className="card m-3" key={i.id} style={{ maxWidth: 200 }}>
-                <Link to={`/collections/${currentCollection.id}/images/${i.id}`}>
-                  <img className="card-img-top" src={thumbnailURL(i.url)} alt={i.name} />
-                  <div className="card-body">
-                    <p className="card-title">{i.name}</p>
-                  </div>
+
+          <div className="row">
+            <div className="col d-flex flex-wrap">
+              {collection.images.map((image: ImageType) => (
+                <Link key={image.id} to={`/collections/${collection.id}/images/${image.id}`}>
+                  <ImageThumbnail image={image} />
                 </Link>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
           {isAddingPicture && (
             <Modal title="Add pictures" onClose={() => setIsAddingPicture(false)}>
-              <ImageUploadForms collection={currentCollection} />
+              <ImageUploadForms collection={collection} />
             </Modal>
           )}
         </>
       )}
-    </div>
+    </>
   );
 };

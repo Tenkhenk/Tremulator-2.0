@@ -1,0 +1,21 @@
+form.rjsf {
+  .row {
+    .form-group {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1em;
+      font-size: 1.1rem;
+      width: 100%;
+
+      label {
+        margin-right: 1em;
+        flex-grow: 1;
+        flex-basis: 33%;
+        text-align: right;
+        text-transform: capitalize;
+      }
+    }
+  }
+}

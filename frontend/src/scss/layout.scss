@@ -1,23 +1,59 @@
 html {
-  position: relative;
-  min-height: 100%;
-}
-body {
-  margin-bottom: 60px; /* Margin bottom by footer height */
-}
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-.footer > .container {
-  height: 60px; /* Set the fixed height of the footer here */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  body {
+    header {
+      height: $header-height;
 
-img.profile {
-  border-radius: 16px;
-  height: 32px;
+      nav.navbar-dark {
+        height: 100%;
+
+        #navbar ul {
+          margin-left: auto;
+          color: $white;
+
+          .nav-link {
+            color: $white;
+          }
+
+          .avatar {
+            height: 32px;
+            margin-right: 1em;
+          }
+
+          .dropdown {
+            .dropdown-menu {
+              margin-top: 0;
+            }
+            &:hover {
+              .dropdown-menu {
+                display: block;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    main {
+      margin-bottom: 4em;
+
+      // #page-header {
+      //   top: 0;
+      //   left: 0;
+      //   width: 100%;
+      //   position: fixed;
+      //   height: $header-height;
+      //   display: flex;
+      //   align-items: center;
+      //   justify-content: center;
+      // }
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      padding: 1em;
+      background-color: $white;
+    }
+  }
 }

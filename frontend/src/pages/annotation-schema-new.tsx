@@ -11,9 +11,11 @@ interface NewProps {
 export const AnnotationSchemaNew: React.FC<NewProps> = (props: NewProps) => {
   const { collectionID } = props;
   const history = useHistory();
+
   // reset context
   const { setCurrentCollection, setCurrentImageID } = useContext(AppContext);
   const { data: getCollection } = useGet<CollectionFullType>(`/collections/${collectionID}`);
+
   useEffect(() => {
     setCurrentCollection(getCollection);
     setCurrentImageID(null);

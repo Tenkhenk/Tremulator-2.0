@@ -1,58 +1,54 @@
 import React, { FormEvent, useContext, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { usePut, useGet, useDelete } from "../hooks/api";
-import { CollectionType, CollectionFullType } from "../types/index";
-import { omit } from "lodash";
+import { collectionSchema, collectionUiSchema, CollectionType, CollectionFullType } from "../types/index";
+import { omit, pick } from "lodash";
 import { AuthenticationContext } from "@axa-fr/react-oidc-context";
+import Form from "@rjsf/bootstrap-4";
 import { AppContext } from "../context/app-context";
 import ModalPortal from "../components/modal";
+import Loader from "../components/loader";
+import { PageHeader } from "../components/page-header";
+
+function isOwner(collection: CollectionFullType, oidcUser: any): boolean {
+  return collection && oidcUser && oidcUser.profile.email === collection.owner.email;
+}
 
 interface Props {
   id: string;
 }
 
 export const CollectionEdit: React.FC<Props> = (props: Props) => {
-  // state management
   const { id } = props;
-  const history = useHistory();
-  const [needsConfirmation, setNeedsConfirmation] = useState<boolean>(false);
-  const {
-    setAlertMessage,
-    currentCollection: collection,
-    setCurrentCollection: setCollection,
-    setCurrentImageID,
-  } = useContext(AppContext);
-  const { oidcUser } = useContext(AuthenticationContext);
-  const { data: getCollection, loading: getLoading, error: getError } = useGet<CollectionFullType>(
-    `/collections/${id}`,
-  );
-  const [putCollection, { loading: putLoading }] = usePut<CollectionType>(`/collections/${id}`);
 
-  const [deleteCollection] = useDelete<CollectionType>(`/collections/${id}`);
-  // initialize collection
+  const history = useHistory();
+  const { setAlertMessage } = useContext(AppContext);
+  const { oidcUser } = useContext(AuthenticationContext);
+
+  // state
+  const [needsConfirmation, setNeedsConfirmation] = useState<boolean>(false);
+  const [collectionEdition, setCollectionEdition] = useState<CollectionType | null>(null);
+
+  const { data: collection, loading, error } = useGet<CollectionFullType>(`/collections/${id}`);
+  const [putCollection, { loading: putLoading }] = usePut<CollectionType>(`/collections/${id}`);
+  const [deleteCollection, { loading: delLoading }] = useDelete<CollectionType>(`/collections/${id}`);
+
   useEffect(() => {
-    if (getCollection) {
-      setCollection(getCollection);
-    }
-    setCurrentImageID(null);
-  }, [getCollection, setCollection, setCurrentImageID]);
+    if (error) setAlertMessage({ message: error.message, type: "warning" });
+  }, [error]);
 
   // actions
-  const updateCollection = async (e: FormEvent) => {
-    e.preventDefault();
-
-    // modify an existing collection
-    if (collection && collection.name !== "") {
-      try {
-        await putCollection(omit(getCollection, ["schemas", "images", "users", "owner"]) as CollectionType);
-        setAlertMessage({ message: `Collection saved`, type: "success" });
-      } catch (error) {
-        setAlertMessage({ message: `Error when saving your collection "${error.message}"`, type: "warning" });
-      }
+  const updateCollection = async (item: CollectionType) => {
+    try {
+      await putCollection(item);
+      setAlertMessage({ message: `Collection saved`, type: "success" });
+      history.push(`/collections/${id}/edit`);
+    } catch (error) {
+      setAlertMessage({ message: `Error when saving your collection "${error.message}"`, type: "warning" });
     }
   };
-  const del = async (e: FormEvent) => {
-    e.preventDefault();
+
+  const del = async () => {
     try {
       await deleteCollection();
       setAlertMessage({ message: `Collection deleted`, type: "success" });
@@ -62,55 +58,36 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const isOwner = getCollection && oidcUser && oidcUser.profile.email === getCollection.owner.email;
-
   return (
     <>
-      {getError && getError.message}
-      {getLoading && "loading collection..."}
-      {!getError && collection && (
+      {(loading || putLoading || delLoading) && <Loader />}
+      {collection && (
         <>
-          <h1>{collection.name}</h1>
-          <div>
+          <PageHeader>
+            <h1>
+              <Link to={`/collections/${collection.id}`}>{collection.name}</Link>
+            </h1>
+          </PageHeader>
+
+          <div className="container-fluid">
             <div className=" row">
-              <label htmlFor="name" className="col-sm-2 col-form-label">
-                Name
-              </label>
-              <div className="col-sm-6">
-                <input
-                  className="form-control"
-                  value={collection.name}
-                  type="text"
-                  id="name"
-                  onChange={(e) => setCollection({ ...collection, name: e.target.value })}
-                />
-              </div>
-            </div>
-            <div className=" row">
-              <label htmlFor="name" className="col-sm-2 col-form-label">
-                Description
-              </label>
-              <div className="col-sm-6">
-                <textarea
-                  className="form-control"
-                  id="description"
-                  value={collection.description}
-                  onChange={(e) => setCollection({ ...collection, description: e.target.value })}
-                ></textarea>
-              </div>
-            </div>
-            <div className=" row">
-              <div className="col-sm-8">
-                <button
-                  className="btn btn-primary col-sm-2"
-                  onClick={(e) => updateCollection(e)}
-                  disabled={collection.name === ""}
+              <div className="col">
+                <Form
+                  schema={collectionSchema}
+                  uiSchema={collectionUiSchema}
+                  formData={pick(collection, ["id", "name", "description"])}
+                  onSubmit={(e) => updateCollection(e.formData)}
                 >
-                  {putLoading ? "loading..." : "save"}
-                </button>
+                  <div className="form-group text-right">
+                    <button type="submit" className="btn btn-primary  ml-2">
+                      Submit
+                    </button>
+                  </div>
+                </Form>
               </div>
             </div>
           </div>
+
           <div>
             <div className=" row">
               <div className="col-sm-12 mt-5">
@@ -153,23 +130,21 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
               </div>
               <div className=" row">
                 <div className="col-sm-12">
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => setNeedsConfirmation(true)}
-                    disabled={collection.id === -1}
-                  >
-                    {putLoading ? "loading..." : "delete this collection"}
+                  <button className="btn btn-secondary" onClick={() => setNeedsConfirmation(true)}>
+                    Delete this collection
                   </button>
                 </div>
               </div>
             </div>
           )}
           {needsConfirmation && (
-            <ModalPortal title="Confirmation needed" onClose={() => setNeedsConfirmation(false)}>
+            <ModalPortal
+              title="Confirmation needed"
+              icon="fa-question-circle"
+              onClose={() => setNeedsConfirmation(false)}
+            >
               <div className="h5">
                 <div className="text-center">
-                  <i className="far fa-question-circle fa-2x mb-3"></i>
-                  <br />
                   You are about to delete the collection
                   <br />"{collection.name}" and the {collection.images.length} associated images?
                 </div>
@@ -177,7 +152,7 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
                   <button className="btn btn-secondary" onClick={() => setNeedsConfirmation(false)}>
                     Cancel <i className="fas fa-window-close ml-1"></i>
                   </button>
-                  <button className="btn btn-danger ml-2" onClick={(e) => del(e)}>
+                  <button className="btn btn-danger ml-2" onClick={(e) => del()}>
                     <i className="fas fa-trash-alt mr-1"></i> Delete
                   </button>
                 </div>

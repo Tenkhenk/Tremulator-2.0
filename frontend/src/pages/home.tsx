@@ -14,24 +14,34 @@ export const PageHome: React.FC<Props> = (props: Props) => {
     setCurrentImageID(null);
   }, [setCurrentCollection, setCurrentImageID]);
   return (
-    <div className="d-flex flex-column">
-      <h1 className="text-left w-100">Tremulator v2</h1>
-      <h4>
-        The Tremulator is a digital Humanities tool created by Ian D. Johnson and David F. Johnson for collecting and
-        visualizing irregular paleographical data on Medieval manuscripts.
-      </h4>
+    <>
+      <div className="row">
+        <div className="col">
+          <h1>Tremulator v2</h1>
+          <span>
+            The Tremulator is a digital Humanities tool created by Ian D. Johnson and David F. Johnson for collecting
+            and visualizing irregular paleographical data on Medieval manuscripts.
+          </span>
+        </div>
+      </div>
       {!oidcUser && (
-        <div>
-          <p>To create or join a collection please login using an existing Google account.</p>
-          <Link to={"/collections"}>
-            <button className="btn btn-primary btn-lg">
+        <div className="row">
+          <div className="col">
+            <p>To create or join a collection please login using an existing Google account.</p>
+            <Link to={"/collections"} title="Sign in with Google" className="btn btn-primary btn-lg">
               <i className="fab fa-google"></i>
               <span className="ml-3">Sign in with Google</span>
-            </button>
-          </Link>
+            </Link>
+          </div>
         </div>
       )}
-      {oidcUser && <CollectionList></CollectionList>}
-    </div>
+      {oidcUser && (
+        <div className="row">
+          <div className="col">
+            <CollectionList></CollectionList>
+          </div>
+        </div>
+      )}
+    </>
   );
 };

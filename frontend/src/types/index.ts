@@ -1,3 +1,4 @@
+import { JSONSchema7 } from "json-schema";
 import { components } from "./api";
 
 export type UserType = Omit<components["schemas"]["UserModel"], "access_token" | "expires_at">;
@@ -13,3 +14,24 @@ export interface AlertMessage {
   message: string;
   type: string;
 }
+
+export const collectionSchema: JSONSchema7 = {
+  type: "object",
+  required: ["name"],
+  properties: {
+    name: {
+      type: "string",
+      title: "Name",
+    },
+    description: {
+      type: "string",
+      title: "Description",
+    },
+  },
+};
+
+export const collectionUiSchema: any = {
+  description: {
+    "ui:widget": "textarea",
+  },
+};
