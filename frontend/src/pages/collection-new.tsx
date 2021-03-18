@@ -1,9 +1,9 @@
-import React, { FormEvent, useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import Form from "@rjsf/bootstrap-4";
 import { AppContext } from "../context/app-context";
 import { usePost } from "../hooks/api";
-import { collectionSchema, collectionUiSchema, NewCollectionType, CollectionType } from "../types/index";
+import { collectionSchemaForm, NewCollectionType, CollectionType } from "../types/index";
 import { PageHeader } from "../components/page-header";
 import Loader from "../components/loader";
 
@@ -13,7 +13,7 @@ export const CollectionNew: React.FC<Props> = (props: Props) => {
   const history = useHistory();
 
   const { setAlertMessage } = useContext(AppContext);
-  const [collection, setCollection] = useState<NewCollectionType>({ name: "", description: "" });
+  const [collection] = useState<NewCollectionType>({ name: "", description: "" });
   const [postCollection, { loading }] = usePost<NewCollectionType, CollectionType>("/collections");
 
   const submit = async (item: NewCollectionType) => {
@@ -39,8 +39,8 @@ export const CollectionNew: React.FC<Props> = (props: Props) => {
             <div className=" row">
               <div className="col">
                 <Form
-                  schema={collectionSchema}
-                  uiSchema={collectionUiSchema}
+                  schema={collectionSchemaForm.schema}
+                  uiSchema={collectionSchemaForm.ui}
                   formData={collection}
                   onSubmit={(e) => submit(e.formData)}
                 >

@@ -18,7 +18,7 @@ import {
 } from "../entities/schema";
 
 @Tags("Schema")
-@Route("schema")
+@Route("collections")
 export class SchemaController extends DefaultController {
   // logger
   private log: Logger = getLogger("SchemaController");

@@ -4,7 +4,7 @@ import ModalPortal from "../components/modal";
 import { Link } from "react-router-dom";
 import { AppContext } from "../context/app-context";
 import { useGet, useDelete } from "../hooks/api";
-import { ImageFullType, CollectionFullType } from "../types/index";
+import { ImageFullType } from "../types/index";
 import Loader from "../components/loader";
 import { PageHeader } from "../components/page-header";
 //leaflet IIIF
@@ -30,7 +30,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
 
   useEffect(() => {
     if (error) setAlertMessage({ message: error.message, type: "warning" });
-  }, [error]);
+  }, [error, setAlertMessage]);
 
   return (
     <>

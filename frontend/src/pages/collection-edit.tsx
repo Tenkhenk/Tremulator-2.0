@@ -1,8 +1,8 @@
-import React, { FormEvent, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { usePut, useGet, useDelete } from "../hooks/api";
-import { collectionSchema, collectionUiSchema, CollectionType, CollectionFullType } from "../types/index";
-import { omit, pick } from "lodash";
+import { collectionSchemaForm, CollectionType, CollectionFullType } from "../types/index";
+import { pick } from "lodash";
 import { AuthenticationContext } from "@axa-fr/react-oidc-context";
 import Form from "@rjsf/bootstrap-4";
 import { AppContext } from "../context/app-context";
@@ -35,7 +35,11 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
 
   useEffect(() => {
     if (error) setAlertMessage({ message: error.message, type: "warning" });
-  }, [error]);
+  }, [error, setAlertMessage]);
+
+  useEffect(() => {
+    setCollectionEdition(pick(collection, ["id", "name", "description"]) as CollectionType);
+  }, [collection]);
 
   // actions
   const updateCollection = async (item: CollectionType) => {
@@ -73,9 +77,10 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
             <div className=" row">
               <div className="col">
                 <Form
-                  schema={collectionSchema}
-                  uiSchema={collectionUiSchema}
-                  formData={pick(collection, ["id", "name", "description"])}
+                  schema={collectionSchemaForm.schema}
+                  uiSchema={collectionSchemaForm.ui}
+                  onChange={(e) => setCollectionEdition(e.formData)}
+                  formData={collectionEdition}
                   onSubmit={(e) => updateCollection(e.formData)}
                 >
                   <div className="form-group text-right">
@@ -115,7 +120,7 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
               </div>
             )}
           </div>
-          {isOwner && (
+          {isOwner(collection, oidcUser) && (
             <div>
               <div className=" row">
                 <div className="col-sm-12 mt-5">

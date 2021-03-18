@@ -18,7 +18,7 @@ export const Menu: React.FC = () => {
       )}
       {oidcUser && (
         <li className="nav-item dropdown">
-          <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false">
+          <button className="btn btn-link nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             {oidcUser.profile.picture ? (
               <img
                 className="avatar rounded-circle"
@@ -29,7 +29,7 @@ export const Menu: React.FC = () => {
               <i className="fas fa-user"></i>
             )}
             {oidcUser.profile.name}
-          </a>
+          </button>
           <ul className="dropdown-menu">
             <li>
               <button className="dropdown-item" onClick={() => logout()} title="sign out">

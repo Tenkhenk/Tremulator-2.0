@@ -1,35 +1,84 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AnnotationSchemaEditionForm } from "../components/annotation-schema-form";
 import { AppContext } from "../context/app-context";
-import { CollectionFullType, SchemaType } from "../types";
-import { useGet } from "../hooks/api";
+import { useHistory } from "react-router-dom";
+import { pick } from "lodash";
+import { useGet, usePut } from "../hooks/api";
 import Loader from "../components/loader";
+import { PageHeader } from "../components/page-header";
+import { JsonSchemaEditor } from "../components/schema/editor";
+import { JsonSchemaPreview } from "../components/schema/preview";
+import { NewSchemaType, SchemaType, SchemaFullType } from "../types";
 
 interface props {
-  collectionID: string;
-  schemaID: string;
+  collectionID: number;
+  schemaID: number;
 }
 export const AnnotationSchemaEdit: React.FC<props> = (props: props) => {
   const { collectionID, schemaID } = props;
 
-  // reset context
-  const { setCurrentCollection, setCurrentImageID } = useContext(AppContext);
-  const { data: getCollection, loading } = useGet<CollectionFullType>(`/collections/${collectionID}`);
-  const [schema, setSchema] = useState<SchemaType | null>(null);
+  // hooks
+  const history = useHistory();
+  const { setAlertMessage } = useContext(AppContext);
+
+  // data hooks
+  const { data: schema, loading, error } = useGet<SchemaFullType>(`/collections/${collectionID}/schema/${schemaID}`);
+  const [update, { loading: updateLoading }] = usePut<SchemaType>(`/collections/${collectionID}/schema/${schemaID}`);
+
+  // States
+  const [schemaForm, setSchemaForm] = useState<NewSchemaType | null>(null);
+
+  // When schema changed
+  //  => we reset the one for the form
   useEffect(() => {
-    setCurrentImageID(null);
-    if (getCollection) {
-      setCurrentCollection(getCollection);
-      const s = getCollection.schemas.find((s) => s.id.toString() === schemaID);
-      if (s) setSchema(s);
-    }
-  }, [getCollection, schemaID, setCurrentCollection, setCurrentImageID]);
+    setSchemaForm(pick(schema, ["name", "schema", "ui"]) as NewSchemaType);
+  }, [schema]);
+
+  // When error happend on loading the schema
+  //  => set the alert
+  useEffect(() => {
+    if (error) setAlertMessage({ message: error.message, type: "warning" });
+  }, [error, setAlertMessage]);
 
   return (
     <>
-      {loading && <Loader />}
-      {!loading && getCollection && schema && (
-        <AnnotationSchemaEditionForm collectionID={+collectionID} schema={schema} />
+      {loading || (updateLoading && <Loader />)}
+      {schema && (
+        <>
+          <PageHeader>
+            <h1>{schema.collection.name}</h1>
+          </PageHeader>
+
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col">
+                <h2>Schema annotation : {schema.name}</h2>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-8">
+                <JsonSchemaEditor
+                  value={schemaForm ? schemaForm : undefined}
+                  onChange={(e) => setSchemaForm(e)}
+                  onSubmit={async (e) => {
+                    try {
+                      await update({ ...e, id: schemaID });
+                      setAlertMessage({ message: `Annotation schema updated`, type: "success" });
+                      history.push(`/collections/${collectionID}/edit`);
+                    } catch (error) {
+                      setAlertMessage({
+                        message: `Error when saving your annotation schema "${error?.message}"`,
+                        type: "warning",
+                      });
+                    }
+                  }}
+                />
+              </div>
+              <div className="col-4">
+                <JsonSchemaPreview schema={schemaForm ? schemaForm.schema : {}} ui={schemaForm ? schemaForm.ui : {}} />
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </>
   );

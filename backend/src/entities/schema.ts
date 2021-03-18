@@ -17,6 +17,9 @@ export class SchemaEntity extends BaseEntity {
   @Column({ type: "json" })
   schema: JSONSchema7;
 
+  @Column({ type: "json" })
+  ui: any;
+
   @ManyToOne(() => CollectionEntity, (collection) => collection.schemas, { onDelete: "CASCADE" })
   collection: CollectionEntity;
 
@@ -27,11 +30,12 @@ export class SchemaEntity extends BaseEntity {
 /**
  * Object model: just the table properties
  */
-export type SchemaModel = Pick<SchemaEntity, "id" | "name"> & { schema: { [key: string]: any } };
+export type SchemaModel = Pick<SchemaEntity, "id" | "name" | "ui"> & { schema: { [key: string]: any } };
+
 // usefull type for creation
 export type SchemaModelWithoutId = Omit<SchemaModel, "id">;
 export function schemaEntityToModel(item: SchemaEntity): SchemaModel {
-  return pick(item, ["id", "name", "schema"]);
+  return pick(item, ["id", "name", "schema", "ui"]);
 }
 
 /**
@@ -43,7 +47,7 @@ export type SchemaModelFull = SchemaModel & {
 };
 export function schemaEntityToModelFull(item: SchemaEntity): SchemaModelFull {
   return {
-    ...pick(item, ["id", "name", "schema"]),
+    ...pick(item, ["id", "name", "schema", "ui"]),
     collection: collectionEntityToModel(item.collection),
     annotations: item.annotations?.map((a) => annotationEntityToModel(a)) || [],
   };

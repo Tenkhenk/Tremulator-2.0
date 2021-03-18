@@ -128,12 +128,13 @@ export interface components {
     "Omit_AnnotationModel.id_": components["schemas"]["Pick_AnnotationModel.Exclude_keyofAnnotationModel.id__"];
     AnnotationModelWithoutId: components["schemas"]["Omit_AnnotationModel.id_"];
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_SchemaEntity.id-or-name_": {
+    "Pick_SchemaEntity.id-or-name-or-ui_": {
       id: number;
       name: string;
+      ui: { [key: string]: any };
     };
     /** Object model: just the table properties */
-    SchemaModel: components["schemas"]["Pick_SchemaEntity.id-or-name_"] & {
+    SchemaModel: components["schemas"]["Pick_SchemaEntity.id-or-name-or-ui_"] & {
       schema: { [key: string]: { [key: string]: any } };
     };
     /** From T, pick a set of properties whose keys are in the union K */
@@ -217,6 +218,7 @@ export interface components {
     /** From T, pick a set of properties whose keys are in the union K */
     "Pick_SchemaModel.Exclude_keyofSchemaModel.id__": {
       name: string;
+      ui: { [key: string]: any };
       schema: { [key: string]: { [key: string]: any } };
     };
     "Omit_SchemaModel.id_": components["schemas"]["Pick_SchemaModel.Exclude_keyofSchemaModel.id__"];
