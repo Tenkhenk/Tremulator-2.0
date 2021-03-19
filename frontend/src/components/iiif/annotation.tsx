@@ -113,7 +113,7 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
         map.removeLayer(editableLayers);
       };
     }
-  }, [map, annotations, editMode, onCreate, onUpdate, onDelete, onSelect, selected]);
+  }, [addMode, schemas, map, annotations, editMode, onCreate, onUpdate, onDelete, onSelect, selected]);
 
   return null;
 };

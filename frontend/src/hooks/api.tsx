@@ -12,38 +12,42 @@ interface APIResult<T> {
 /**
  * API hook for GET
  */
-export function useGet<R>(
-  path: string,
-  urlParams?: { [key: string]: unknown },
-): APIResult<R> & { fetch: () => Promise<void> } {
+export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }): APIResult<R> & { fetch: () => void } {
   const [data, setData] = useState<R | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
   const { oidcUser } = useContext(AuthenticationContext);
 
-  async function fetch() {
-    setData(null);
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axios({
-        method: "GET",
-        params: urlParams,
-        url: `${config.api_path}${path}`,
-        responseType: "json",
-        headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
-      });
-      setData(response.data as R);
-    } catch (e) {
-      setError(e);
-    } finally {
-      setLoading(false);
-    }
+  // just a var that we increment for refetch
+  const [refetchVar, setRefetchVar] = useState<number>(0);
+  function fetch() {
+    setRefetchVar((e) => {
+      return e + 1;
+    });
   }
 
   useEffect(() => {
-    fetch();
-  }, [path, urlParams, oidcUser]);
+    const main = async () => {
+      setData(null);
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axios({
+          method: "GET",
+          params: urlParams,
+          url: `${config.api_path}${path}`,
+          responseType: "json",
+          headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
+        });
+        setData(response.data as R);
+      } catch (e) {
+        setError(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    main();
+  }, [path, urlParams, oidcUser, refetchVar]);
 
   return { loading, error, data, fetch };
 }

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import ModalPortal from "../components/modal";
-import { Link } from "react-router-dom";
 import { AppContext } from "../context/app-context";
 import { useGet, useDelete } from "../hooks/api";
 import { useQueryParam } from "../hooks/useQueryParam";
@@ -94,7 +93,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                     }}
                     onSelect={(id) => {
                       setSelectedAnnotation((prev) => {
-                        if (prev == id) return null;
+                        if (prev === id) return null;
                         return id;
                       });
                     }}
@@ -118,7 +117,11 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                     schemas={collection?.schemas || []}
                     collectionID={collection.id}
                     imageID={image.id}
-                    onSaved={() => fetch()}
+                    onSaved={(a) => {
+                      setAnnotation(null);
+                      setSelectedAnnotation(a.id);
+                      fetch();
+                    }}
                     onCancel={() => setAnnotation(null)}
                   />
                 )}

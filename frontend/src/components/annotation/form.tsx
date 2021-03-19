@@ -11,7 +11,7 @@ interface Props {
   imageID: number;
   schemas: Array<SchemaType>;
   annotation: AnnotationType;
-  onSaved?: () => void;
+  onSaved?: (a: AnnotationType) => void;
   onCancel?: () => void;
 }
 export const AnnotationForm: FC<Props> = (props: Props) => {
@@ -81,18 +81,16 @@ export const AnnotationForm: FC<Props> = (props: Props) => {
               formData={annotation.data}
               onSubmit={async (e) => {
                 try {
+                  let data = { ...annotation, data: e.formData };
                   if (annotation.id < 0) {
-                    const data = await create(
-                      { ...omit(annotation, ["id"]), data: e.formData },
-                      { schemaId: schema.id },
-                    );
+                    data = await create(omit(data, ["id"]), { schemaId: schema.id });
                     setAlertMessage({ message: `Annotation created`, type: "success" });
+                    if (onSaved) onSaved(data);
                   } else {
-                    console.log({ ...omit(annotation, ["schemaId"]), data: e.formData });
-                    await update({ ...omit(annotation, ["schemaId"]), data: e.formData });
+                    await update(data);
                     setAlertMessage({ message: `Annotation updated`, type: "success" });
                   }
-                  if (onSaved) onSaved();
+                  if (onSaved) onSaved(data);
                 } catch (error) {
                   setAlertMessage({
                     message: `Error when creating annotation "${error?.message}" created`,

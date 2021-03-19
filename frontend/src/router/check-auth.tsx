@@ -18,7 +18,7 @@ export const CheckAuth: React.FC<Props> = (props: React.PropsWithChildren<Props>
       setAllowed(false);
       login();
     }
-  }, [secured, oidcUser]);
+  }, [secured, oidcUser, login]);
 
   if (allowed) return <>{children}</>;
   else return <></>;
