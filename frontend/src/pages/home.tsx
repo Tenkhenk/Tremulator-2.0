@@ -1,8 +1,7 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { AuthenticationContext } from "@axa-fr/react-oidc-context";
 import { CollectionList } from "../components/collection-list";
 import { Link } from "react-router-dom";
-import { AppContext } from "../context/app-context";
 
 interface Props {}
 export const PageHome: React.FC<Props> = (props: Props) => {

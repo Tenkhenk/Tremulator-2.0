@@ -7,6 +7,7 @@ import { useGet, useDelete } from "../hooks/api";
 import { AnnotationType, ImageFullType } from "../types/index";
 import Loader from "../components/loader";
 import { PageHeader } from "../components/page-header";
+import { AnnotationAccordion } from "../components/annotation/accordion";
 //leaflet IIIF
 import { MapContainer } from "react-leaflet";
 import { IIIFLayer } from "../components/iiif";
@@ -58,55 +59,49 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
           </PageHeader>
 
           <div className="container-fluid">
-            <div className="d-flex justify-content-between">
-              <div>
-                <i className="fas fa-vector-square mr-1"></i>
-                {image.annotations.length} annotations
-              </div>
-              <div>
-                <h2>
-                  {image.name || image.url}{" "}
-                  <button className="btn" onClick={() => setNeedsConfirmation(true)}>
-                    <i className="fas fa-trash-alt"></i>
-                  </button>
-                </h2>
-              </div>
-              <div>
-                <i className="fas fa-sliders-h mr-2"></i>
-                <i className="fas fa-map mr-2"></i>
-                <i className="fas fa-expand"></i>
-              </div>
+            <div className="row justify-content-center">
+              <h2>
+                {image.name || image.url}{" "}
+                <button className="btn" onClick={() => setNeedsConfirmation(true)}>
+                  <i className="fas fa-trash-alt"></i>
+                </button>
+              </h2>
             </div>
 
             <div className="row">
-              <MapContainer center={[0, 0]} zoom={0} crs={L.CRS.Simple} scrollWheelZoom={true}>
-                <IIIFLayer url={image.url} />
-                <IIIFLayerAnnotation
-                  editMode={true}
-                  annotations={annotation ? image.annotations.concat([annotation]) : image.annotations}
-                  selected={annotation?.id || null}
-                  onCreate={(geo) => {
-                    setAnnotation({
-                      id: -1,
-                      data: {},
-                      geometry: geo,
-                    });
-                  }}
-                  onUpdate={(e) => {
-                    console.log(e);
-                  }}
-                  onDelete={(e) => {
-                    console.log(e);
-                  }}
-                  onSelect={(e) => {
-                    console.log(e.layer.toGeoJSON());
-                    // setAnnotation((annotation) => {
-                    //   if (annotation) return null;
-                    //   return e;
-                    // });
-                  }}
-                />
-              </MapContainer>
+              <div className="col-9">
+                <MapContainer center={[0, 0]} zoom={0} crs={L.CRS.Simple} scrollWheelZoom={true}>
+                  <IIIFLayer url={image.url} />
+                  <IIIFLayerAnnotation
+                    editMode={true}
+                    annotations={annotation ? image.annotations.concat([annotation]) : image.annotations}
+                    selected={annotation?.id || null}
+                    onCreate={(geo) => {
+                      setAnnotation({
+                        id: -1,
+                        data: {},
+                        geometry: geo,
+                      });
+                    }}
+                    onUpdate={(e) => {
+                      console.log(e);
+                    }}
+                    onDelete={(e) => {
+                      console.log(e);
+                    }}
+                    onSelect={(e) => {
+                      console.log(e.layer.toGeoJSON());
+                    }}
+                  />
+                </MapContainer>
+              </div>
+              <div className="col-3">
+                <h3>
+                  <i className="fas fa-vector-square mr-1"></i>
+                  {image.annotations.length} annotations
+                </h3>
+                <AnnotationAccordion annotations={image.annotations} />
+              </div>
             </div>
           </div>
 

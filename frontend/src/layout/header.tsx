@@ -1,8 +1,5 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { AppContext } from "../context/app-context";
-import { ImageType } from "../types";
-import { findIndex } from "lodash";
 import { Menu } from "./menu";
 
 export const Header: React.FC = () => {

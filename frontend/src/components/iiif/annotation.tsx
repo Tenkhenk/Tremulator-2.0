@@ -38,6 +38,7 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
     if (editMode === true) {
       // Add controls
       const drawControl = new (L.Control as any).Draw({
+        position: "topright",
         edit: {
           featureGroup: editableLayers,
           remove: false,
@@ -89,7 +90,7 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
         map.removeLayer(editableLayers);
       };
     }
-  }, [map, annotations]);
+  }, [map, annotations, editMode, onCreate, onUpdate, onDelete, onSelect, selected]);
 
   return null;
 };

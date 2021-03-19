@@ -34,7 +34,7 @@ export const AnnotationSchemaNew: React.FC<NewProps> = (props: NewProps) => {
   useEffect(() => {
     const colorIndex = (collection?.schemas?.length || 0) % config.schema_colors.length;
     setSchemaForm({ name: "", color: config.schema_colors[colorIndex], schema: {}, ui: {} });
-  }, [collectionID]);
+  }, [collection]);
 
   // When error happend on loading the collection
   //  => set the alert

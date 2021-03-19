@@ -1,5 +1,5 @@
 import React, { Context } from "react";
-import { AlertMessage, CollectionFullType } from "../types/index";
+import { AlertMessage } from "../types/index";
 
 export interface AppContextType {
   alertMessage: AlertMessage;
