@@ -57,12 +57,6 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
     setNeedsConfirmation(false);
   }, [imageID]);
 
-  // // WHen the selected annotation change
-  // //  => update the annation
-  // useEffect(() => {
-  //   if (image?.annotations) setAnnotation(image.annotations.find((e) => e.id === selectedAnnotation) || null);
-  // }, [selectedAnnotation, image]);
-
   return (
     <>
       {(imageLoading || collectionLoading) && <Loader />}
@@ -87,16 +81,15 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                 <MapContainer center={[0, 0]} zoom={0} crs={L.CRS.Simple} scrollWheelZoom={true}>
                   <IIIFLayer url={image.url} />
                   <IIIFLayerAnnotation
-                    editMode={true}
+                    editMode={false}
+                    addMode={true}
+                    schemas={collection.schemas}
                     annotations={annotation ? image.annotations.concat([annotation]) : image.annotations}
                     selected={annotation ? annotation.id : selectedAnnotation}
                     onCreate={(geo) => {
-                      setAnnotation({ id: -1, data: {}, geometry: geo, schemaId: undefined });
+                      setAnnotation({ id: -1, data: {}, geometry: geo, schemaId: -1 });
                     }}
                     onUpdate={(e) => {
-                      console.log(e);
-                    }}
-                    onDelete={(e) => {
                       console.log(e);
                     }}
                     onSelect={(id) => {

@@ -1,8 +1,8 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import Form from "@rjsf/bootstrap-4";
 import { omit } from "lodash";
+import Loader from "../loader";
 import { AnnotationType, NewAnnotationType, SchemaType } from "../../types";
-import { AccordionAnnotation } from "./accordion-annotation";
 import { AppContext } from "../../context/app-context";
 import { usePost, usePut } from "../../hooks/api";
 
@@ -26,7 +26,7 @@ export const AnnotationForm: FC<Props> = (props: Props) => {
     `/collections/${collectionID}/images/${imageID}/annotations`,
   );
   // Hook to update the data
-  const [update, { loading: updateLoading }] = usePut<AnnotationType>(
+  const [update, { loading: updateLoading }] = usePut<NewAnnotationType>(
     `/collections/${collectionID}/images/${imageID}/annotations/${annotation.id}`,
   );
 
@@ -44,6 +44,7 @@ export const AnnotationForm: FC<Props> = (props: Props) => {
 
   return (
     <>
+      {createLoading || (updateLoading && <Loader />)}
       <div className="row">
         <div className="col">
           <h3>

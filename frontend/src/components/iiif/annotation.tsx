@@ -4,11 +4,13 @@ import L, { LeafletEvent } from "leaflet";
 import { pick } from "lodash";
 import "leaflet-draw";
 import { GeoJSON, Geometry } from "geojson";
-import { AnnotationType } from "../../types";
+import { AnnotationType, SchemaType } from "../../types";
 
 interface Props {
   annotations: Array<AnnotationType>;
+  schemas: Array<SchemaType>;
   editMode: boolean;
+  addMode: boolean;
   onCreate?: (geo: GeoJSON) => void;
   onUpdate?: (geo: GeoJSON) => void;
   onDelete?: (id: number) => void;
@@ -17,19 +19,28 @@ interface Props {
 }
 
 export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
-  const { annotations, editMode, onCreate, onUpdate, onDelete, onSelect, selected } = props;
+  const { annotations, addMode, editMode, schemas, onCreate, onUpdate, onDelete, onSelect, selected } = props;
   const map = useMap();
 
   useEffect(() => {
     // Create layer for annotation
     const editableLayers = new L.FeatureGroup(
       annotations.map((annotation) => {
+        const schema = schemas.find((item) => item.id === annotation.schemaId);
+
         const geo: GeoJSON = {
           type: "Feature",
           geometry: (annotation.geometry as any) as Geometry,
           properties: { annotation: pick(annotation, ["id", "data"]) },
         };
-        const layer = L.geoJSON(geo, { editable: annotation.id === selected } as any);
+        const layer = L.geoJSON(geo, {
+          editable: annotation.id === selected && editMode,
+          style: {
+            color: schema ? schema.color : "#ff7800",
+            weight: annotation.id === selected ? 5 : 1,
+            opacity: 0.65,
+          },
+        } as any);
         return layer;
       }),
     );
@@ -46,7 +57,7 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
     map.addLayer(editableLayers);
 
     // If we are in edit mode, we enabled leaflet-draw
-    if (editMode === true) {
+    if (editMode === true || addMode === true) {
       // Add controls
       const drawControl = new (L.Control as any).Draw({
         position: "topright",
@@ -59,6 +70,7 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
           marker: false,
           circlemarker: false,
           polyline: false,
+          circle: false,
           polygon: {
             allowIntersection: false,
             showArea: true,

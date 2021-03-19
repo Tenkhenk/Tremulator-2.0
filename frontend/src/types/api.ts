@@ -109,7 +109,7 @@ export interface components {
     "Pick_AnnotationEntity.id-or-data-or-schemaId_": {
       id: number;
       data: { [key: string]: any };
-      schemaId?: number;
+      schemaId: number;
     };
     /** Object model: just the table properties */
     AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-data-or-schemaId_"] & {
@@ -160,14 +160,14 @@ export interface components {
       scope: string;
       token_type: string;
       id_token: string;
-    };
+    } & { [key: string]: any };
     ValidateCodeRequest: {
       client_id: string;
       code: string;
       code_verifier: string;
       grant_type: string;
       redirect_uri?: string;
-    };
+    } & { [key: string]: any };
     /** From T, pick a set of properties whose keys are in the union K */
     "Pick_UserEntity.email-or-firstname-or-lastname-or-avatar-or-access_token-or-expires_at_": {
       email: string;
