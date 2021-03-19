@@ -4,12 +4,13 @@ import ModalPortal from "../components/modal";
 import { Link } from "react-router-dom";
 import { AppContext } from "../context/app-context";
 import { useGet, useDelete } from "../hooks/api";
-import { ImageFullType } from "../types/index";
+import { AnnotationType, ImageFullType } from "../types/index";
 import Loader from "../components/loader";
 import { PageHeader } from "../components/page-header";
 //leaflet IIIF
 import { MapContainer } from "react-leaflet";
-import { IIIFLayer } from "../components/iiif-layer";
+import { IIIFLayer } from "../components/iiif";
+import { IIIFLayerAnnotation } from "../components/iiif/annotation";
 import L from "leaflet";
 import "leaflet-iiif";
 
@@ -28,9 +29,15 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
   const { data: image, loading, error } = useGet<ImageFullType>(`/collections/${collectionID}/images/${imageID}`);
   const [deleteImage] = useDelete<any>(`/collections/${collectionID}/images/${imageID}`);
 
+  const [annotation, setAnnotation] = useState<AnnotationType | null>(null);
+
   useEffect(() => {
     if (error) setAlertMessage({ message: error.message, type: "warning" });
   }, [error, setAlertMessage]);
+
+  useEffect(() => {
+    setAnnotation(null);
+  }, [imageID]);
 
   return (
     <>
@@ -66,7 +73,32 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
 
             <div className="row">
               <MapContainer center={[0, 0]} zoom={0} crs={L.CRS.Simple} scrollWheelZoom={true}>
-                <IIIFLayer url={image.url} />
+                <IIIFLayer url={image.url}>
+                  <IIIFLayerAnnotation
+                    annotations={annotation ? image.annotations.concat([annotation]) : image.annotations}
+                    selected={annotation?.id || null}
+                    onCreate={(geo) => {
+                      setAnnotation({
+                        id: -1,
+                        data: {},
+                        geometry: geo,
+                      });
+                    }}
+                    onUpdate={(e) => {
+                      console.log(e);
+                    }}
+                    onDelete={(e) => {
+                      console.log(e);
+                    }}
+                    onSelect={(e) => {
+                      console.log(e.layer.toGeoJSON());
+                      // setAnnotation((annotation) => {
+                      //   if (annotation) return null;
+                      //   return e;
+                      // });
+                    }}
+                  />
+                </IIIFLayer>
               </MapContainer>
             </div>
           </div>

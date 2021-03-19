@@ -1,7 +1,7 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { IsNotEmpty } from "class-validator";
 import { pick } from "lodash";
-import { Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon } from "geojson";
+import { GeoJsonObject } from "geojson";
 import { imageEntityToModel, ImageEntity, ImageModel } from "./image";
 import { schemaEntityToModel, SchemaEntity, SchemaModel } from "./schema";
 
@@ -15,7 +15,7 @@ export class AnnotationEntity extends BaseEntity {
 
   @Column({ type: "geometry", nullable: false })
   @IsNotEmpty()
-  geometry: Point | MultiPoint | LineString | MultiLineString | Polygon | MultiPolygon;
+  geometry: GeoJsonObject;
 
   @ManyToOne(() => ImageEntity, (image) => image.annotations, { onDelete: "CASCADE" })
   image: ImageEntity;
@@ -28,7 +28,7 @@ export class AnnotationEntity extends BaseEntity {
  * Object model: just the table properties
  */
 export type AnnotationModel = Pick<AnnotationEntity, "id" | "data"> & {
-  geometry: { type: string; coordinates: Array<any> };
+  geometry: any;
 };
 // usefull type for creation
 export type AnnotationModelWithoutId = Omit<AnnotationModel, "id">;
@@ -40,7 +40,7 @@ export function annotationEntityToModel(item: AnnotationEntity): AnnotationModel
  * Object full : model with the deps in model format
  */
 export type AnnotationModelFull = Pick<AnnotationEntity, "id" | "data"> & {
-  geometry: { type: string; coordinates: Array<any> };
+  geometry: { type: string };
   schema: SchemaModel;
   image: ImageModel;
 };

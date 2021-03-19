@@ -65,6 +65,7 @@ export class AnnotationsController extends DefaultController {
     // Validate the body
     const errors = await validate(plainToClass(AnnotationEntity, body));
     this.classValidationErrorToHttpError(errors);
+
     // validate the data
     const ajv = new Ajv();
     const validateJson = await ajv.compile(schema.schema);
@@ -72,6 +73,7 @@ export class AnnotationsController extends DefaultController {
       this.log.info("Data validation failed", validateJson.errors);
       throw Boom.badRequest("Data validation failed");
     }
+
     // validate geojson
     if (!gjv.valid(body.geometry)) throw Boom.badRequest("Geometry is invalid");
 

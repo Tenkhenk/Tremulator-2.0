@@ -89,11 +89,11 @@ export interface paths {
   "/misc/lock_user": {
     put: operations["Lock_user"];
   };
-  "/schema/{collectionId}/schema": {
+  "/collections/{collectionId}/schema": {
     /** Create a schema for a collection. */
     post: operations["Create"];
   };
-  "/schema/{collectionId}/schema/{id}": {
+  "/collections/{collectionId}/schema/{id}": {
     /** Get a schema from the collection. */
     get: operations["Get"];
     /** Update a schema from the collection. */
@@ -113,7 +113,6 @@ export interface components {
     /** Object model: just the table properties */
     AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-data_"] & {
       geometry: {
-        coordinates: { [key: string]: any }[];
         type: string;
       };
     };
@@ -121,7 +120,6 @@ export interface components {
     "Pick_AnnotationModel.Exclude_keyofAnnotationModel.id__": {
       data: { [key: string]: any };
       geometry: {
-        coordinates: { [key: string]: any }[];
         type: string;
       };
     };
@@ -150,7 +148,6 @@ export interface components {
       image: components["schemas"]["ImageModel"];
       schema: components["schemas"]["SchemaModel"];
       geometry: {
-        coordinates: { [key: string]: any }[];
         type: string;
       };
     };
