@@ -17,6 +17,8 @@ export type NewSchemaType = components["schemas"]["SchemaModelWithoutId"];
 export type SchemaType = components["schemas"]["SchemaModel"];
 export type SchemaFullType = components["schemas"]["SchemaModelFull"];
 
+// Types for annotation
+export type NewAnnotationType = components["schemas"]["AnnotationModelWithoutId"];
 export type AnnotationType = components["schemas"]["AnnotationModel"];
 
 export interface AlertMessage {

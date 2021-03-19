@@ -12,36 +12,40 @@ interface APIResult<T> {
 /**
  * API hook for GET
  */
-export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }): APIResult<R> {
+export function useGet<R>(
+  path: string,
+  urlParams?: { [key: string]: unknown },
+): APIResult<R> & { fetch: () => Promise<void> } {
   const [data, setData] = useState<R | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
   const { oidcUser } = useContext(AuthenticationContext);
 
+  async function fetch() {
+    setData(null);
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios({
+        method: "GET",
+        params: urlParams,
+        url: `${config.api_path}${path}`,
+        responseType: "json",
+        headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
+      });
+      setData(response.data as R);
+    } catch (e) {
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    const main = async () => {
-      setData(null);
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await axios({
-          method: "GET",
-          params: urlParams,
-          url: `${config.api_path}${path}`,
-          responseType: "json",
-          headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
-        });
-        setData(response.data as R);
-      } catch (e) {
-        setError(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    main();
+    fetch();
   }, [path, urlParams, oidcUser]);
 
-  return { loading, error, data };
+  return { loading, error, data, fetch };
 }
 
 /**

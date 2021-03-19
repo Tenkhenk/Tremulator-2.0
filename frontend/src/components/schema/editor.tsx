@@ -54,6 +54,7 @@ function formToSchema(form: { name: string; color: string; fields: Array<any> })
       switch (field.type) {
         case "textarea":
           schemaField.type = "string";
+          schemaField.default = "";
           schema.ui[field.name] = { "ui:widget": "textarea" };
           break;
         case "select":

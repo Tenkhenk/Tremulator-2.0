@@ -1,0 +1,12 @@
+.accordion {
+  .card {
+    .card-body {
+      display: none;
+    }
+    &.selected {
+      .card-body {
+        display: block;
+      }
+    }
+  }
+}

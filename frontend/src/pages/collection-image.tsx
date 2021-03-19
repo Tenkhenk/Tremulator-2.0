@@ -4,14 +4,17 @@ import ModalPortal from "../components/modal";
 import { Link } from "react-router-dom";
 import { AppContext } from "../context/app-context";
 import { useGet, useDelete } from "../hooks/api";
-import { AnnotationType, ImageFullType } from "../types/index";
+import { useQueryParam } from "../hooks/useQueryParam";
+import { AnnotationType, CollectionFullType, ImageFullType } from "../types/index";
 import Loader from "../components/loader";
 import { PageHeader } from "../components/page-header";
 import { AnnotationAccordion } from "../components/annotation/accordion";
+import { ImagePageHeader } from "../components/image-page-header";
 //leaflet IIIF
 import { MapContainer } from "react-leaflet";
 import { IIIFLayer } from "../components/iiif";
 import { IIIFLayerAnnotation } from "../components/iiif/annotation";
+import { AnnotationForm } from "../components/annotation/form";
 import L from "leaflet";
 import "leaflet-iiif";
 
@@ -27,18 +30,25 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
   const history = useHistory();
   const { setAlertMessage } = useContext(AppContext);
   // Data hooks
-  const { data: image, loading, error } = useGet<ImageFullType>(`/collections/${collectionID}/images/${imageID}`);
+  const { data: collection, loading: collectionLoading, error: collectionError } = useGet<CollectionFullType>(
+    `/collections/${collectionID}`,
+  );
+  const { data: image, loading: imageLoading, error: imageError, fetch } = useGet<ImageFullType>(
+    `/collections/${collectionID}/images/${imageID}`,
+  );
   const [deleteImage] = useDelete<any>(`/collections/${collectionID}/images/${imageID}`);
 
   // States
   const [needsConfirmation, setNeedsConfirmation] = useState<boolean>(false);
   const [annotation, setAnnotation] = useState<AnnotationType | null>(null);
+  const [selectedAnnotation, setSelectedAnnotation] = useQueryParam<number | null>("annotation", null);
 
   // When error happened
   //  => set the alerte
   useEffect(() => {
-    if (error) setAlertMessage({ message: error.message, type: "warning" });
-  }, [error, setAlertMessage]);
+    if (collectionError) setAlertMessage({ message: collectionError.message, type: "warning" });
+    if (imageError) setAlertMessage({ message: imageError.message, type: "warning" });
+  }, [collectionError, imageError, setAlertMessage]);
 
   // When the image changed
   //  => reset the state
@@ -47,15 +57,19 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
     setNeedsConfirmation(false);
   }, [imageID]);
 
+  // // WHen the selected annotation change
+  // //  => update the annation
+  // useEffect(() => {
+  //   if (image?.annotations) setAnnotation(image.annotations.find((e) => e.id === selectedAnnotation) || null);
+  // }, [selectedAnnotation, image]);
+
   return (
     <>
-      {loading && <Loader />}
-      {image && (
+      {(imageLoading || collectionLoading) && <Loader />}
+      {collection && image && (
         <>
           <PageHeader title={`${image.collection.name}: ${image.name}`}>
-            <h1>
-              <Link to={`/collections/${image.collection.id}`}>{image.collection.name}</Link>
-            </h1>
+            <ImagePageHeader collection={collection} image={image} />
           </PageHeader>
 
           <div className="container-fluid">
@@ -69,19 +83,15 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
             </div>
 
             <div className="row">
-              <div className="col-9">
+              <div className="col-8">
                 <MapContainer center={[0, 0]} zoom={0} crs={L.CRS.Simple} scrollWheelZoom={true}>
                   <IIIFLayer url={image.url} />
                   <IIIFLayerAnnotation
                     editMode={true}
                     annotations={annotation ? image.annotations.concat([annotation]) : image.annotations}
-                    selected={annotation?.id || null}
+                    selected={annotation ? annotation.id : selectedAnnotation}
                     onCreate={(geo) => {
-                      setAnnotation({
-                        id: -1,
-                        data: {},
-                        geometry: geo,
-                      });
+                      setAnnotation({ id: -1, data: {}, geometry: geo, schemaId: undefined });
                     }}
                     onUpdate={(e) => {
                       console.log(e);
@@ -89,18 +99,36 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                     onDelete={(e) => {
                       console.log(e);
                     }}
-                    onSelect={(e) => {
-                      console.log(e.layer.toGeoJSON());
+                    onSelect={(id) => {
+                      setSelectedAnnotation((prev) => {
+                        if (prev == id) return null;
+                        return id;
+                      });
                     }}
                   />
                 </MapContainer>
               </div>
-              <div className="col-3">
-                <h3>
-                  <i className="fas fa-vector-square mr-1"></i>
-                  {image.annotations.length} annotations
-                </h3>
-                <AnnotationAccordion annotations={image.annotations} />
+
+              <div className="col-4">
+                {!annotation && (
+                  <>
+                    <h3>
+                      <i className="fas fa-vector-square mr-1"></i>
+                      {image.annotations.length} annotations
+                    </h3>
+                    <AnnotationAccordion selected={selectedAnnotation} annotations={image.annotations} />
+                  </>
+                )}
+                {collection && annotation && (
+                  <AnnotationForm
+                    annotation={annotation}
+                    schemas={collection?.schemas || []}
+                    collectionID={collection.id}
+                    imageID={image.id}
+                    onSaved={() => fetch()}
+                    onCancel={() => setAnnotation(null)}
+                  />
+                )}
               </div>
             </div>
           </div>
