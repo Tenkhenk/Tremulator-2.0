@@ -26,27 +26,26 @@ export const Collection: React.FC<Props> = (props: Props) => {
     if (error) setAlertMessage({ message: error.message, type: "warning" });
   }, [error, setAlertMessage]);
 
+  console.log("render", isAddingPicture);
   return (
     <>
       {loading && <Loader />}
       {collection && (
         <>
           <PageHeader title={`Collection ${collection.name}`}>
-            <h1>
-              {collection.name}
-              <Link to={`/collections/${collection.id}/edit`} title={`Edit collection ${collection.name}`}>
-                <i className="fas fa-edit"></i>
-              </Link>
-            </h1>
+            <h1>{collection.name}</h1>
+            <Link to={`/collections/${collection.id}/edit`} title={`Edit collection ${collection.name}`}>
+              <i className="fas fa-edit"></i>
+            </Link>
           </PageHeader>
 
           <div className="row">
-            <h3 className="col">
-              {collection.images.length} Pictures{" "}
+            <div className="col d-flex justify-content-start">
+              <h3>{collection.images.length} Pictures </h3>
               <button onClick={() => setIsAddingPicture(true)} className="btn btn-link btn-sm">
                 <i className="far fa-plus-square fa-2x" aria-label="add a picture" title="add a picture"></i>
               </button>
-            </h3>
+            </div>
           </div>
 
           <div className="row">
