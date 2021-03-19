@@ -1,22 +1,43 @@
 form.rjsf {
   width: 100%;
 
-  .row {
-    .form-group {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1em;
-      font-size: 1.1rem;
-      width: 100%;
+  & > .form-group {
+    margin-bottom: 1em;
 
-      label {
-        margin-right: 1em;
-        flex-grow: 1;
-        flex-basis: 33%;
-        text-align: right;
-        text-transform: capitalize;
+    .row {
+      .form-group {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.1rem;
+        margin: 0;
+        width: 100%;
+
+        label {
+          margin-right: 1em;
+          flex-grow: 1;
+          flex-basis: 33%;
+          text-align: right;
+          text-transform: capitalize;
+        }
+
+        div.checkbox.form-group {
+          justify-content: flex-end;
+          .form-check {
+            flex-basis: 77%;
+            align-self: flex-end;
+          }
+        }
+
+        & > div {
+          width: 100%;
+        }
+
+        .col-9 > .form-group {
+          border: 1px solid #6c757d;
+          padding: 1em;
+        }
       }
     }
   }

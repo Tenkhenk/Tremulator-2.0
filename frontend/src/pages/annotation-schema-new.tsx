@@ -8,6 +8,7 @@ import { PageHeader } from "../components/page-header";
 import { JsonSchemaEditor } from "../components/schema/editor";
 import { JsonSchemaPreview } from "../components/schema/preview";
 import { NewSchemaType, SchemaType } from "../types";
+import { config } from "../config";
 
 interface NewProps {
   collectionID: string;
@@ -31,7 +32,9 @@ export const AnnotationSchemaNew: React.FC<NewProps> = (props: NewProps) => {
   // When collectionId changed
   //  => we reset the schema
   useEffect(() => {
-    setSchemaForm(null);
+    const colorIndex = (collection?.schemas?.length || 0) % config.schema_colors.length;
+    console.log(colorIndex, config.schema_colors);
+    setSchemaForm({ name: "", color: config.schema_colors[colorIndex], schema: {}, ui: {} });
   }, [collectionID]);
 
   // When error happend on loading the collection

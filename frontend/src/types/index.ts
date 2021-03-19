@@ -59,9 +59,13 @@ export const schemaSchemaForm: JsonSchemaForm = {
         type: "string",
         title: "Name",
       },
+      color: {
+        type: "string",
+        title: "Color",
+      },
       fields: {
         type: "array",
-        title: "Field",
+        title: "Form's fields",
         items: {
           type: "object",
           required: ["name", "type"],
@@ -106,6 +110,7 @@ export const schemaSchemaForm: JsonSchemaForm = {
                       type: "array",
                       title: "List of values",
                       items: {
+                        title: "Value",
                         type: "string",
                       },
                     },
@@ -119,6 +124,9 @@ export const schemaSchemaForm: JsonSchemaForm = {
     },
   },
   ui: {
+    color: {
+      "ui:widget": "color",
+    },
     schema: {
       "ui:widget": "textarea",
     },

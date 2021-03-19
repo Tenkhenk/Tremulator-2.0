@@ -2,6 +2,18 @@
 export const config_default = {
   api_path: "/api/v1",
   iiif_path: "/iiif",
+  schema_colors: [
+    "#c45fa1",
+    "#66b045",
+    "#965ed0",
+    "#a7963e",
+    "#7679c7",
+    "#cf6c31",
+    "#56a7d8",
+    "#d2415d",
+    "#55a376",
+    "#bd6e61",
+  ],
   auth: {
     authority: "https://accounts.google.com",
     client_id: "118173508985-pk9j97rcj7ivfpf1c1scuekfsmdqefn7.apps.googleusercontent.com",

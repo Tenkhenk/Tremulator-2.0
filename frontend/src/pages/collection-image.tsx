@@ -82,7 +82,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
               <MapContainer center={[0, 0]} zoom={0} crs={L.CRS.Simple} scrollWheelZoom={true}>
                 <IIIFLayer url={image.url} />
                 <IIIFLayerAnnotation
-                  editMode={false}
+                  editMode={true}
                   annotations={annotation ? image.annotations.concat([annotation]) : image.annotations}
                   selected={annotation?.id || null}
                   onCreate={(geo) => {

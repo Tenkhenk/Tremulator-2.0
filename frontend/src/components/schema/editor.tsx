@@ -2,17 +2,11 @@ import React from "react";
 import Form from "@rjsf/bootstrap-4";
 import { schemaSchemaForm, NewSchemaType } from "../../types";
 
-interface Props {
-  value?: NewSchemaType;
-  onChange: (value: NewSchemaType) => void;
-  onSubmit: (value: NewSchemaType) => void;
-}
-
 /**
  * Translate the schema (ie. json schema + ui) to fields for the form.
  */
 function schemaToForm(value: NewSchemaType): { name: string; fields: Array<any> } {
-  let form: any = { name: value.name, fields: [] };
+  let form: any = { name: value.name, color: value.color, fields: [] };
 
   if (value.schema && value.schema.properties) {
     Object.keys(value.schema.properties).forEach((field) => {
@@ -40,10 +34,11 @@ function schemaToForm(value: NewSchemaType): { name: string; fields: Array<any> 
 /**
  * Translate the form value (ie. fields) to schema (ie. json schema + ui)
  */
-function formToSchema(form: { name: string; fields: Array<any> }): NewSchemaType {
+function formToSchema(form: { name: string; color: string; fields: Array<any> }): NewSchemaType {
   // init schema
   let schema: any = {
     name: form.name,
+    color: form.color,
     schema: {
       type: "object",
       required: [],
@@ -76,6 +71,12 @@ function formToSchema(form: { name: string; fields: Array<any> }): NewSchemaType
     });
   }
   return schema;
+}
+
+interface Props {
+  value?: NewSchemaType;
+  onChange: (value: NewSchemaType) => void;
+  onSubmit: (value: NewSchemaType) => void;
 }
 
 export const JsonSchemaEditor: React.FC<Props> = (props: Props) => {
