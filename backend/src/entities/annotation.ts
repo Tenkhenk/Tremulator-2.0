@@ -17,6 +17,10 @@ export class AnnotationEntity extends BaseEntity {
   @IsNotEmpty()
   geometry: GeoJsonObject;
 
+  @Column({ type: "json", nullable: true })
+  @IsNotEmpty()
+  geometry_props: any;
+
   @ManyToOne(() => ImageEntity, (image) => image.annotations, { onDelete: "CASCADE" })
   image: ImageEntity;
 
