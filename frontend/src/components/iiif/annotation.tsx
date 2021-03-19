@@ -39,9 +39,12 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
       edit: {
         featureGroup: editableLayers,
         remove: false,
-        edit: true,
+        edit: false,
       },
       draw: {
+        marker: false,
+        circlemarker: false,
+        polyline: false,
         polygon: {
           allowIntersection: false,
           showArea: true,
