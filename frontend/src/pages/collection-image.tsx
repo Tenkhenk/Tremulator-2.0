@@ -108,7 +108,11 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                       <i className="fas fa-vector-square mr-1"></i>
                       {image.annotations.length} annotations
                     </h3>
-                    <AnnotationAccordion selected={selectedAnnotation} annotations={image.annotations} />
+                    <AnnotationAccordion
+                      onClick={(a) => setSelectedAnnotation(a.id)}
+                      selected={selectedAnnotation}
+                      annotations={image.annotations}
+                    />
                   </>
                 )}
                 {collection && annotation && (
