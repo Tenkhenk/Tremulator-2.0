@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { BaseEntity, JoinColumn, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { IsNotEmpty } from "class-validator";
 import { pick } from "lodash";
 import { GeoJsonObject } from "geojson";
@@ -15,29 +15,33 @@ export class AnnotationEntity extends BaseEntity {
 
   @Column({ type: "geometry", nullable: false })
   @IsNotEmpty()
-  geometry: GeoJsonObject;
+  geometry: any;
 
   @Column({ type: "json", nullable: true })
-  @IsNotEmpty()
   geometry_props: any;
 
   @ManyToOne(() => ImageEntity, (image) => image.annotations, { onDelete: "CASCADE" })
   image: ImageEntity;
 
+  @Column("int", { nullable: true })
+  schemaId: number;
+
   @ManyToOne(() => SchemaEntity, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "schemaId" })
   schema: SchemaEntity;
 }
 
 /**
  * Object model: just the table properties
  */
-export type AnnotationModel = Pick<AnnotationEntity, "id" | "data"> & {
+export type AnnotationModel = Pick<AnnotationEntity, "id" | "data" | "schemaId"> & {
   geometry: any;
 };
 // usefull type for creation
-export type AnnotationModelWithoutId = Omit<AnnotationModel, "id">;
+export type AnnotationModelWithoutId = Omit<AnnotationModel, "id" | "schemaId">;
+
 export function annotationEntityToModel(item: AnnotationEntity): AnnotationModel {
-  return pick(item, ["id", "data", "geometry"]);
+  return pick(item, ["id", "data", "geometry", "geometry_props", "schemaId"]);
 }
 
 /**

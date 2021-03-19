@@ -123,7 +123,7 @@ export class AnnotationsController extends DefaultController {
     @Path() collectionId: number,
     @Path() imageId: number,
     @Path() id: number,
-    @Body() body: AnnotationModel,
+    @Body() body: AnnotationModelWithoutId,
   ): Promise<void> {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, imageId);
