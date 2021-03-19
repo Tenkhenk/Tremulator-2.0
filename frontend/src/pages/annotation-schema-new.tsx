@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/app-context";
 import { CollectionFullType } from "../types";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useGet, usePost } from "../hooks/api";
 import Loader from "../components/loader";
 import { PageHeader } from "../components/page-header";
@@ -33,7 +33,6 @@ export const AnnotationSchemaNew: React.FC<NewProps> = (props: NewProps) => {
   //  => we reset the schema
   useEffect(() => {
     const colorIndex = (collection?.schemas?.length || 0) % config.schema_colors.length;
-    console.log(colorIndex, config.schema_colors);
     setSchemaForm({ name: "", color: config.schema_colors[colorIndex], schema: {}, ui: {} });
   }, [collectionID]);
 
@@ -49,7 +48,9 @@ export const AnnotationSchemaNew: React.FC<NewProps> = (props: NewProps) => {
       {collection && (
         <>
           <PageHeader title={`${collection.name}: New annotation schema`}>
-            <h1>{collection.name}</h1>
+            <h1>
+              <Link to={`/collections/${collection.id}`}>{collection.name}</Link>
+            </h1>
           </PageHeader>
 
           <div className="container-fluid">

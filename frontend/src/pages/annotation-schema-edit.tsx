@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/app-context";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { pick } from "lodash";
 import { useGet, usePut } from "../hooks/api";
 import Loader from "../components/loader";
@@ -45,7 +45,9 @@ export const AnnotationSchemaEdit: React.FC<props> = (props: props) => {
       {schema && (
         <>
           <PageHeader title={`${schema.collection.name}: Edit schema ${schema.name}`}>
-            <h1>{schema.collection.name}</h1>
+            <h1>
+              <Link to={`/collections/${schema.collection.id}`}>{schema.collection.name}</Link>
+            </h1>
           </PageHeader>
 
           <div className="container-fluid">
