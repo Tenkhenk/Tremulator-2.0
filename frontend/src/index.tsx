@@ -27,26 +27,26 @@ class LocalStorage {
 }
 
 ReactDOM.render(
-  <Router>
+  <AuthenticationProvider
+    configuration={config.auth}
+    UserStore={LocalStorage}
+    loggerLevel={oidcLog.ERROR}
+    authenticating={Authenticating}
+    callbackComponentOverride={Authenticated}
+    notAuthorized={NotAuthenticated}
+    sessionLostComponent={SessionLost}
+  >
     <AppContextProvider>
-      <AuthenticationProvider
-        configuration={config.auth}
-        UserStore={LocalStorage}
-        loggerLevel={oidcLog.ERROR}
-        authenticating={Authenticating}
-        callbackComponentOverride={Authenticated}
-        notAuthorized={NotAuthenticated}
-        sessionLostComponent={SessionLost}
-      >
+      <Router>
         <Header />
         <Alert />
         <main className="container" role="main">
           <RouterWrapper routes={routes} />
         </main>
         <Footer />
-      </AuthenticationProvider>
+      </Router>
     </AppContextProvider>
-  </Router>,
+  </AuthenticationProvider>,
   document.getElementById("root"),
 );
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { RouteDefinition } from "./routes";
-import { OidcSecure } from "@axa-fr/react-oidc-context";
+import { CheckAuth } from "./check-auth";
 
 interface Props {
   path?: string;
@@ -57,13 +57,11 @@ export const RouterWrapper: React.FC<Props> = (props: Props) => {
                 path={route.path}
                 exact={route.exact || true}
                 render={(props) => {
-                  if (route.secured === true)
-                    return (
-                      <OidcSecure>
-                        <route.component {...props.match.params} />
-                      </OidcSecure>
-                    );
-                  else return <route.component {...props.match.params} />;
+                  return (
+                    <CheckAuth secured={route.secured}>
+                      <route.component {...props.match.params} />
+                    </CheckAuth>
+                  );
                 }}
               />
             );
