@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState, useMemo, CSSProperties } from "react";
-import { AppContext } from "../context/app-context";
-import { useDropzone } from "react-dropzone";
-import { usePost } from "../hooks/api";
-import { CollectionFullType, ImageType } from "../types";
 import { useHistory } from "react-router-dom";
+import { useDropzone } from "react-dropzone";
 import { uniqBy } from "lodash";
+import { CollectionFullType, ImageType } from "../types";
+import { AppContext } from "../context/app-context";
+import { usePost } from "../hooks/api";
+import { config } from "../config";
 
 const baseStyle: CSSProperties = {
   flex: 1,
@@ -47,7 +48,7 @@ const ImageUpload: React.FC<Props> = (props: Props) => {
     // Disable click and keydown behavior
     noClick: true,
     noKeyboard: true,
-    accept: "image/jpeg, image/png",
+    accept: config.mime_types.join(","),
   });
   const style = useMemo(
     () => ({
@@ -89,7 +90,7 @@ const ImageUpload: React.FC<Props> = (props: Props) => {
       </div>
       <aside>
         <h4>Files</h4>
-        <ul>
+        <ul style={{ maxHeight: "200px", overflowY: "scroll" }}>
           {files.map((file) => (
             <li key={file.name}>
               {file.name} - {file.size} bytes

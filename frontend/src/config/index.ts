@@ -7,6 +7,7 @@ export interface Configuration {
   iiif_path: string;
   auth: UserManagerSettings;
   schema_colors: Array<string>;
+  mime_types: Array<string>;
 }
 
 const config: Configuration = config_default;

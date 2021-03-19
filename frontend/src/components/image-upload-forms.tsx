@@ -15,7 +15,6 @@ enum UploadMethod {
 
 const ImageUploadForms: React.FC<Props> = (props: Props) => {
   const { collection } = props;
-
   const [uploadMethod, setUploadMethod] = useState<UploadMethod>(UploadMethod.LocalImage);
 
   return (

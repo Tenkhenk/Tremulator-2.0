@@ -14,6 +14,7 @@ export const config_default = {
     "#55a376",
     "#bd6e61",
   ],
+  mime_types: ["image/jpeg", "image/jpg", "image/png", "image/tiff"],
   auth: {
     authority: "https://accounts.google.com",
     client_id: "118173508985-pk9j97rcj7ivfpf1c1scuekfsmdqefn7.apps.googleusercontent.com",
