@@ -17,9 +17,6 @@ export class AnnotationEntity extends BaseEntity {
   @IsNotEmpty()
   geometry: any;
 
-  @Column({ type: "json", nullable: true })
-  geometry_props: any;
-
   @ManyToOne(() => ImageEntity, (image) => image.annotations, { onDelete: "CASCADE" })
   image: ImageEntity;
 
@@ -41,7 +38,7 @@ export type AnnotationModel = Pick<AnnotationEntity, "id" | "data" | "schemaId">
 export type AnnotationModelWithoutId = Omit<AnnotationModel, "id" | "schemaId">;
 
 export function annotationEntityToModel(item: AnnotationEntity): AnnotationModel {
-  return pick(item, ["id", "data", "geometry", "geometry_props", "schemaId"]);
+  return pick(item, ["id", "data", "geometry", "schemaId"]);
 }
 
 /**
