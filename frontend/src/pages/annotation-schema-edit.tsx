@@ -44,7 +44,7 @@ export const AnnotationSchemaEdit: React.FC<props> = (props: props) => {
       {loading || (updateLoading && <Loader />)}
       {schema && (
         <>
-          <PageHeader>
+          <PageHeader title={`${schema.collection.name}: Edit schema ${schema.name}`}>
             <h1>{schema.collection.name}</h1>
           </PageHeader>
 

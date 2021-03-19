@@ -31,7 +31,7 @@ export const Collection: React.FC<Props> = (props: Props) => {
       {loading && <Loader />}
       {collection && (
         <>
-          <PageHeader>
+          <PageHeader title={`Collection ${collection.name}`}>
             <h1>
               {collection.name}
               <Link to={`/collections/${collection.id}/edit`} title={`Edit collection ${collection.name}`}>

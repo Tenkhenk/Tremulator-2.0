@@ -45,7 +45,7 @@ export const AnnotationSchemaNew: React.FC<NewProps> = (props: NewProps) => {
       {loading || (createLoading && <Loader />)}
       {collection && (
         <>
-          <PageHeader>
+          <PageHeader title={`${collection.name}: New annotation schema`}>
             <h1>{collection.name}</h1>
           </PageHeader>
 

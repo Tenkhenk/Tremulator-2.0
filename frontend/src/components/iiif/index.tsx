@@ -7,8 +7,8 @@ interface Props {
   url: string;
 }
 
-export const IIIFLayer: React.FC<React.PropsWithChildren<Props>> = (props: React.PropsWithChildren<Props>) => {
-  const { children, url } = props;
+export const IIIFLayer: React.FC<Props> = (props: Props) => {
+  const { url } = props;
   const map = useMap();
 
   // leaflet draw
@@ -23,5 +23,5 @@ export const IIIFLayer: React.FC<React.PropsWithChildren<Props>> = (props: React
     };
   }, [url, map]);
 
-  return <>{children}</>;
+  return null;
 };

@@ -22,21 +22,28 @@ interface Props {
 export const CollectionImage: React.FC<Props> = (props: Props) => {
   const { collectionID, imageID } = props;
 
+  // Hooks
   const history = useHistory();
   const { setAlertMessage } = useContext(AppContext);
-
-  const [needsConfirmation, setNeedsConfirmation] = useState<boolean>(false);
+  // Data hooks
   const { data: image, loading, error } = useGet<ImageFullType>(`/collections/${collectionID}/images/${imageID}`);
   const [deleteImage] = useDelete<any>(`/collections/${collectionID}/images/${imageID}`);
 
+  // States
+  const [needsConfirmation, setNeedsConfirmation] = useState<boolean>(false);
   const [annotation, setAnnotation] = useState<AnnotationType | null>(null);
 
+  // When error happened
+  //  => set the alerte
   useEffect(() => {
     if (error) setAlertMessage({ message: error.message, type: "warning" });
   }, [error, setAlertMessage]);
 
+  // When the image changed
+  //  => reset the state
   useEffect(() => {
     setAnnotation(null);
+    setNeedsConfirmation(false);
   }, [imageID]);
 
   return (
@@ -44,7 +51,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
       {loading && <Loader />}
       {image && (
         <>
-          <PageHeader>
+          <PageHeader title={`${image.collection.name}: ${image.name}`}>
             <h1>
               <Link to={`/collections/${image.collection.id}`}>{image.collection.name}</Link>
             </h1>
@@ -73,32 +80,32 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
 
             <div className="row">
               <MapContainer center={[0, 0]} zoom={0} crs={L.CRS.Simple} scrollWheelZoom={true}>
-                <IIIFLayer url={image.url}>
-                  <IIIFLayerAnnotation
-                    annotations={annotation ? image.annotations.concat([annotation]) : image.annotations}
-                    selected={annotation?.id || null}
-                    onCreate={(geo) => {
-                      setAnnotation({
-                        id: -1,
-                        data: {},
-                        geometry: geo,
-                      });
-                    }}
-                    onUpdate={(e) => {
-                      console.log(e);
-                    }}
-                    onDelete={(e) => {
-                      console.log(e);
-                    }}
-                    onSelect={(e) => {
-                      console.log(e.layer.toGeoJSON());
-                      // setAnnotation((annotation) => {
-                      //   if (annotation) return null;
-                      //   return e;
-                      // });
-                    }}
-                  />
-                </IIIFLayer>
+                <IIIFLayer url={image.url} />
+                <IIIFLayerAnnotation
+                  editMode={false}
+                  annotations={annotation ? image.annotations.concat([annotation]) : image.annotations}
+                  selected={annotation?.id || null}
+                  onCreate={(geo) => {
+                    setAnnotation({
+                      id: -1,
+                      data: {},
+                      geometry: geo,
+                    });
+                  }}
+                  onUpdate={(e) => {
+                    console.log(e);
+                  }}
+                  onDelete={(e) => {
+                    console.log(e);
+                  }}
+                  onSelect={(e) => {
+                    console.log(e.layer.toGeoJSON());
+                    // setAnnotation((annotation) => {
+                    //   if (annotation) return null;
+                    //   return e;
+                    // });
+                  }}
+                />
               </MapContainer>
             </div>
           </div>

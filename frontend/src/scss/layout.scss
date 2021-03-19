@@ -1,31 +1,52 @@
 html {
   body {
     header {
-      height: $header-height;
+      // height: $header-height;
 
       nav.navbar-dark {
         height: 100%;
+        justify-content: space-between;
+        align-items: center;
 
-        #navbar ul {
-          margin-left: auto;
+        #brand {
+          flex-grow: 1;
+          width: 20%;
+        }
+
+        #app-header {
+          flex-grow: 2;
           color: $white;
-
-          .nav-link {
+          width: 60%;
+          h1 {
+            text-align: center;
+          }
+          a {
             color: $white;
           }
+        }
 
-          .avatar {
-            height: 32px;
-            margin-right: 1em;
-          }
-
-          .dropdown {
-            .dropdown-menu {
-              margin-top: 0;
+        #navbar {
+          width: 20%;
+          ul {
+            margin-left: auto;
+            color: $white;
+            .nav-link {
+              color: $white;
             }
-            &:hover {
+
+            .avatar {
+              height: 32px;
+              margin-right: 1em;
+            }
+
+            .dropdown {
               .dropdown-menu {
-                display: block;
+                margin-top: 0;
+              }
+              &:hover {
+                .dropdown-menu {
+                  display: block;
+                }
               }
             }
           }

@@ -31,7 +31,7 @@ export const CollectionNew: React.FC<Props> = (props: Props) => {
       {loading && <Loader />}
       {!loading && (
         <>
-          <PageHeader>
+          <PageHeader title={`Create a collection`}>
             <h1>Create a collection</h1>
           </PageHeader>
 

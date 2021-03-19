@@ -15,12 +15,8 @@ export const AppContextProvider: React.FC<Props> = (props: PropsWithChildren<Pro
     <AppContext.Provider
       value={{
         alertMessage,
-        currentCollection,
-        currentImageID,
         modalTarget: modalTarget.current || undefined,
         setAlertMessage,
-        setCurrentCollection,
-        setCurrentImageID,
       }}
     >
       {children}
