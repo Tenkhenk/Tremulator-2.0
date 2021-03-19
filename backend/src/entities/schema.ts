@@ -14,6 +14,9 @@ export class SchemaEntity extends BaseEntity {
   @IsNotEmpty()
   name: string;
 
+  @Column({ nullable: true })
+  color: string;
+
   @Column({ type: "json" })
   schema: JSONSchema7;
 
@@ -30,12 +33,12 @@ export class SchemaEntity extends BaseEntity {
 /**
  * Object model: just the table properties
  */
-export type SchemaModel = Pick<SchemaEntity, "id" | "name" | "ui"> & { schema: { [key: string]: any } };
+export type SchemaModel = Pick<SchemaEntity, "id" | "name" | "ui" | "color"> & { schema: { [key: string]: any } };
 
 // usefull type for creation
 export type SchemaModelWithoutId = Omit<SchemaModel, "id">;
 export function schemaEntityToModel(item: SchemaEntity): SchemaModel {
-  return pick(item, ["id", "name", "schema", "ui"]);
+  return pick(item, ["id", "name", "schema", "ui", "color"]);
 }
 
 /**
@@ -47,7 +50,7 @@ export type SchemaModelFull = SchemaModel & {
 };
 export function schemaEntityToModelFull(item: SchemaEntity): SchemaModelFull {
   return {
-    ...pick(item, ["id", "name", "schema", "ui"]),
+    ...pick(item, ["id", "name", "schema", "ui", "color"]),
     collection: collectionEntityToModel(item.collection),
     annotations: item.annotations?.map((a) => annotationEntityToModel(a)) || [],
   };
