@@ -1,4 +1,13 @@
-import { BaseEntity, JoinColumn, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
+  JoinColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+} from "typeorm";
 import { IsNotEmpty } from "class-validator";
 import { pick } from "lodash";
 import { GeoJsonObject } from "geojson";
@@ -9,6 +18,12 @@ import { schemaEntityToModel, SchemaEntity, SchemaModel } from "./schema";
 export class AnnotationEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 
   @Column({ type: "json" })
   data: any;

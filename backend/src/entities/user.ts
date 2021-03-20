@@ -1,4 +1,13 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
+import {
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
 import { IsEmail, IsDate } from "class-validator";
 import { pick } from "lodash";
 import { CollectionEntity } from "./collection";
@@ -8,6 +17,12 @@ export class UserEntity extends BaseEntity {
   @IsEmail()
   @Column({ primary: true })
   email: string;
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 
   @Column({ nullable: true })
   firstname: string;

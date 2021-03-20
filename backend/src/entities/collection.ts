@@ -1,6 +1,8 @@
 import {
   BeforeRemove,
   BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -25,6 +27,12 @@ const log: Logger = getLogger("collection");
 export class CollectionEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 
   @Column()
   @IsNotEmpty()

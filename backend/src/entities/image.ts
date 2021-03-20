@@ -1,4 +1,14 @@
-import { AfterRemove, BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import {
+  AfterRemove,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
 import { IsNotEmpty, IsUrl } from "class-validator";
 import { pick } from "lodash";
 import * as fs from "fs";
@@ -13,6 +23,12 @@ const log: Logger = getLogger("image");
 export class ImageEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 
   @Column()
   @IsNotEmpty()

@@ -1,4 +1,13 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import {
+  BaseEntity,
+  Entity,
+  CreateDateColumn,
+  UpdateDateColumn,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
 import { IsNotEmpty } from "class-validator";
 import { JSONSchema7 } from "json-schema";
 import { pick } from "lodash";
@@ -9,6 +18,12 @@ import { annotationEntityToModel, AnnotationEntity, AnnotationModel } from "./an
 export class SchemaEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @CreateDateColumn()
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 
   @Column()
   @IsNotEmpty()
