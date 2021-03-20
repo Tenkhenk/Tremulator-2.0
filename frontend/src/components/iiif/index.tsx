@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
-import L, { latLng, Layer, LatLng, latLngBounds, LatLngBounds } from "leaflet";
+import L, { Layer, LatLngBounds } from "leaflet";
 import "leaflet-iiif";
 import "leaflet-draw";
-import { useQueryParam } from "../../hooks/useQueryParam";
 
 interface Props {
   url: string;
   bbox: LatLngBounds | null;
   onMoveEnd?: (e: LatLngBounds) => void;
-  onClick?: () => void;
 }
 
 export const IIIFLayer: React.FC<Props> = (props: Props) => {
-  const { url, bbox, onMoveEnd, onClick } = props;
+  const { url, bbox, onMoveEnd } = props;
 
   // state
   const [layer, setLayer] = useState<Layer | null>(null);
@@ -53,7 +51,7 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
         if (onMoveEnd) onMoveEnd(map.getBounds());
       });
     };
-  }, [map, layer, bbox]);
+  }, [map, layer, bbox, onMoveEnd]);
 
   return null;
 };
