@@ -84,7 +84,7 @@ export const schemaSchemaForm: JsonSchemaForm = {
               type: "string",
               title: "Type",
               default: "string",
-              enum: ["string", "boolean", "number", "textarea", "select"],
+              enum: ["string", "boolean", "number", "textarea", "select", "range"],
             },
           },
           dependencies: {
@@ -115,6 +115,21 @@ export const schemaSchemaForm: JsonSchemaForm = {
                         title: "Value",
                         type: "string",
                       },
+                    },
+                  },
+                },
+                {
+                  properties: {
+                    type: { enum: ["range"] },
+                    min: {
+                      title: "Min. value",
+                      type: "number",
+                      default: 0,
+                    },
+                    max: {
+                      title: "Max. value",
+                      type: "number",
+                      default: 100,
                     },
                   },
                 },

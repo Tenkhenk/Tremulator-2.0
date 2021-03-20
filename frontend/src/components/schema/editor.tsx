@@ -24,7 +24,13 @@ function schemaToForm(value: NewSchemaType): { name: string; fields: Array<any> 
         formField.values = def.enum;
       }
 
-      // TODO handle UI with types
+      // Handle special case for range
+      if (def.type === "range") {
+        formField.type = "number";
+        formField.min = def.min;
+        formField.max = def.max;
+      }
+
       form.fields.push(formField);
     });
   }
@@ -61,6 +67,12 @@ function formToSchema(form: { name: string; color: string; fields: Array<any> })
           schemaField.type = "string";
           schemaField.enum = field.values && field.values.length > 0 ? field.values : ["add a value"];
           break;
+        case "range":
+          schemaField.type = "number";
+          schemaField.minimum = field.min;
+          schemaField.maximum = field.max;
+          schema.ui[field.name] = { "ui:widget": "range" };
+          break;
         default:
           schemaField.type = field.type;
           break;
@@ -82,7 +94,6 @@ interface Props {
 
 export const JsonSchemaEditor: React.FC<Props> = (props: Props) => {
   const { onChange, onSubmit, value } = props;
-
   return (
     <div className="container-fluid">
       <div className="row">
