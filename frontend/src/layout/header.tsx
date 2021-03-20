@@ -11,10 +11,12 @@ export const Header: React.FC = () => {
             Tr.
           </Link>
         </div>
-
         <div id="app-header"></div>
-        <div className="collapse navbar-collapse" id="navbar">
-          <Menu />
+
+        <div id="menu">
+          <div className="collapse navbar-collapse collapse show" id="navbar">
+            <Menu />
+          </div>
         </div>
       </nav>
     </header>
