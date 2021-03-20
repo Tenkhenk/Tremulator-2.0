@@ -30,7 +30,7 @@ export const AnnotationSchemaEdit: React.FC<props> = (props: props) => {
   // When schema changed
   //  => we reset the one for the form
   useEffect(() => {
-    setSchemaForm(pick(schema, ["name", "schema", "ui"]) as NewSchemaType);
+    setSchemaForm(pick(schema, ["name", "schema", "ui", "color"]) as NewSchemaType);
   }, [schema]);
 
   // When error happend on loading the schema
