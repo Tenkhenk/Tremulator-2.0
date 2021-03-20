@@ -42,8 +42,8 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
   // When bbox changed
   //  => move the map and then listen for moves
   useEffect(() => {
-    if (layer && bbox) {
-      map.fitBounds(bbox);
+    if (layer) {
+      if (bbox) map.fitBounds(bbox);
       map.on("moveend", () => {
         if (onMoveEnd) onMoveEnd(map.getBounds());
       });
