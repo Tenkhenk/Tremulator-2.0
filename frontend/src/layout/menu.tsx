@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
 import { AuthenticationContext } from "@axa-fr/react-oidc-context";
+import { Link } from "react-router-dom";
 
 /**
  * Display the application user menu.
  */
 export const Menu: React.FC = () => {
   const { oidcUser, logout, login } = useContext(AuthenticationContext);
+
   return (
     <ul className="navbar-nav navbar-align">
       {!oidcUser && (
@@ -18,7 +20,7 @@ export const Menu: React.FC = () => {
       )}
       {oidcUser && (
         <li className="nav-item dropdown">
-          <button className="btn btn-link nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          <Link className="btn btn-link nav-link dropdown-toggle" to="/collections" title="My collections">
             {oidcUser.profile.picture ? (
               <img
                 className="avatar rounded-circle"
@@ -29,8 +31,13 @@ export const Menu: React.FC = () => {
               <i className="fas fa-user"></i>
             )}
             {oidcUser.profile.name}
-          </button>
+          </Link>
           <ul className="dropdown-menu">
+            <li>
+              <Link className="dropdown-item" title="My collections" to="/collections">
+                My collections
+              </Link>
+            </li>
             <li>
               <button className="dropdown-item" onClick={() => logout()} title="sign out">
                 <i className="fas fa-sign-out-alt" title="signout"></i>
