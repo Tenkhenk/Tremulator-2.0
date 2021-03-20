@@ -22,7 +22,7 @@ export const ImagePageHeader: FC<Props> = (props: Props) => {
       )}
       <h1>
         <Link title={collection.name} to={`/collections/${collection.id}`}>
-          {collection.name}
+          {collection.name} - {currentIndex + 1} / {collection.images.length}
         </Link>
       </h1>
       {next && (
