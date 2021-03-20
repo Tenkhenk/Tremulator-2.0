@@ -194,11 +194,15 @@ export class DefaultController extends Controller {
       fs.writeFile(filePath, data, (err) => {
         if (err) reject(err);
         resolve({
-          originalname: filename,
+          originalname: this.cleanFilename(filename),
           mimetype: mimetype,
           path: filePath,
         });
       });
     });
+  }
+
+  private cleanFilename(filename: string): string {
+    return filename.split(".").slice(0, -1).join(".");
   }
 }
