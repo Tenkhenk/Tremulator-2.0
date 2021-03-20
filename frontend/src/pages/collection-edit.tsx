@@ -108,7 +108,7 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
             {collection.schemas.length > 0 && (
               <div className="d-flex flex-wrap">
                 {collection.schemas.map((s) => (
-                  <div className="card m-2" key={s.id}>
+                  <div className="card m-2" key={s.id} style={{ borderLeft: `5px solid ${s.color}` }}>
                     <div className="card-body">
                       {s.name}{" "}
                       <Link to={`/collections/${collection.id}/schemas/${s.id}/edit`}>
