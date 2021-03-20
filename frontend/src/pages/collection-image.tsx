@@ -78,8 +78,8 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
             <ImagePageHeader collection={collection} image={image} />
           </PageHeader>
 
-          <div className="container-fluid">
-            <div className="row justify-content-center">
+          <div className="image-viewer">
+            <div className="image-viewer-header">
               <h2>
                 {image.name || image.url}{" "}
                 <button className="btn" onClick={() => setNeedsConfirmation(true)}>
@@ -87,9 +87,8 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                 </button>
               </h2>
             </div>
-
-            <div className="row">
-              <div className="col-8">
+            <div className="image-viewer-body">
+              <div className="image">
                 <MapContainer center={[0, 0]} zoom={0} crs={L.CRS.Simple} scrollWheelZoom={true}>
                   <IIIFLayer
                     url={image.url}
@@ -120,7 +119,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                 </MapContainer>
               </div>
 
-              <div className="col-4">
+              <div className="annotation">
                 {!annotation && (
                   <>
                     <h3>
@@ -151,7 +150,6 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
               </div>
             </div>
           </div>
-
           {needsConfirmation && (
             <ModalPortal
               icon="fa-question-circle"

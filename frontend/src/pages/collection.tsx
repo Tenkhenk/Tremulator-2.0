@@ -48,7 +48,7 @@ export const Collection: React.FC<Props> = (props: Props) => {
           </div>
 
           <div className="row">
-            <div className="col d-flex flex-wrap">
+            <div className="col d-flex flex-wrap justify-content-center">
               {collection.images.map((image: ImageType) => (
                 <Link key={image.id} to={`/collections/${collection.id}/images/${image.id}`}>
                   <ImageThumbnail image={image} />

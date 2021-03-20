@@ -106,7 +106,7 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
               </div>
             </div>
             {collection.schemas.length > 0 && (
-              <div className="d-flex flex-wrap">
+              <div className="d-flex flex-wrap justify-content-start">
                 {collection.schemas.map((s) => (
                   <div className="card m-2" key={s.id} style={{ borderLeft: `5px solid ${s.color}` }}>
                     <div className="card-body">

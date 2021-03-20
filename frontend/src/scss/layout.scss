@@ -1,77 +1,89 @@
 html {
   body {
-    header {
-      // height: $header-height;
+    #root {
+      min-height: calc(100vh);
+      display: flex;
+      flex-direction: column;
 
-      nav.navbar-dark {
-        height: 100%;
-        justify-content: space-between;
-        align-items: center;
-        padding-top: 0;
-        padding-bottom: 0;
-        #brand {
-          flex-grow: 1;
-          width: 20%;
-        }
-
-        #app-header {
-          flex-grow: 2;
-          color: $white;
-          width: 60%;
-          display: flex;
-          justify-content: center;
+      header {
+        height: $header-height;
+        nav.navbar-dark {
+          height: 100%;
+          justify-content: space-between;
           align-items: center;
-          font-size: 2rem;
+          padding-top: 0;
+          padding-bottom: 0;
 
-          h1 {
-            padding: 0 1rem;
-            margin: 0;
+          #brand {
+            flex-grow: 1;
+            width: 20%;
           }
-          a {
-            color: $white;
-          }
-        }
 
-        #navbar {
-          width: 20%;
-          ul {
-            margin-left: auto;
+          #app-header {
+            flex-grow: 2;
             color: $white;
-            .nav-link {
+            width: 60%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+
+            h1 {
+              padding: 0 1rem;
+              margin: 0;
+            }
+            a {
               color: $white;
             }
+          }
 
-            .avatar {
-              height: 32px;
-              margin-right: 1em;
-            }
+          #menu {
+            width: 20%;
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
 
-            .dropdown {
-              .dropdown-menu {
-                margin-top: 0;
+            ul {
+              margin-left: auto;
+              color: $white;
+              .nav-link {
+                color: $white;
               }
-              &:hover {
+
+              .avatar {
+                height: 32px;
+                margin-right: 1em;
+              }
+
+              .dropdown {
                 .dropdown-menu {
-                  display: block;
+                  margin-top: 0;
+                }
+                &:hover {
+                  .dropdown-menu {
+                    display: block;
+                  }
                 }
               }
             }
           }
         }
       }
-    }
 
-    main {
-      margin-bottom: 4em;
-    }
+      main {
+        height: calc(100vh - #{$header-height} - #{$footer-height});
+        overflow: auto;
+      }
 
-    footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      padding: 0.5em;
-      opacity: 0.8;
-      background-color: $white;
+      footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        padding: 0.5em;
+        opacity: 0.8;
+        height: $footer-height;
+        background-color: $white;
+      }
     }
   }
 }

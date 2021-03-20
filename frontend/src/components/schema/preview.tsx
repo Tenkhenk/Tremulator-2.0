@@ -9,13 +9,15 @@ export const JsonSchemaPreview: React.FC<JsonSchemaForm> = (props: JsonSchemaFor
   const [value, setValue] = useState<any>({});
 
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <div className="col">
-          <h4>Preview</h4>
-          <Form schema={schema || {}} uiSchema={ui || {}} onChange={(e) => setValue(e.formData)} formData={value} />
+    <div className="preview position-sticky">
+      <h4>Preview</h4>
+      <Form schema={schema || {}} uiSchema={ui || {}} onChange={(e) => setValue(e.formData)} formData={value}>
+        <div className="form-group text-right">
+          <button type="submit" className="btn btn-primary  ml-2">
+            Submit
+          </button>
         </div>
-      </div>
+      </Form>
     </div>
   );
 };

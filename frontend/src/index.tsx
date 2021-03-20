@@ -38,7 +38,7 @@ ReactDOM.render(
     <Router>
       <Header />
       <Alert />
-      <main className="container" role="main">
+      <main className="container-fluid" role="main">
         <RouterWrapper routes={routes} />
       </main>
       <Footer />
