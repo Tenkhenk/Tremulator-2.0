@@ -26,7 +26,6 @@ export const Collection: React.FC<Props> = (props: Props) => {
     if (error) setAlertMessage({ message: error.message, type: "warning" });
   }, [error, setAlertMessage]);
 
-  console.log("render", isAddingPicture);
   return (
     <>
       {loading && <Loader />}
