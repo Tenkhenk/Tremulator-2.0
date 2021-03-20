@@ -10,12 +10,20 @@ import { PageHeader } from "../components/page-header";
 import { AnnotationAccordion } from "../components/annotation/accordion";
 import { ImagePageHeader } from "../components/image-page-header";
 //leaflet IIIF
-import { MapContainer } from "react-leaflet";
+import { MapContainer, useMapEvents } from "react-leaflet";
 import { IIIFLayer } from "../components/iiif";
 import { IIIFLayerAnnotation } from "../components/iiif/annotation";
 import { AnnotationForm } from "../components/annotation/form";
-import L from "leaflet";
-import "leaflet-iiif";
+import L, { latLng, LatLng, latLngBounds, LatLngBounds } from "leaflet";
+
+/**
+ * Desiarlization of the `toBBoxString`.
+ */
+function fromBBoxString(bbox: string): LatLngBounds | null {
+  if (bbox === "") return null;
+  const parsed = bbox.split(",").map(parseFloat);
+  return latLngBounds(latLng(parsed[1], parsed[0]), latLng(parsed[3], parsed[2]));
+}
 
 interface Props {
   collectionID: string;
@@ -38,9 +46,15 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
   const [deleteImage] = useDelete<any>(`/collections/${collectionID}/images/${imageID}`);
 
   // States
+  // ~~~~~~~~~~~~~~~~~~
+  // for the image deletion
   const [needsConfirmation, setNeedsConfirmation] = useState<boolean>(false);
+  // For the annotation that is currently created
   const [annotation, setAnnotation] = useState<AnnotationType | null>(null);
+  // Id of the selected annotation
   const [selectedAnnotation, setSelectedAnnotation] = useQueryParam<number | null>("annotation", null);
+  // Map BBOX
+  const [bbox, setBbox] = useQueryParam<string>("bbox", "", true);
 
   // When error happened
   //  => set the alerte
@@ -78,7 +92,13 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
             <div className="row">
               <div className="col-8">
                 <MapContainer center={[0, 0]} zoom={0} crs={L.CRS.Simple} scrollWheelZoom={true}>
-                  <IIIFLayer url={image.url} />
+                  <IIIFLayer
+                    url={image.url}
+                    bbox={fromBBoxString(bbox)}
+                    onMoveEnd={(e) => {
+                      setBbox(e.toBBoxString());
+                    }}
+                  />
                   <IIIFLayerAnnotation
                     editMode={false}
                     addMode={true}
