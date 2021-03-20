@@ -28,7 +28,6 @@ const Modal: FC<Props> = ({ onClose, title, icon, children }) => (
 
 const ModalPortal: FC<Props> = (props) => {
   const context = useContext(AppContext);
-  console.log(context);
   if (context.modalTarget.current) return createPortal(<Modal {...props} />, context.modalTarget.current);
   else return null;
 };
