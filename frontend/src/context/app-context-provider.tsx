@@ -8,17 +8,18 @@ export const AppContextProvider: React.FC<Props> = (props: PropsWithChildren<Pro
   const [alertMessage, setAlertMessage] = useState<AlertMessage>({ message: "", type: "" });
   const { children } = props;
   const modalTarget = useRef<HTMLDivElement>(null);
-
   return (
-    <AppContext.Provider
-      value={{
-        alertMessage,
-        modalTarget: modalTarget.current || undefined,
-        setAlertMessage,
-      }}
-    >
-      {children}
+    <>
       <div className="modal-container" ref={modalTarget} />
-    </AppContext.Provider>
+      <AppContext.Provider
+        value={{
+          alertMessage,
+          modalTarget: modalTarget,
+          setAlertMessage,
+        }}
+      >
+        {children}
+      </AppContext.Provider>
+    </>
   );
 };

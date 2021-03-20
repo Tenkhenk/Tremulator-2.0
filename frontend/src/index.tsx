@@ -16,7 +16,6 @@ import { Alert } from "./components/alert";
 // contexts
 import { config } from "./config/index";
 import { AuthenticationProvider, oidcLog } from "@axa-fr/react-oidc-context";
-import { AppContextProvider } from "./context/app-context-provider";
 // auth
 import { Authenticating, Authenticated, NotAuthenticated, SessionLost } from "./pages/auth/auth-messages";
 
@@ -36,16 +35,14 @@ ReactDOM.render(
     notAuthorized={NotAuthenticated}
     sessionLostComponent={SessionLost}
   >
-    <AppContextProvider>
-      <Router>
-        <Header />
-        <Alert />
-        <main className="container" role="main">
-          <RouterWrapper routes={routes} />
-        </main>
-        <Footer />
-      </Router>
-    </AppContextProvider>
+    <Router>
+      <Header />
+      <Alert />
+      <main className="container" role="main">
+        <RouterWrapper routes={routes} />
+      </main>
+      <Footer />
+    </Router>
   </AuthenticationProvider>,
   document.getElementById("root"),
 );

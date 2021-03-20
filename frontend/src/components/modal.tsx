@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import { AppContext } from "../context/app-context";
 import { createPortal } from "react-dom";
 
@@ -26,10 +26,11 @@ const Modal: FC<Props> = ({ onClose, title, icon, children }) => (
   </div>
 );
 
-const ModalPortal: FC<Props> = (props) => (
-  <AppContext.Consumer>
-    {(context) => context.modalTarget && createPortal(<Modal {...props} />, context.modalTarget)}
-  </AppContext.Consumer>
-);
+const ModalPortal: FC<Props> = (props) => {
+  const context = useContext(AppContext);
+  console.log(context);
+  if (context.modalTarget.current) return createPortal(<Modal {...props} />, context.modalTarget.current);
+  else return null;
+};
 
 export default ModalPortal;

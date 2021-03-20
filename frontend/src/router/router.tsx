@@ -1,7 +1,7 @@
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import { RouteDefinition } from "./routes";
-import { CheckAuth } from "./check-auth";
+import { RouteWrapper } from "./route-wrapper";
 
 interface Props {
   path?: string;
@@ -58,9 +58,9 @@ export const RouterWrapper: React.FC<Props> = (props: Props) => {
                 exact={route.exact || true}
                 render={(props) => {
                   return (
-                    <CheckAuth secured={route.secured}>
+                    <RouteWrapper secured={route.secured}>
                       <route.component {...props.match.params} />
-                    </CheckAuth>
+                    </RouteWrapper>
                   );
                 }}
               />
