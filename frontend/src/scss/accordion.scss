@@ -1,5 +1,10 @@
 .accordion {
   .card {
+    .card-header {
+      button {
+        padding-right: 0;
+      }
+    }
     .card-body {
       display: none;
     }

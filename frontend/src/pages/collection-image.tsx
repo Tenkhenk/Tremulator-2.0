@@ -90,14 +90,20 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
           <div className="image-viewer">
             <div className="row image-viewer-header page-title">
               <div className="col">
-                <h2>{image.name || image.url} </h2>
-                <button title="Delete picture" className="btn btn-link" onClick={() => setNeedsConfirmation(true)}>
-                  <i className="fas fa-trash-alt"></i>
-                </button>
+                <div>
+                  <h2>{image.name || image.url} </h2>
+                  <button title="Delete picture" className="btn btn-link" onClick={() => setNeedsConfirmation(true)}>
+                    <i className="fas fa-trash-alt"></i>
+                  </button>
+                </div>
+                <div className="h5">
+                  <i className="fas fa-vector-square mr-1"></i>
+                  {image.annotations.length}
+                </div>
               </div>
             </div>
-            <div className="image-viewer-body">
-              <div className="image">
+            <div className="row image-viewer-body">
+              <div className="col-8 image">
                 <MapContainer doubleClickZoom={!Browser.mobile} center={[0, 0]} zoom={0} crs={L.CRS.Simple}>
                   <IIIFLayer
                     url={image.url}
@@ -130,7 +136,6 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                         });
                       }}
                       onUpdate={(e) => {
-                        // console.log(Object.assign({}, annotation, { geometry: e }));
                         setAnnotation((annotation) => Object.assign({}, annotation, { geometry: e }));
                       }}
                       onSelect={(id) => {
@@ -144,7 +149,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                 </MapContainer>
               </div>
 
-              <div className="annotation">
+              <div className="col-4 annotation">
                 {collection.schemas.length === 0 && (
                   <div>
                     <p>To create annotations, you must create an schema annotation schema</p>
@@ -157,10 +162,6 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                   <>
                     {(mode === "view" || mode === "edit") && (
                       <>
-                        <h3>
-                          <i className="fas fa-vector-square mr-1"></i>
-                          {image.annotations.length} annotations
-                        </h3>
                         {image.annotations.length === 0 && (
                           <p>To create an annotation, click on a shape button on the top-right corner of the image</p>
                         )}

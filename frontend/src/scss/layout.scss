@@ -94,10 +94,10 @@ html {
             h2 {
               margin-right: 10px;
               margin-bottom: 0;
-            }
-            button,
-            a {
-              font-size: 1.5em;
+              & + button,
+              a {
+                font-size: 1.5em;
+              }
             }
           }
         }

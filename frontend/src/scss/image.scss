@@ -11,8 +11,19 @@
 
   .image-viewer-header {
     height: 5em;
-    h2 {
-      display: inline-block;
+    display: flex;
+
+    div.col {
+      justify-content: space-between;
+      align-items: center;
+
+      div {
+        display: flex;
+        align-items: center;
+        h2 {
+          display: inline-block;
+        }
+      }
     }
   }
   .image-viewer-body {
@@ -23,7 +34,6 @@
       flex-grow: 1;
     }
     .annotation {
-      width: 30%;
       overflow: auto;
     }
   }
