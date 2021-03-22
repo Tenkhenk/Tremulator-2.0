@@ -48,11 +48,22 @@ export const Collection: React.FC<Props> = (props: Props) => {
           </div>
 
           <div className="row">
-            <div className="col gallery">
-              {collection.images.map((image: ImageModel) => (
-                <Image key={image.id} image={image} />
-              ))}
-            </div>
+            {collection.images.length > 0 && (
+              <div className="col gallery">
+                {collection.images.map((image: ImageModel) => (
+                  <Image key={image.id} image={image} />
+                ))}
+              </div>
+            )}
+            {collection.images.length === 0 && (
+              <div>
+                <p>There is no images ...</p>
+                <button onClick={() => setIsAddingPicture(true)} className="btn btn-link">
+                  <i className="fas fa-upload"></i>
+                  Start by upload images
+                </button>
+              </div>
+            )}
           </div>
           {isAddingPicture && (
             <Modal title="Add pictures" onClose={() => setIsAddingPicture(false)}>

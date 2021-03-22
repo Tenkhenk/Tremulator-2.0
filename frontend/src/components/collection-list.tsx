@@ -41,9 +41,12 @@ export const CollectionList: React.FC<Props> = (props: Props) => {
       <div>
         {!loading && !error && data && data.length === 0 && (
           <p>
-            You can't access any collections yet.
+            There is no collection ...
             <br />
-            Ask for access to a collection's owner or create your own collection
+            Ask an access to a collection's owner or{" "}
+            <Link to={"/collections/new"} title="Create a new collection">
+              create your own collection
+            </Link>
           </p>
         )}
       </div>

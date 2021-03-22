@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import ModalPortal from "../components/modal";
 import { AppContext } from "../context/app-context";
 import { useGet, useDelete } from "../hooks/api";
@@ -106,76 +106,93 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                       setBbox(e.toBBoxString());
                     }}
                   />
-                  <IIIFLayerAnnotation
-                    editMode={mode !== "view"}
-                    addMode={mode !== "new"}
-                    schemas={collection.schemas}
-                    annotations={
-                      annotation
-                        ? image.annotations.filter((e) => e.id !== annotation.id).concat([annotation])
-                        : image.annotations
-                    }
-                    selected={annotation ? annotation.id : selectedAnnotation}
-                    onCreate={(geo) => {
-                      setMode("new");
-                      setAnnotation({
-                        id: -1,
-                        data: {},
-                        geometry: geo,
-                        schema_id: -1,
-                        image_id: image.id,
-                        created_at: "",
-                        updated_at: "",
-                      });
-                    }}
-                    onUpdate={(e) => {
-                      // console.log(Object.assign({}, annotation, { geometry: e }));
-                      setAnnotation((annotation) => Object.assign({}, annotation, { geometry: e }));
-                    }}
-                    onSelect={(id) => {
-                      setSelectedAnnotation((prev) => {
-                        if (prev === id) return null;
-                        return id;
-                      });
-                    }}
-                  />
+                  {collection.schemas.length > 0 && (
+                    <IIIFLayerAnnotation
+                      editMode={mode !== "view"}
+                      addMode={mode !== "new"}
+                      schemas={collection.schemas}
+                      annotations={
+                        annotation
+                          ? image.annotations.filter((e) => e.id !== annotation.id).concat([annotation])
+                          : image.annotations
+                      }
+                      selected={annotation ? annotation.id : selectedAnnotation}
+                      onCreate={(geo) => {
+                        setMode("new");
+                        setAnnotation({
+                          id: -1,
+                          data: {},
+                          geometry: geo,
+                          schema_id: -1,
+                          image_id: image.id,
+                          created_at: "",
+                          updated_at: "",
+                        });
+                      }}
+                      onUpdate={(e) => {
+                        // console.log(Object.assign({}, annotation, { geometry: e }));
+                        setAnnotation((annotation) => Object.assign({}, annotation, { geometry: e }));
+                      }}
+                      onSelect={(id) => {
+                        setSelectedAnnotation((prev) => {
+                          if (prev === id) return null;
+                          return id;
+                        });
+                      }}
+                    />
+                  )}
                 </MapContainer>
               </div>
 
               <div className="annotation">
-                {(mode === "view" || mode === "edit") && (
-                  <>
-                    <h3>
-                      <i className="fas fa-vector-square mr-1"></i>
-                      {image.annotations.length} annotations
-                    </h3>
-                    <AnnotationAccordion
-                      collection={collection}
-                      annotations={image.annotations.map((a) => (a.id === annotation?.id ? annotation : a))}
-                      selected={selectedAnnotation}
-                      setSelected={(a) => setSelectedAnnotation(a?.id || null)}
-                      editMode={mode === "edit"}
-                      setEditMode={(b: boolean) => setMode(b ? "edit" : "view")}
-                      onSaved={() => fetch()}
-                    />
-                  </>
+                {collection.schemas.length === 0 && (
+                  <div>
+                    <p>To create annotations, you must create an schema annotation schema</p>
+                    <Link className="mr-1" to={`/collections/${collection.id}/schemas/new`}>
+                      Create a schema
+                    </Link>
+                  </div>
                 )}
-                {mode === "new" && collection && annotation && (
-                  <AnnotationForm
-                    annotation={annotation}
-                    schemas={collection?.schemas || []}
-                    collectionID={collection.id}
-                    onSaved={(id) => {
-                      setAnnotation(null);
-                      setSelectedAnnotation(id);
-                      setMode("view");
-                      fetch();
-                    }}
-                    onCancel={() => {
-                      setAnnotation(null);
-                      setMode("view");
-                    }}
-                  />
+                {collection.schemas.length > 0 && (
+                  <>
+                    {(mode === "view" || mode === "edit") && (
+                      <>
+                        <h3>
+                          <i className="fas fa-vector-square mr-1"></i>
+                          {image.annotations.length} annotations
+                        </h3>
+                        {image.annotations.length === 0 && (
+                          <p>To create an annotation, click on a shape button on the top-right corner of the image</p>
+                        )}
+                        <AnnotationAccordion
+                          collection={collection}
+                          annotations={image.annotations.map((a) => (a.id === annotation?.id ? annotation : a))}
+                          selected={selectedAnnotation}
+                          setSelected={(a) => setSelectedAnnotation(a?.id || null)}
+                          editMode={mode === "edit"}
+                          setEditMode={(b: boolean) => setMode(b ? "edit" : "view")}
+                          onSaved={() => fetch()}
+                        />
+                      </>
+                    )}
+                    {mode === "new" && collection && annotation && (
+                      <AnnotationForm
+                        annotation={annotation}
+                        schemas={collection?.schemas || []}
+                        collectionID={collection.id}
+                        onSaved={(id) => {
+                          setAnnotation(null);
+                          setSelectedAnnotation(id);
+                          setMode("view");
+                          fetch();
+                        }}
+                        onCancel={() => {
+                          setAnnotation(null);
+                          setMode("view");
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             </div>

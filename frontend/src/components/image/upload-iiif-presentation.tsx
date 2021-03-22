@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import urlRegexpSafe from "url-regex-safe";
+import React, { useContext, useState } from "react";
 import { usePost } from "../../hooks/api";
 import { CollectionModelFull, ImageModel } from "../../types/index";
 import { AppContext } from "../../context/app-context";
