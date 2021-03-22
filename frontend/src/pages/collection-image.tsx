@@ -65,6 +65,8 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
   const [mode, setMode] = useQueryParam<string>("mode", "view");
   // Map BBOX
   const [bbox, setBbox] = useQueryParam<string>("bbox", "", true);
+  // iiif quality mode
+  const [quality, setQuality] = useQueryParam<string>("quality", "default");
 
   // When error happened
   //  => set the alerte
@@ -116,6 +118,8 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                   <IIIFLayer
                     url={image.url}
                     bbox={fromBBoxString(bbox)}
+                    quality={quality}
+                    setQuality={setQuality}
                     onMoveEnd={(e) => {
                       setBbox(e.toBBoxString());
                     }}
@@ -160,8 +164,10 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
               <div className="col-4 annotation">
                 {collection.schemas.length === 0 && (
                   <div>
-                    <p>To create annotations, you must create an schema annotation schema</p>
-                    <Link className="mr-1" to={`/collections/${collection.id}/schemas/new`}>
+                    <p className="text-center text-muted">
+                      To create annotations, you must create an schema annotation schema
+                    </p>
+                    <Link title="Create a schema" to={`/collections/${collection.id}/schemas/new`}>
                       Create a schema
                     </Link>
                   </div>
@@ -171,7 +177,9 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                     {(mode === "view" || mode === "edit") && (
                       <>
                         {image.annotations.length === 0 && (
-                          <p>To create an annotation, click on a shape button on the top-right corner of the image</p>
+                          <p className="text-center text-muted">
+                            To create an annotation, click on a shape button on the top-right corner of the image
+                          </p>
                         )}
                         <AnnotationAccordion
                           collection={collection}

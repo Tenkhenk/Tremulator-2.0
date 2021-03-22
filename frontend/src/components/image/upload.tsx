@@ -94,16 +94,18 @@ const ImageUpload: React.FC<Props> = (props: Props) => {
                 Open File Dialog
               </button>
             </div>
-            <aside>
-              <h4>Files</h4>
-              <ul style={{ maxHeight: "200px", overflowY: "scroll" }}>
-                {files.map((file) => (
-                  <li key={file.name}>
-                    {file.name} - {file.size} bytes
-                  </li>
-                ))}
-              </ul>
-            </aside>
+            {files.length > 0 && (
+              <aside>
+                <h4>Files</h4>
+                <ul style={{ maxHeight: "200px", overflowY: "scroll" }}>
+                  {files.map((file) => (
+                    <li key={file.name}>
+                      {file.name} - {file.size} bytes
+                    </li>
+                  ))}
+                </ul>
+              </aside>
+            )}
           </>
         )}
       </div>

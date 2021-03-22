@@ -66,7 +66,7 @@ export const Collection: React.FC<Props> = (props: Props) => {
             )}
           </div>
           {isAddingPicture && (
-            <Modal title="Add pictures" onClose={() => setIsAddingPicture(false)}>
+            <Modal icon="fa-images" title="Add pictures" onClose={() => setIsAddingPicture(false)}>
               <ImageUploadForms
                 collection={collection}
                 onUploaded={() => {
