@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import ModalPortal from "./../modal";
 import { useDelete } from "../../hooks/api";
 import { AppContext } from "../../context/app-context";
+import Loader from "../loader";
 
 // function to compute the tumbnail url from the iiif url
 const thumbnailURL = (iiifURL: string) => iiifURL.split("/").slice(0, -1).join("/") + "/full/200,/0/default.jpg";
@@ -51,10 +52,14 @@ export const Image: FC<Props> = (props: Props) => {
         <ModalPortal title="Confirmation needed" icon="fa-question-circle" onClose={() => setDeleteConfirmation(false)}>
           <>
             <div className="modal-body">
-              <div className="text-center h5">
-                You are about to delete the image "{image.name}" and its associated annotations ({image.nb_annotations}
-                ).
-              </div>
+              {loading && <Loader />}
+              {!loading && (
+                <div className="text-center h5">
+                  You are about to delete the image "{image.name}" and its associated annotations (
+                  {image.nb_annotations}
+                  ).
+                </div>
+              )}
             </div>
             <div className="modal-footer">
               <button className="btn btn-secondary" onClick={() => setDeleteConfirmation(false)}>
@@ -63,6 +68,7 @@ export const Image: FC<Props> = (props: Props) => {
               </button>
               <button
                 className="btn btn-danger"
+                disabled={loading}
                 onClick={async (e) => {
                   try {
                     await remove();
@@ -78,7 +84,7 @@ export const Image: FC<Props> = (props: Props) => {
                   }
                 }}
               >
-                <i className={`fas  ${loading ? "fa-spinner" : "fa-trash-alt"}`}></i>
+                <i className={`fas fa-trash-alt`}></i>
                 Delete
               </button>
             </div>

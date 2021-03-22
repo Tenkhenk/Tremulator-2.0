@@ -42,7 +42,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
   const { data: image, loading: imageLoading, error: imageError, fetch } = useGet<ImageModelFull>(
     `/collections/${collectionID}/images/${imageID}`,
   );
-  const [deleteImage] = useDelete(`/collections/${collectionID}/images/${imageID}`);
+  const [deleteImage, { loading: delLoading }] = useDelete(`/collections/${collectionID}/images/${imageID}`);
 
   // States
   // ~~~~~~~~~~~~~~~~~~
@@ -188,14 +188,17 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
             >
               <>
                 <div className="modal-body">
-                  <div className="text-center h5">
-                    Do you really want to delete
-                    <br />"{image.name}"
-                    {image.annotations.length > 0 && (
-                      <span> and the {image.annotations.length} associated annotations</span>
-                    )}
-                    ?
-                  </div>
+                  {delLoading && <Loader />}
+                  {!delLoading && (
+                    <div className="text-center h5">
+                      Do you really want to delete
+                      <br />"{image.name}"
+                      {image.annotations.length > 0 && (
+                        <span> and the {image.annotations.length} associated annotations</span>
+                      )}
+                      ?
+                    </div>
+                  )}
                 </div>
                 <div className="modal-footer">
                   <button className="btn btn-secondary" onClick={() => setNeedsConfirmation(false)}>
@@ -203,6 +206,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                   </button>
                   <button
                     className="btn btn-danger"
+                    disabled={delLoading}
                     onClick={async () => {
                       try {
                         await deleteImage();

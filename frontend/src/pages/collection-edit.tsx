@@ -140,16 +140,19 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
             >
               <>
                 <div className="modal-body">
-                  <div className="text-center h5">
-                    You are about to delete the collection "{collection.name}" and the {collection.images.length}{" "}
-                    associated images?
-                  </div>
+                  {delLoading && <Loader />}
+                  {!delLoading && (
+                    <div className="text-center h5">
+                      You are about to delete the collection "{collection.name}" and the {collection.images.length}{" "}
+                      associated images?
+                    </div>
+                  )}
                 </div>
                 <div className="modal-footer">
                   <button className="btn btn-secondary" onClick={() => setNeedsConfirmation(false)}>
                     <i className="fas fa-window-close"></i> Cancel
                   </button>
-                  <button className="btn btn-danger" onClick={(e) => del()}>
+                  <button className="btn btn-danger" onClick={(e) => del()} disabled={delLoading}>
                     <i className="fas fa-trash-alt"></i> Delete
                   </button>
                 </div>

@@ -4,6 +4,7 @@ import { CollectionModel } from "../types";
 import ModalPortal from "./modal";
 import { useDelete } from "../hooks/api";
 import { AppContext } from "../context/app-context";
+import Loader from "./loader";
 
 interface Props {
   collection: CollectionModel;
@@ -54,10 +55,13 @@ export const Collection: FC<Props> = (props: Props) => {
         <ModalPortal title="Confirmation needed" icon="fa-question-circle" onClose={() => setDeleteConfirmation(false)}>
           <>
             <div className="modal-body">
-              <div className="text-center h5">
-                You are about to delete the collection "{collection.name}" and its associated images (
-                {collection.nb_images}).
-              </div>
+              {loading && <Loader />}
+              {!loading && (
+                <div className="text-center h5">
+                  You are about to delete the collection "{collection.name}" and its associated images (
+                  {collection.nb_images}).
+                </div>
+              )}
             </div>
             <div className="modal-footer">
               <button className="btn btn-secondary" onClick={() => setDeleteConfirmation(false)}>
@@ -66,6 +70,7 @@ export const Collection: FC<Props> = (props: Props) => {
               </button>
               <button
                 className="btn btn-danger"
+                disabled={loading}
                 onClick={async (e) => {
                   try {
                     await remove();
@@ -81,7 +86,7 @@ export const Collection: FC<Props> = (props: Props) => {
                   }
                 }}
               >
-                <i className={`fas ${loading ? "fa-spinner" : "fa-trash-alt"}`}></i>
+                <i className={`fas fa-trash-alt`}></i>
                 Delete
               </button>
             </div>
