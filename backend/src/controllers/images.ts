@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Put, Delete, Route, Response, Request, Query, Path, Security, Tags } from "tsoa";
 import { Inject } from "typescript-ioc";
 import * as Boom from "@hapi/boom";
+import axios from "axios";
 import { plainToClass } from "class-transformer";
 import { validate } from "class-validator";
 import { MoreThan, LessThan } from "typeorm";
@@ -160,6 +161,62 @@ export class ImagesController extends DefaultController {
 
     this.setStatus(201);
     return result.map((i) => imageEntityToModel(i));
+  }
+
+  /**
+   * Import images of a IIIF presentation manifest into the collection.
+   */
+  @Post("{collectionId}/images/iiif_presentation")
+  @Security("auth")
+  @Response("201", "Created")
+  @Response("400", "Bad Request")
+  @Response("401", "Unauthorized")
+  @Response("403", "Forbidden")
+  @Response("404", "Not Found")
+  @Response("500", "Internal Error")
+  public async iiifPresentation(
+    @Request() req: ExpressAuthRequest,
+    @Path() collectionId: number,
+    @Body() body: { url: string },
+  ): Promise<Array<ImageModel>> {
+    // Get the collection
+    const collection = await this.getCollection(req, collectionId);
+
+    // Retrieve the IIIF manifest
+    try {
+      const response = await axios({
+        method: "GET",
+        url: body.url,
+      });
+      let order = 0;
+      const result: Array<ImageEntity> = await Promise.all(
+        (response.data.sequences || [])
+          .map((seq) =>
+            (seq.canvases || [])
+              .map((canvas) => {
+                const name = canvas.label;
+                return (canvas.images || []).map(async (img, index) => {
+                  order++;
+                  console.log(img.resource);
+                  // Create the image
+                  const image = new ImageEntity();
+                  image.name = index === 0 ? name : `${name} - ${index}`;
+                  image.url = img.resource.service["@id"] + "/info.json";
+                  image.order = order;
+                  image.collection = collection;
+                  await image.save();
+                  return image;
+                });
+              })
+              .flat(),
+          )
+          .flat(),
+      );
+      this.setStatus(201);
+      return result.map((i) => imageEntityToModel(i));
+    } catch (e) {
+      throw Boom.badRequest("IIIF presentation invalid");
+    }
   }
 
   /**

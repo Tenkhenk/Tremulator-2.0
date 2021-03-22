@@ -37,12 +37,13 @@ export class ImageEntity extends BaseEntity {
 
   @Column({ nullable: false })
   @IsUrl()
+  @IsNotEmpty()
   url: string;
 
   @Column({ nullable: true })
   path: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   order: number;
 
   @ManyToOne(() => CollectionEntity, (collection) => collection.images, { onDelete: "CASCADE" })

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { CollectionModelFull } from "../types";
-import ImageUpload from "./image-upload";
-import ImageURLUpload from "./image-url-upload";
+import { CollectionModelFull } from "../../types";
+import ImageUpload from "./upload";
+import ImageURLUpload from "./upload-url";
+import ImageIiifPresentation from "./upload-iiif-presentation";
 
 interface Props {
   onUploaded: () => void;
@@ -11,7 +12,7 @@ interface Props {
 enum UploadMethod {
   LocalImage = "LocalImage",
   DistantImage = "DistantImage",
-  IIIFImage = "IIIFImage",
+  IIIFPresentation = "IIIFPresentation",
 }
 
 const ImageUploadForms: React.FC<Props> = (props: Props) => {
@@ -39,10 +40,10 @@ const ImageUploadForms: React.FC<Props> = (props: Props) => {
         </li>
         <li className="nav-item">
           <button
-            onClick={() => setUploadMethod(UploadMethod.IIIFImage)}
-            className={`btn btn-link nav-link ${uploadMethod === UploadMethod.IIIFImage ? "active" : ""}`}
+            onClick={() => setUploadMethod(UploadMethod.IIIFPresentation)}
+            className={`btn btn-link nav-link ${uploadMethod === UploadMethod.IIIFPresentation ? "active" : ""}`}
           >
-            IIIF Images
+            IIIF Presentation
           </button>
         </li>
       </ul>
@@ -50,6 +51,10 @@ const ImageUploadForms: React.FC<Props> = (props: Props) => {
       {uploadMethod === UploadMethod.LocalImage && <ImageUpload onUploaded={onUploaded} collection={collection} />}
       {/* DISTANT IMAGE UPLOAD */}
       {uploadMethod === UploadMethod.DistantImage && <ImageURLUpload onUploaded={onUploaded} collection={collection} />}
+      {/* IIIF Presentation */}
+      {uploadMethod === UploadMethod.IIIFPresentation && (
+        <ImageIiifPresentation onUploaded={onUploaded} collection={collection} />
+      )}
     </div>
   );
 };

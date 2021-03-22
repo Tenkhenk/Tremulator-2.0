@@ -1,9 +1,9 @@
 import React, { FC, useContext, useState } from "react";
-import { ImageModel } from "../types";
+import { ImageModel } from "../../types";
 import { Link } from "react-router-dom";
-import ModalPortal from "./modal";
-import { useDelete } from "../hooks/api";
-import { AppContext } from "../context/app-context";
+import ModalPortal from "./../modal";
+import { useDelete } from "../../hooks/api";
+import { AppContext } from "../../context/app-context";
 
 // function to compute the tumbnail url from the iiif url
 const thumbnailURL = (iiifURL: string) => iiifURL.split("/").slice(0, -1).join("/") + "/full/200,/0/default.jpg";
@@ -12,7 +12,7 @@ interface Props {
   image: ImageModel;
   onDelete?: () => void;
 }
-export const ImageThumbnail: FC<Props> = (props: Props) => {
+export const Image: FC<Props> = (props: Props) => {
   const { image, onDelete } = props;
 
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);

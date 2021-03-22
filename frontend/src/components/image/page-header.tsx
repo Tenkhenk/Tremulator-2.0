@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
-import { CollectionModelFull, ImageModelFull } from "../types";
+import { CollectionModelFull, ImageModelFull } from "../../types";
 
 interface Props {
   collection: CollectionModelFull;

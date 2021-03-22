@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState, useMemo, CSSProperties } from "react";
 import { useDropzone } from "react-dropzone";
 import { uniqBy } from "lodash";
-import { CollectionModelFull, ImageModel } from "../types";
-import { AppContext } from "../context/app-context";
-import { usePost } from "../hooks/api";
-import { config } from "../config";
-import Loader from "./loader";
+import { CollectionModelFull, ImageModel } from "../../types";
+import { AppContext } from "../../context/app-context";
+import { usePost } from "../../hooks/api";
+import { config } from "../../config";
+import Loader from "./../loader";
 
 const baseStyle: CSSProperties = {
   flex: 1,

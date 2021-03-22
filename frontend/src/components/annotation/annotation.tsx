@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState, useEffect } from "react";
+import React, { FC, useContext, useState } from "react";
 import { AnnotationModel, CollectionModelFull } from "../../types";
 import ModalPortal from "../modal";
 import { useDelete } from "../../hooks/api";

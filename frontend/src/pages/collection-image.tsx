@@ -8,7 +8,7 @@ import { AnnotationModel, CollectionModelFull, ImageModelFull } from "../types/i
 import Loader from "../components/loader";
 import { PageHeader } from "../components/page-header";
 import { AnnotationAccordion } from "../components/annotation/accordion";
-import { ImagePageHeader } from "../components/image-page-header";
+import { ImagePageHeader } from "../components/image/page-header";
 import { MapContainer } from "react-leaflet";
 import { IIIFLayer } from "../components/iiif";
 import { IIIFLayerAnnotation } from "../components/iiif/annotation";

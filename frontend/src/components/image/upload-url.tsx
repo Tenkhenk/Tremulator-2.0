@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import urlRegexpSafe from "url-regex-safe";
-import { usePost } from "../hooks/api";
-import { CollectionModelFull, ImageModel } from "../types/index";
-import { AppContext } from "../context/app-context";
-import Loader from "./loader";
+import { usePost } from "../../hooks/api";
+import { CollectionModelFull, ImageModel } from "../../types/index";
+import { AppContext } from "../../context/app-context";
+import Loader from "./../loader";
 
 interface Props {
   onUploaded: () => void;
