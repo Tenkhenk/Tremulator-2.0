@@ -19,10 +19,10 @@ export class UserEntity extends BaseEntity {
   email: string;
 
   @CreateDateColumn()
-  createdDate: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updated_at: Date;
 
   @Column({ nullable: true })
   firstname: string;

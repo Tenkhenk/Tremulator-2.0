@@ -94,12 +94,13 @@ export class ImagesController extends DefaultController {
     const files = await this.handleArrayFileUpload(req, "files", `${collectionId}`);
 
     const result = await Promise.all(
-      files.map(async (file) => {
+      files.map(async (file, index) => {
         // Save the image
         const image = new ImageEntity();
         image.name = file.originalname;
         image.url = `/iiif/2/${file.path.replace(config.data.path + "/", "").replace(/\//, "%2F")}/info.json`;
         image.path = file.path;
+        image.order = collection.images_id.length + 1 + index;
         image.collection = collection;
         await image.save();
 
@@ -133,7 +134,7 @@ export class ImagesController extends DefaultController {
     if (!body || !body.urls || !Array.isArray(body.urls)) throw Boom.badRequest("Bad value for urls");
 
     const result = await Promise.all(
-      body.urls.map(async (url) => {
+      body.urls.map(async (url, index) => {
         // Handle the uploaded file
         const file = await this.handleFileDownload(url, `${collectionId}`);
 
@@ -143,6 +144,7 @@ export class ImagesController extends DefaultController {
         image.url = `/iiif/2/${file.path.replace(config.data.path + "/", "").replace(/\//, "%2F")}/info.json`;
         image.path = file.path;
         image.collection = collection;
+        image.order = collection.images_id.length + 1 + index;
         await image.save();
 
         return image;
@@ -172,68 +174,6 @@ export class ImagesController extends DefaultController {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, id, ["collection", "annotations"]);
     return imageEntityToModelFull(image);
-  }
-
-  /**
-   * Get the next image from the collection.
-   */
-  @Get("{collectionId}/images/{id}/next")
-  @Security("auth")
-  @Response("200", "Success")
-  @Response("204", "No Content")
-  @Response("400", "Bad Request")
-  @Response("401", "Unauthorized")
-  @Response("403", "Forbidden")
-  @Response("404", "Not Found")
-  @Response("500", "Internal Error")
-  public async next(
-    @Request() req: ExpressAuthRequest,
-    @Path() collectionId: number,
-    @Path() id: number,
-  ): Promise<ImageModelFull> {
-    // Retrieve the image
-    const image = await this.getImage(req, collectionId, id, ["collection", "annotations"]);
-
-    // Get the next image
-    const nextImage = await this.db.getRepository(ImageEntity).find({
-      relations: ["collection", "annotations"],
-      take: 1,
-      ...(image.order !== null
-        ? { where: { order: MoreThan(image.order) }, order: { order: "ASC" } }
-        : { where: { id: MoreThan(image.id) }, order: { id: "ASC" } }),
-    });
-    return nextImage[0] ? imageEntityToModelFull(nextImage[0]) : null;
-  }
-
-  /**
-   * Get the previous image from the collection.
-   */
-  @Get("{collectionId}/images/{id}/previous")
-  @Security("auth")
-  @Response("200", "Success")
-  @Response("204", "No Content")
-  @Response("400", "Bad Request")
-  @Response("401", "Unauthorized")
-  @Response("403", "Forbidden")
-  @Response("404", "Not Found")
-  @Response("500", "Internal Error")
-  public async previous(
-    @Request() req: ExpressAuthRequest,
-    @Path() collectionId: number,
-    @Path() id: number,
-  ): Promise<ImageModelFull> {
-    // Retrieve the image
-    const image = await this.getImage(req, collectionId, id, ["collection", "annotations"]);
-
-    // Get the next image
-    const nextImage = await this.db.getRepository(ImageEntity).find({
-      relations: ["collection", "annotations"],
-      take: 1,
-      ...(image.order !== null
-        ? { where: { order: LessThan(image.order) }, order: { order: "DESC" } }
-        : { where: { id: LessThan(image.id) }, order: { id: "DESC" } }),
-    });
-    return nextImage[0] ? imageEntityToModelFull(nextImage[0]) : null;
   }
 
   /**

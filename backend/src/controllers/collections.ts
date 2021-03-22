@@ -12,7 +12,7 @@ import {
   collectionEntityToModel,
   collectionEntityToModelFull,
   CollectionModel,
-  CollectionModelWithoutId,
+  CollectionData,
   CollectionModelFull,
   CollectionEntity,
 } from "../entities/collection";
@@ -78,10 +78,7 @@ export class CollectionsController extends DefaultController {
   @Response("400", "Bad Request")
   @Response("401", "Unauthorized")
   @Response("500", "Internal Error")
-  public async create(
-    @Request() req: ExpressAuthRequest,
-    @Body() body: CollectionModelWithoutId,
-  ): Promise<CollectionModel> {
+  public async create(@Request() req: ExpressAuthRequest, @Body() body: CollectionData): Promise<CollectionModel> {
     // Validate the body
     const errors = await validate(plainToClass(CollectionEntity, body));
     this.classValidationErrorToHttpError(errors);
@@ -106,11 +103,21 @@ export class CollectionsController extends DefaultController {
   @Response("403", "Forbidden")
   @Response("404", "Not Found")
   @Response("500", "Internal Error")
-  public async get(@Request() req: ExpressAuthRequest, @Path() id: number): Promise<CollectionModelFull> {
+  public async get(
+    @Request() req: ExpressAuthRequest,
+    @Path() id: number,
+    @Query() sortField: string = "order",
+    @Query() sortOrder: string = "ASC",
+  ): Promise<CollectionModelFull> {
     // Get the collection and check rights
     const collection = await this.getCollection(req, id, ["users", "owner", "schemas", "images"]);
+    const result = collectionEntityToModelFull(collection, sortField);
 
-    return collectionEntityToModelFull(collection);
+    if (sortOrder.toLowerCase() === "desc") {
+      result.images = result.images.reverse();
+    }
+
+    return result;
   }
 
   /**
@@ -127,7 +134,7 @@ export class CollectionsController extends DefaultController {
   public async update(
     @Request() req: ExpressAuthRequest,
     @Path() id: number,
-    @Body() body: CollectionModel,
+    @Body() body: CollectionData,
   ): Promise<void> {
     // Get the collection
     const collection = await this.getCollection(req, id);

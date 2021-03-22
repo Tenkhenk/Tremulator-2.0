@@ -15,8 +15,8 @@ import {
   AnnotationEntity,
   annotationEntityToModel,
   annotationEntityToModelFull,
+  AnnotationData,
   AnnotationModel,
-  AnnotationModelWithoutId,
   AnnotationModelFull,
 } from "../entities/annotation";
 
@@ -41,7 +41,7 @@ export class AnnotationsController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() imageId: number,
-    @Body() body: AnnotationModelWithoutId,
+    @Body() body: AnnotationData,
     @Query() schemaId?: number,
   ): Promise<AnnotationModel> {
     // Retrieve the image
@@ -123,7 +123,7 @@ export class AnnotationsController extends DefaultController {
     @Path() collectionId: number,
     @Path() imageId: number,
     @Path() id: number,
-    @Body() body: AnnotationModelWithoutId,
+    @Body() body: AnnotationData,
   ): Promise<void> {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, imageId);

@@ -8,9 +8,10 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  RelationId,
 } from "typeorm";
 import { IsNotEmpty, IsUrl } from "class-validator";
-import { pick } from "lodash";
+import { omit, pick } from "lodash";
 import * as fs from "fs";
 import { collectionEntityToModel, CollectionEntity, CollectionModel } from "./collection";
 import { annotationEntityToModel, AnnotationEntity, AnnotationModel } from "./annotation";
@@ -25,10 +26,10 @@ export class ImageEntity extends BaseEntity {
   id: number;
 
   @CreateDateColumn()
-  createdDate: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updated_at: Date;
 
   @Column()
   @IsNotEmpty()
@@ -47,8 +48,14 @@ export class ImageEntity extends BaseEntity {
   @ManyToOne(() => CollectionEntity, (collection) => collection.images, { onDelete: "CASCADE" })
   collection: CollectionEntity;
 
+  @RelationId((i: ImageEntity) => i.collection)
+  collection_id: number;
+
   @OneToMany(() => AnnotationEntity, (annotation) => annotation.image)
   annotations: Array<AnnotationEntity>;
+
+  @RelationId((i: ImageEntity) => i.annotations)
+  annotations_id: number[];
 
   @AfterRemove()
   removeFile() {
@@ -61,24 +68,30 @@ export class ImageEntity extends BaseEntity {
   }
 }
 
-/**
- * Object model: just the table properties
- */
-export type ImageModel = Pick<ImageEntity, "id" | "name" | "url">;
-export function imageEntityToModel(item: ImageEntity): ImageModel {
-  return pick(item, ["id", "name", "url"]);
-}
-
-/**
- * Object full
- */
-export type ImageModelFull = ImageModel & {
-  collection: CollectionModel;
-  annotations: Array<AnnotationModel>;
+// For forms
+export type ImageData = Pick<ImageEntity, "name" | "url">;
+// Just the table properties with forgein keys
+export type ImageModel = Pick<
+  ImageEntity,
+  "id" | "created_at" | "updated_at" | "name" | "order" | "url" | "collection_id"
+> & {
+  nb_annotations: number;
 };
+// Full
+export type ImageModelFull = Omit<ImageModel, "collection_id" | "nb_annotations"> & {
+  collection: CollectionModel;
+  annotations: AnnotationModel[];
+};
+
+export function imageEntityToModel(item: ImageEntity): ImageModel {
+  return {
+    ...omit(item, ["path", "collection", "annotations", "annotations_id"]),
+    nb_annotations: item.annotations_id?.length || 0,
+  };
+}
 export function imageEntityToModelFull(item: ImageEntity): ImageModelFull {
   return {
-    ...pick(item, ["id", "name", "url"]),
+    ...omit(item, ["collection", "collection_id", "annotations", "annotations_id"]),
     collection: collectionEntityToModel(item.collection),
     annotations: item.annotations?.map((a) => annotationEntityToModel(a)) || [],
   };

@@ -10,9 +10,10 @@ import {
   OneToMany,
   ManyToMany,
   JoinTable,
+  RelationId,
 } from "typeorm";
 import { IsNotEmpty } from "class-validator";
-import { pick } from "lodash";
+import { sortBy, pick, omit } from "lodash";
 import * as fs from "fs";
 import { config } from "../config";
 import { schemaEntityToModel, SchemaEntity, SchemaModel } from "./schema";
@@ -29,10 +30,10 @@ export class CollectionEntity extends BaseEntity {
   id: number;
 
   @CreateDateColumn()
-  createdDate: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updated_at: Date;
 
   @Column()
   @IsNotEmpty()
@@ -44,14 +45,26 @@ export class CollectionEntity extends BaseEntity {
   @ManyToOne(() => UserEntity)
   owner: UserEntity;
 
+  @RelationId((c: CollectionEntity) => c.owner)
+  owner_id: string;
+
   @ManyToMany(() => UserEntity, (user) => user.collections)
   users: Array<UserEntity>;
+
+  @RelationId((c: CollectionEntity) => c.users)
+  users_id: string[];
 
   @OneToMany(() => ImageEntity, (image) => image.collection, { cascade: true, onDelete: "CASCADE" })
   images: Array<ImageEntity>;
 
+  @RelationId((c: CollectionEntity) => c.images)
+  images_id: number[];
+
   @OneToMany(() => SchemaEntity, (schema) => schema.collection, { cascade: true, onDelete: "CASCADE" })
   schemas: Array<SchemaEntity>;
+
+  @RelationId((c: CollectionEntity) => c.schemas)
+  schemas_id: number[];
 
   @BeforeRemove()
   removeCollectionDirectory() {
@@ -64,31 +77,40 @@ export class CollectionEntity extends BaseEntity {
   }
 }
 
-/**
- * Object model: just the table properties
- */
-export type CollectionModel = Pick<CollectionEntity, "id" | "name" | "description">;
-// Usefull type for creation
-export type CollectionModelWithoutId = Omit<CollectionModel, "id">;
-export function collectionEntityToModel(item: CollectionEntity): CollectionModel {
-  return pick(item, ["id", "name", "description"]);
-}
-
-/**
- * Object full
- */
-export type CollectionModelFull = Pick<CollectionEntity, "id" | "name" | "description"> & {
+// For forms
+export type CollectionData = Pick<CollectionEntity, "name" | "description">;
+// Just the table properties with forgein keys
+export type CollectionModel = Pick<
+  CollectionEntity,
+  "id" | "created_at" | "updated_at" | "name" | "description" | "owner_id"
+> & {
+  nb_users: number;
+  nb_images: number;
+  nb_schemas: number;
+};
+// Full
+export type CollectionModelFull = Omit<CollectionModel, "owner_id" | "nb_users" | "nb_images" | "nb_schemas"> & {
   owner: UserModel;
   users: Array<UserModel>;
   images: Array<ImageModel>;
   schemas: Array<SchemaModel>;
 };
-export function collectionEntityToModelFull(item: CollectionEntity): CollectionModelFull {
+
+export function collectionEntityToModel(item: CollectionEntity): CollectionModel {
   return {
-    ...pick(item, ["id", "name", "description"]),
+    ...omit(item, ["owner", "users", "users_id", "images", "images_id", "schemas", "schemas_id"]),
+    nb_users: item.users_id?.length || 0,
+    nb_images: item.images_id?.length || 0,
+    nb_schemas: item.schemas_id?.length || 0,
+  };
+}
+
+export function collectionEntityToModelFull(item: CollectionEntity, sortField = "order"): CollectionModelFull {
+  return {
+    ...omit(item, ["owner", "owner_id", "users", "users_id", "images", "images_id", "schemas", "schemas_id"]),
     owner: userEntityToModel(item.owner),
     users: item.users?.map((u) => userEntityToModel(u)),
-    images: item.images?.sort((a, b) => (b.order || b.id) - (a.order || a.id)).map((i) => imageEntityToModel(i)) || [],
+    images: sortBy(item.images, [sortField]).map((i) => imageEntityToModel(i)) || [],
     schemas: item.schemas?.map((s) => schemaEntityToModel(s)) || [],
   };
 }

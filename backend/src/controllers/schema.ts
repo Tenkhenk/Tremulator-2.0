@@ -11,8 +11,8 @@ import { DbService } from "../services/db";
 import {
   schemaEntityToModel,
   schemaEntityToModelFull,
+  SchemaData,
   SchemaModel,
-  SchemaModelWithoutId,
   SchemaModelFull,
   SchemaEntity,
 } from "../entities/schema";
@@ -39,7 +39,7 @@ export class SchemaController extends DefaultController {
   public async create(
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
-    @Body() body: SchemaModelWithoutId,
+    @Body() body: SchemaData,
   ): Promise<SchemaModel> {
     // Get the collection and check rights
     const collection = await this.getCollection(req, collectionId);
@@ -102,7 +102,7 @@ export class SchemaController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() id: number,
-    @Body() body: SchemaModel,
+    @Body() body: SchemaData,
   ): Promise<void> {
     // Get the collection
     const collection = await this.getCollection(req, collectionId);

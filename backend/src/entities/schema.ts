@@ -7,10 +7,10 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  RelationId,
 } from "typeorm";
 import { IsNotEmpty } from "class-validator";
-import { JSONSchema7 } from "json-schema";
-import { pick } from "lodash";
+import { pick, omit } from "lodash";
 import { collectionEntityToModel, CollectionEntity, CollectionModel } from "./collection";
 import { annotationEntityToModel, AnnotationEntity, AnnotationModel } from "./annotation";
 
@@ -20,10 +20,10 @@ export class SchemaEntity extends BaseEntity {
   id: number;
 
   @CreateDateColumn()
-  createdDate: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updated_at: Date;
 
   @Column()
   @IsNotEmpty()
@@ -33,7 +33,7 @@ export class SchemaEntity extends BaseEntity {
   color: string;
 
   @Column({ type: "json" })
-  schema: JSONSchema7;
+  schema: any;
 
   @Column({ type: "json" })
   ui: any;
@@ -41,32 +41,39 @@ export class SchemaEntity extends BaseEntity {
   @ManyToOne(() => CollectionEntity, (collection) => collection.schemas, { onDelete: "CASCADE" })
   collection: CollectionEntity;
 
+  @RelationId((a: SchemaEntity) => a.collection)
+  collection_id: number;
+
   @OneToMany(() => AnnotationEntity, (annotation) => annotation.schema)
   annotations: Array<AnnotationEntity>;
+
+  @RelationId((a: SchemaEntity) => a.annotations)
+  annotations_id: number[];
 }
 
-/**
- * Object model: just the table properties
- */
-export type SchemaModel = Pick<SchemaEntity, "id" | "name" | "ui" | "color"> & { schema: { [key: string]: any } };
-
-// usefull type for creation
-export type SchemaModelWithoutId = Omit<SchemaModel, "id">;
-export function schemaEntityToModel(item: SchemaEntity): SchemaModel {
-  return pick(item, ["id", "name", "schema", "ui", "color"]);
-}
-
-/**
- * Object full
- */
-export type SchemaModelFull = SchemaModel & {
+// For forms
+export type SchemaData = Pick<SchemaEntity, "name" | "color" | "schema" | "ui">;
+// Just the table properties with forgein keys
+export type SchemaModel = Pick<
+  SchemaEntity,
+  "id" | "created_at" | "updated_at" | "name" | "color" | "schema" | "ui" | "collection_id"
+> & { nb_annotations: number };
+// Full
+export type SchemaModelFull = Omit<SchemaModel, "collection_id"> & {
   collection: CollectionModel;
-  annotations: Array<AnnotationModel>;
 };
+
+export function schemaEntityToModel(item: SchemaEntity): SchemaModel {
+  return {
+    ...omit(item, ["collection", "annotations", "annotations_id"]),
+    nb_annotations: item.annotations_id?.length || 0,
+  };
+}
+
 export function schemaEntityToModelFull(item: SchemaEntity): SchemaModelFull {
   return {
-    ...pick(item, ["id", "name", "schema", "ui", "color"]),
+    ...omit(item, ["collection", "collection_id", "annotations", "annotations_id"]),
+    nb_annotations: item.annotations_id?.length || 0,
     collection: collectionEntityToModel(item.collection),
-    annotations: item.annotations?.map((a) => annotationEntityToModel(a)) || [],
   };
 }

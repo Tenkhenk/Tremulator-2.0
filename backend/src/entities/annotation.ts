@@ -7,9 +7,10 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
+  RelationId,
 } from "typeorm";
 import { IsNotEmpty } from "class-validator";
-import { pick } from "lodash";
+import { pick, omit } from "lodash";
 import { GeoJsonObject } from "geojson";
 import { imageEntityToModel, ImageEntity, ImageModel } from "./image";
 import { schemaEntityToModel, SchemaEntity, SchemaModel } from "./schema";
@@ -20,10 +21,10 @@ export class AnnotationEntity extends BaseEntity {
   id: number;
 
   @CreateDateColumn()
-  createdDate: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedDate: Date;
+  updated_at: Date;
 
   @Column({ type: "json" })
   data: any;
@@ -35,38 +36,37 @@ export class AnnotationEntity extends BaseEntity {
   @ManyToOne(() => ImageEntity, (image) => image.annotations, { onDelete: "CASCADE" })
   image: ImageEntity;
 
-  @Column("int", { nullable: true })
-  schemaId: number;
+  @RelationId((a: AnnotationEntity) => a.image)
+  image_id: number;
 
   @ManyToOne(() => SchemaEntity, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "schemaId" })
   schema: SchemaEntity;
+
+  @RelationId((a: AnnotationEntity) => a.schema)
+  schema_id: number;
 }
 
-/**
- * Object model: just the table properties
- */
-export type AnnotationModel = Pick<AnnotationEntity, "id" | "data" | "schemaId"> & {
-  geometry: any;
-};
-// usefull type for creation
-export type AnnotationModelWithoutId = Omit<AnnotationModel, "id" | "schemaId">;
+// For forms
+export type AnnotationData = Pick<AnnotationEntity, "data" | "geometry">;
+// Just the table properties with forgein keys
+export type AnnotationModel = Pick<
+  AnnotationEntity,
+  "id" | "created_at" | "updated_at" | "data" | "geometry" | "image_id" | "schema_id"
+>;
 
-export function annotationEntityToModel(item: AnnotationEntity): AnnotationModel {
-  return pick(item, ["id", "data", "geometry", "schemaId"]);
-}
-
-/**
- * Object full : model with the deps in model format
- */
-export type AnnotationModelFull = Pick<AnnotationEntity, "id" | "data"> & {
-  geometry: { type: string };
+// Full
+export type AnnotationModelFull = Omit<AnnotationModel, "image_id" | "schema_id"> & {
   schema: SchemaModel;
   image: ImageModel;
 };
+
+export function annotationEntityToModel(item: AnnotationEntity): AnnotationModel {
+  return omit(item, ["image", "schema"]);
+}
+
 export function annotationEntityToModelFull(item: AnnotationEntity): AnnotationModelFull {
   return {
-    ...pick(item, ["id", "data", "geometry"]),
+    ...omit(item, ["image_id", "schema_id", "schema", "image"]),
     schema: schemaEntityToModel(item.schema),
     image: imageEntityToModel(item.image),
   };
