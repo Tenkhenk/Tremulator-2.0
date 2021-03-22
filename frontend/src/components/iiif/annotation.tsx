@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { useMap } from "react-leaflet";
 import L, { LeafletEvent } from "leaflet";
-import { pick } from "lodash";
+import { sortBy, pick } from "lodash";
 import "leaflet-draw";
 import { GeoJSON, Geometry } from "geojson";
 import { AnnotationModel, SchemaModel } from "../../types";
+import * as geojsonArea from "@mapbox/geojson-area";
 
 interface Props {
   annotations: Array<AnnotationModel>;
@@ -25,7 +26,8 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
     const drawLayer = new L.FeatureGroup();
     const annotationsLayer = new L.FeatureGroup();
 
-    annotations.forEach((annotation) => {
+    // We sort the annotation by area, so big ones are in background
+    sortBy(annotations, (a) => geojsonArea.geometry(a.geometry as Geometry)).forEach((annotation) => {
       const schema = schemas.find((item) => item.id === annotation.schema_id);
       const isEditable = annotation.id === selected && editMode;
       const geo: GeoJSON = {
