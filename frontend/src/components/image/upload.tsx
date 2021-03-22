@@ -74,42 +74,45 @@ const ImageUpload: React.FC<Props> = (props: Props) => {
         message: `Created ${newImages.length} images in the collection "${collection.name}"`,
         type: "success",
       });
-      if (onUploaded) onUploaded();
     } catch (error) {
       setAlertMessage({ message: `Error when uploading ${error.message}`, type: "danger" });
+    } finally {
+      if (onUploaded) onUploaded();
     }
   };
 
   return (
     <>
-      {loading && <Loader />}
-      {!loading && (
-        <div className="container">
-          <div {...getRootProps({ className: "dropzone", style })}>
-            <input {...getInputProps()} />
-            <p>Drag 'n' drop some files here</p>
-            <button type="button" onClick={open}>
-              Open File Dialog
-            </button>
-          </div>
-          <aside>
-            <h4>Files</h4>
-            <ul style={{ maxHeight: "200px", overflowY: "scroll" }}>
-              {files.map((file) => (
-                <li key={file.name}>
-                  {file.name} - {file.size} bytes
-                </li>
-              ))}
-            </ul>
-          </aside>
-          <div className="text-center">
-            <button className="btn btn-primary" onClick={upload}>
-              {loading && <i className="fas mr-1 fa-spinner"></i>}
-              Upload
-            </button>
-          </div>
-        </div>
-      )}
+      <div className="modal-body">
+        {loading && <Loader />}
+        {!loading && (
+          <>
+            <div {...getRootProps({ className: "dropzone", style })}>
+              <input {...getInputProps()} />
+              <p>Drag 'n' drop some files here</p>
+              <button type="button" onClick={open}>
+                Open File Dialog
+              </button>
+            </div>
+            <aside>
+              <h4>Files</h4>
+              <ul style={{ maxHeight: "200px", overflowY: "scroll" }}>
+                {files.map((file) => (
+                  <li key={file.name}>
+                    {file.name} - {file.size} bytes
+                  </li>
+                ))}
+              </ul>
+            </aside>
+          </>
+        )}
+      </div>
+      <div className="modal-footer">
+        <button className="btn btn-primary" onClick={upload} disabled={loading}>
+          <i className="fas fa-upload"></i>
+          Upload
+        </button>
+      </div>
     </>
   );
 };

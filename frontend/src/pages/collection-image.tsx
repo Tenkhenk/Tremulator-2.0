@@ -186,21 +186,23 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
               title="Confirmation needed"
               onClose={() => setNeedsConfirmation(false)}
             >
-              <div className="h5">
-                <div className="text-center">
-                  Do you really want to delete
-                  <br />"{image.name}"
-                  {image.annotations.length > 0 && (
-                    <span> and the {image.annotations.length} associated annotations</span>
-                  )}
-                  ?
+              <>
+                <div className="modal-body">
+                  <div className="text-center h5">
+                    Do you really want to delete
+                    <br />"{image.name}"
+                    {image.annotations.length > 0 && (
+                      <span> and the {image.annotations.length} associated annotations</span>
+                    )}
+                    ?
+                  </div>
                 </div>
-                <div className="text-center mt-3">
+                <div className="modal-footer">
                   <button className="btn btn-secondary" onClick={() => setNeedsConfirmation(false)}>
-                    No <i className="fas fa-window-close ml-1"></i>
+                    No <i className="fas fa-window-close"></i>
                   </button>
                   <button
-                    className="btn btn-danger ml-2"
+                    className="btn btn-danger"
                     onClick={async () => {
                       try {
                         await deleteImage();
@@ -212,10 +214,10 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                       }
                     }}
                   >
-                    <i className="fas fa-trash-alt mr-1"></i> Yes
+                    <i className="fas fa-trash-alt"></i> Yes
                   </button>
                 </div>
-              </div>
+              </>
             </ModalPortal>
           )}
         </>

@@ -21,35 +21,37 @@ const ImageIiifPresentationUpload: React.FC<Props> = (props: Props) => {
 
   return (
     <>
-      {loading && <Loader />}
-      {!loading && (
-        <form>
+      <div className="modal-body">
+        {loading && <Loader />}
+        {!loading && (
           <div className="fromGroup m-2">
             <label htmlFor="name">IIIF Presentation Manifest url</label>
             <input className="form-control" id="url" value={url} onChange={(e) => setUrl(e.target.value)} />
           </div>
-          <div className="fromGroup m-2">
-            <button
-              className="btn btn-primary"
-              disabled={url.length === 0 || loading}
-              onClick={async (e) => {
-                try {
-                  const downloadedImages = await save({ url });
-                  setAlertMessage({
-                    message: `${downloadedImages?.length || 0} images were downloaded`,
-                    type: "success",
-                  });
-                  if (onUploaded) onUploaded();
-                } catch (error) {
-                  setAlertMessage({ message: `Error in uploading image  ${error}`, type: "warning" });
-                }
-              }}
-            >
-              Upload
-            </button>
-          </div>
-        </form>
-      )}
+        )}
+      </div>
+      <div className="modal-footer">
+        <button
+          className="btn btn-primary"
+          disabled={url.length === 0 || loading}
+          onClick={async (e) => {
+            try {
+              const downloadedImages = await save({ url });
+              setAlertMessage({
+                message: `${downloadedImages?.length || 0} images were downloaded`,
+                type: "success",
+              });
+            } catch (error) {
+              setAlertMessage({ message: `Error in uploading image  ${error}`, type: "warning" });
+            } finally {
+              if (onUploaded) onUploaded();
+            }
+          }}
+        >
+          <i className="fas fa-upload"></i>
+          Upload
+        </button>
+      </div>
     </>
   );
 };

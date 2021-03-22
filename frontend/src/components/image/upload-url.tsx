@@ -27,10 +27,10 @@ const ImageURLUpload: React.FC<Props> = (props: Props) => {
 
   return (
     <>
-      {loading && <Loader />}
-      {!loading && (
-        <form>
-          <div className="fromGroup m-2">
+      <div className="modal-body">
+        {loading && <Loader />}
+        {!loading && (
+          <>
             <label htmlFor="name">Copy/paste Image URLs</label>
             <textarea
               className="form-control"
@@ -38,35 +38,37 @@ const ImageURLUpload: React.FC<Props> = (props: Props) => {
               value={imagesURLsText}
               onChange={(e) => setImagesURLsText(e.target.value)}
             ></textarea>
-          </div>
-          <div className="fromGroup m-2">
-            <button
-              className="btn btn-primary"
-              disabled={imagesURLs.length === 0 || loading}
-              onClick={async (e) => {
-                e.preventDefault();
-                if (imagesURLs.length > 0) {
-                  try {
-                    const downloadedImages = await postImageURLs({ urls: imagesURLs });
-                    setAlertMessage({
-                      message: `${downloadedImages?.length || 0} images were downloaded from the ${
-                        imagesURLs.length
-                      } URLs you uploaded`,
-                      type: "success",
-                    });
-                    if (onUploaded) onUploaded();
-                  } catch (error) {
-                    setAlertMessage({ message: `Error in uploading image URLs ${error}`, type: "warning" });
-                  }
-                }
-              }}
-            >
-              Upload{loading && "ing"} {imagesURLs.length} URL{imagesURLs.length > 1 && "s"}
-            </button>
-          </div>
-          <div className="fromGroup m-2">Note that only URLs pointing to image file format will be processed.</div>
-        </form>
-      )}
+            <div className="fromGroup m-2">Note that only URLs pointing to image file format will be processed.</div>
+          </>
+        )}
+      </div>
+      <div className="modal-footer">
+        <button
+          className="btn btn-primary"
+          disabled={imagesURLs.length === 0 || loading}
+          onClick={async (e) => {
+            e.preventDefault();
+            if (imagesURLs.length > 0) {
+              try {
+                const downloadedImages = await postImageURLs({ urls: imagesURLs });
+                setAlertMessage({
+                  message: `${downloadedImages?.length || 0} images were downloaded from the ${
+                    imagesURLs.length
+                  } URLs you uploaded`,
+                  type: "success",
+                });
+              } catch (error) {
+                setAlertMessage({ message: `Error in uploading image URLs ${error}`, type: "warning" });
+              } finally {
+                if (onUploaded) onUploaded();
+              }
+            }
+          }}
+        >
+          <i className="fas fa-upload"></i>
+          Upload{loading && "ing"} {imagesURLs.length} URL{imagesURLs.length > 1 && "s"}
+        </button>
+      </div>
     </>
   );
 };

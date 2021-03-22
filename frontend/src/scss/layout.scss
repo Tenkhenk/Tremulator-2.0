@@ -72,6 +72,11 @@ html {
       .alert {
         margin-bottom: 0;
       }
+
+      .btn > i.fas {
+        margin-right: 0.5rem;
+      }
+
       main {
         height: calc(100vh - #{$header-height} - #{$footer-height});
         overflow: auto;

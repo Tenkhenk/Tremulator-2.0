@@ -20,7 +20,7 @@ const Modal: FC<Props> = ({ onClose, title, icon, children }) => (
             <i className="fas fa-times" />
           </button>
         </div>
-        <div className="modal-body">{children}</div>
+        {children}
       </div>
     </div>
   </div>

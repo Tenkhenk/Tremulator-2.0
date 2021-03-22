@@ -49,17 +49,20 @@ export const Image: FC<Props> = (props: Props) => {
       </Link>
       {deleteConfirmation && (
         <ModalPortal title="Confirmation needed" icon="fa-question-circle" onClose={() => setDeleteConfirmation(false)}>
-          <div className="h5">
-            <div className="text-center">
-              You are about to delete the image "{image.name}" and its associated annotations ({image.nb_annotations}).
+          <>
+            <div className="modal-body">
+              <div className="text-center h5">
+                You are about to delete the image "{image.name}" and its associated annotations ({image.nb_annotations}
+                ).
+              </div>
             </div>
-            <div className="text-center">
+            <div className="modal-footer">
               <button className="btn btn-secondary" onClick={() => setDeleteConfirmation(false)}>
                 <i className="fas fa-window-close"></i>
                 Cancel
               </button>
               <button
-                className="btn btn-danger ml-2"
+                className="btn btn-danger"
                 onClick={async (e) => {
                   try {
                     await remove();
@@ -75,11 +78,11 @@ export const Image: FC<Props> = (props: Props) => {
                   }
                 }}
               >
-                <i className={`fas mr-1 ${loading ? "fa-spinner" : "fa-trash-alt"}`}></i>
+                <i className={`fas  ${loading ? "fa-spinner" : "fa-trash-alt"}`}></i>
                 Delete
               </button>
             </div>
-          </div>
+          </>
         </ModalPortal>
       )}
     </>
