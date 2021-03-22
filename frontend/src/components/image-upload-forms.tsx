@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { CollectionFullType } from "../types";
+import { CollectionModelFull } from "../types";
 import ImageUpload from "./image-upload";
 import ImageURLUpload from "./image-url-upload";
 
 interface Props {
-  collection: CollectionFullType;
+  onUploaded: () => void;
+  collection: CollectionModelFull;
 }
 
 enum UploadMethod {
@@ -14,7 +15,7 @@ enum UploadMethod {
 }
 
 const ImageUploadForms: React.FC<Props> = (props: Props) => {
-  const { collection } = props;
+  const { collection, onUploaded } = props;
   const [uploadMethod, setUploadMethod] = useState<UploadMethod>(UploadMethod.LocalImage);
 
   return (
@@ -46,9 +47,9 @@ const ImageUploadForms: React.FC<Props> = (props: Props) => {
         </li>
       </ul>
       {/* LOCAL IMAGE UPLOAD */}
-      {uploadMethod === UploadMethod.LocalImage && <ImageUpload collection={collection} />}
+      {uploadMethod === UploadMethod.LocalImage && <ImageUpload onUploaded={onUploaded} collection={collection} />}
       {/* DISTANT IMAGE UPLOAD */}
-      {uploadMethod === UploadMethod.DistantImage && <ImageURLUpload collection={collection} />}
+      {uploadMethod === UploadMethod.DistantImage && <ImageURLUpload onUploaded={onUploaded} collection={collection} />}
     </div>
   );
 };

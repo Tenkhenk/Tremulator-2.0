@@ -6,12 +6,13 @@ import "leaflet-draw";
 
 interface Props {
   url: string;
+  quality?: string;
   bbox: LatLngBounds | null;
   onMoveEnd?: (e: LatLngBounds) => void;
 }
 
 export const IIIFLayer: React.FC<Props> = (props: Props) => {
-  const { url, bbox, onMoveEnd } = props;
+  const { url, bbox, onMoveEnd, quality } = props;
 
   // state
   const [layer, setLayer] = useState<Layer | null>(null);
@@ -23,7 +24,7 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
   //  => reset layer
   useEffect(() => {
     // add IIF layer to leaflet
-    const l = (L.tileLayer as any).iiif(url, { fitBounds: true });
+    const l = new (L.TileLayer as any).Iiif(url, { fitBounds: true, quality: quality ? quality : "default" });
     l.addTo(map);
 
     // when layer is fully-loaded, set it in the state
@@ -35,7 +36,7 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
     return () => {
       map.removeLayer(l);
     };
-  }, [url, map]);
+  }, [url, map, quality]);
 
   // When bbox changed
   //  => move the map and then listen for moves

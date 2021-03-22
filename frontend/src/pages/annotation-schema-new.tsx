@@ -1,13 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../context/app-context";
-import { CollectionFullType } from "../types";
+import { CollectionModelFull } from "../types";
 import { Link, useHistory } from "react-router-dom";
 import { useGet, usePost } from "../hooks/api";
 import Loader from "../components/loader";
 import { PageHeader } from "../components/page-header";
 import { JsonSchemaEditor } from "../components/schema/editor";
 import { JsonSchemaPreview } from "../components/schema/preview";
-import { NewSchemaType, SchemaType } from "../types";
+import { SchemaData, SchemaModel } from "../types";
 import { config } from "../config";
 
 interface NewProps {
@@ -21,13 +21,11 @@ export const AnnotationSchemaNew: React.FC<NewProps> = (props: NewProps) => {
   const history = useHistory();
   const { setAlertMessage } = useContext(AppContext);
   // data hooks
-  const { data: collection, loading, error } = useGet<CollectionFullType>(`/collections/${collectionID}`);
-  const [create, { loading: createLoading }] = usePost<NewSchemaType, SchemaType>(
-    `/collections/${collectionID}/schema`,
-  );
+  const { data: collection, loading, error } = useGet<CollectionModelFull>(`/collections/${collectionID}`);
+  const [create, { loading: createLoading }] = usePost<SchemaData, SchemaModel>(`/collections/${collectionID}/schema`);
 
   // States
-  const [schemaForm, setSchemaForm] = useState<NewSchemaType | null>(null);
+  const [schemaForm, setSchemaForm] = useState<SchemaData | null>(null);
 
   // When collectionId changed
   //  => we reset the schema
@@ -54,7 +52,7 @@ export const AnnotationSchemaNew: React.FC<NewProps> = (props: NewProps) => {
           </PageHeader>
 
           <div className="container-fluid">
-            <div className="row">
+            <div className="row page-title">
               <div className="col">
                 <h2>Schema annotation creation</h2>
               </div>

@@ -106,53 +106,61 @@ export interface paths {
 export interface components {
   schemas: {
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_AnnotationEntity.id-or-data-or-schemaId_": {
+    "Pick_AnnotationEntity.id-or-created_at-or-updated_at-or-data-or-geometry-or-image_id-or-schema_id_": {
       id: number;
-      data: { [key: string]: any };
-      schemaId: number;
-    };
-    /** Object model: just the table properties */
-    AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-data-or-schemaId_"] & {
-      geometry: { [key: string]: any };
-    };
-    /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_AnnotationModel.Exclude_keyofAnnotationModel.id-or-schemaId__": {
+      created_at: string;
+      updated_at: string;
       data: { [key: string]: any };
       geometry: { [key: string]: any };
+      image_id: number;
+      schema_id: number;
     };
-    "Omit_AnnotationModel.id-or-schemaId_": components["schemas"]["Pick_AnnotationModel.Exclude_keyofAnnotationModel.id-or-schemaId__"];
-    AnnotationModelWithoutId: components["schemas"]["Omit_AnnotationModel.id-or-schemaId_"];
+    AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-created_at-or-updated_at-or-data-or-geometry-or-image_id-or-schema_id_"];
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_AnnotationEntity.id-or-data_": {
-      id: number;
+    "Pick_AnnotationEntity.data-or-geometry_": {
       data: { [key: string]: any };
+      geometry: { [key: string]: any };
     };
+    AnnotationData: components["schemas"]["Pick_AnnotationEntity.data-or-geometry_"];
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_SchemaEntity.id-or-name-or-ui-or-color_": {
+    "Pick_AnnotationModel.Exclude_keyofAnnotationModel.image_id-or-schema_id__": {
       id: number;
+      created_at: string;
+      updated_at: string;
+      data: { [key: string]: any };
+      geometry: { [key: string]: any };
+    };
+    "Omit_AnnotationModel.image_id-or-schema_id_": components["schemas"]["Pick_AnnotationModel.Exclude_keyofAnnotationModel.image_id-or-schema_id__"];
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_SchemaEntity.id-or-created_at-or-updated_at-or-name-or-color-or-schema-or-ui-or-collection_id_": {
+      id: number;
+      created_at: string;
+      updated_at: string;
       name: string;
-      ui: { [key: string]: any };
       color: string;
+      schema: { [key: string]: any };
+      ui: { [key: string]: any };
+      collection_id: number;
     };
-    /** Object model: just the table properties */
-    SchemaModel: components["schemas"]["Pick_SchemaEntity.id-or-name-or-ui-or-color_"] & {
-      schema: { [key: string]: { [key: string]: any } };
+    SchemaModel: components["schemas"]["Pick_SchemaEntity.id-or-created_at-or-updated_at-or-name-or-color-or-schema-or-ui-or-collection_id_"] & {
+      nb_annotations: number;
     };
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_ImageEntity.id-or-name-or-url_": {
+    "Pick_ImageEntity.id-or-created_at-or-updated_at-or-name-or-order-or-url-or-collection_id_": {
       id: number;
+      created_at: string;
+      updated_at: string;
       name: string;
+      collection_id: number;
+      order: number;
       url: string;
     };
-    /** Object model: just the table properties */
-    ImageModel: components["schemas"]["Pick_ImageEntity.id-or-name-or-url_"];
-    /** Object full : model with the deps in model format */
-    AnnotationModelFull: components["schemas"]["Pick_AnnotationEntity.id-or-data_"] & {
+    ImageModel: components["schemas"]["Pick_ImageEntity.id-or-created_at-or-updated_at-or-name-or-order-or-url-or-collection_id_"] & {
+      nb_annotations: number;
+    };
+    AnnotationModelFull: components["schemas"]["Omit_AnnotationModel.image_id-or-schema_id_"] & {
       image: components["schemas"]["ImageModel"];
       schema: components["schemas"]["SchemaModel"];
-      geometry: {
-        type: string;
-      };
     };
     ValidateCodeResponse: {
       access_token: string;
@@ -180,20 +188,34 @@ export interface components {
     /** Object full */
     UserModelFull: components["schemas"]["Pick_UserEntity.email-or-firstname-or-lastname-or-avatar-or-access_token-or-expires_at_"];
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_CollectionEntity.id-or-name-or-description_": {
+    "Pick_CollectionEntity.id-or-created_at-or-updated_at-or-name-or-description-or-owner_id_": {
       id: number;
+      created_at: string;
+      updated_at: string;
       name: string;
       description: string;
+      owner_id: string;
     };
-    /** Object model: just the table properties */
-    CollectionModel: components["schemas"]["Pick_CollectionEntity.id-or-name-or-description_"];
+    CollectionModel: components["schemas"]["Pick_CollectionEntity.id-or-created_at-or-updated_at-or-name-or-description-or-owner_id_"] & {
+      nb_schemas: number;
+      nb_images: number;
+      nb_users: number;
+    };
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_CollectionModel.Exclude_keyofCollectionModel.id__": {
+    "Pick_CollectionEntity.name-or-description_": {
       name: string;
       description: string;
     };
-    "Omit_CollectionModel.id_": components["schemas"]["Pick_CollectionModel.Exclude_keyofCollectionModel.id__"];
-    CollectionModelWithoutId: components["schemas"]["Omit_CollectionModel.id_"];
+    CollectionData: components["schemas"]["Pick_CollectionEntity.name-or-description_"];
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_CollectionModel.Exclude_keyofCollectionModel.owner_id-or-nb_users-or-nb_images-or-nb_schemas__": {
+      id: number;
+      created_at: string;
+      updated_at: string;
+      name: string;
+      description: string;
+    };
+    "Omit_CollectionModel.owner_id-or-nb_users-or-nb_images-or-nb_schemas_": components["schemas"]["Pick_CollectionModel.Exclude_keyofCollectionModel.owner_id-or-nb_users-or-nb_images-or-nb_schemas__"];
     /** From T, pick a set of properties whose keys are in the union K */
     "Pick_UserEntity.email-or-firstname-or-lastname-or-avatar_": {
       email: string;
@@ -203,30 +225,47 @@ export interface components {
     };
     /** Object summary */
     UserModel: components["schemas"]["Pick_UserEntity.email-or-firstname-or-lastname-or-avatar_"];
-    /** Object full */
-    CollectionModelFull: components["schemas"]["Pick_CollectionEntity.id-or-name-or-description_"] & {
+    CollectionModelFull: components["schemas"]["Omit_CollectionModel.owner_id-or-nb_users-or-nb_images-or-nb_schemas_"] & {
       schemas: components["schemas"]["SchemaModel"][];
       images: components["schemas"]["ImageModel"][];
       users: components["schemas"]["UserModel"][];
       owner: components["schemas"]["UserModel"];
     };
-    /** Object full */
-    ImageModelFull: components["schemas"]["ImageModel"] & {
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_ImageModel.Exclude_keyofImageModel.collection_id-or-nb_annotations__": {
+      id: number;
+      created_at: string;
+      updated_at: string;
+      name: string;
+      order: number;
+      url: string;
+    };
+    "Omit_ImageModel.collection_id-or-nb_annotations_": components["schemas"]["Pick_ImageModel.Exclude_keyofImageModel.collection_id-or-nb_annotations__"];
+    ImageModelFull: components["schemas"]["Omit_ImageModel.collection_id-or-nb_annotations_"] & {
       annotations: components["schemas"]["AnnotationModel"][];
       collection: components["schemas"]["CollectionModel"];
     };
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_SchemaModel.Exclude_keyofSchemaModel.id__": {
+    "Pick_SchemaEntity.name-or-color-or-schema-or-ui_": {
       name: string;
-      ui: { [key: string]: any };
       color: string;
-      schema: { [key: string]: { [key: string]: any } };
+      schema: { [key: string]: any };
+      ui: { [key: string]: any };
     };
-    "Omit_SchemaModel.id_": components["schemas"]["Pick_SchemaModel.Exclude_keyofSchemaModel.id__"];
-    SchemaModelWithoutId: components["schemas"]["Omit_SchemaModel.id_"];
-    /** Object full */
-    SchemaModelFull: components["schemas"]["SchemaModel"] & {
-      annotations: components["schemas"]["AnnotationModel"][];
+    SchemaData: components["schemas"]["Pick_SchemaEntity.name-or-color-or-schema-or-ui_"];
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_SchemaModel.Exclude_keyofSchemaModel.collection_id__": {
+      id: number;
+      created_at: string;
+      updated_at: string;
+      name: string;
+      color: string;
+      schema: { [key: string]: any };
+      ui: { [key: string]: any };
+      nb_annotations: number;
+    };
+    "Omit_SchemaModel.collection_id_": components["schemas"]["Pick_SchemaModel.Exclude_keyofSchemaModel.collection_id__"];
+    SchemaModelFull: components["schemas"]["Omit_SchemaModel.collection_id_"] & {
       collection: components["schemas"]["CollectionModel"];
     };
   };
@@ -266,7 +305,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SchemaModelWithoutId"];
+        "application/json": components["schemas"]["SchemaData"];
       };
     };
   };
@@ -321,7 +360,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["SchemaModel"];
+        "application/json": components["schemas"]["SchemaData"];
       };
     };
   };

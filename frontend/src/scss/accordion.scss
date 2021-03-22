@@ -6,6 +6,17 @@
     &.selected {
       .card-body {
         display: block;
+
+        .field {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          .name {
+            font-weight: bold;
+          }
+          .value {
+          }
+        }
       }
     }
   }

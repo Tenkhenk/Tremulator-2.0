@@ -4,22 +4,22 @@ import { components } from "./api";
 export type UserType = Omit<components["schemas"]["UserModel"], "access_token" | "expires_at">;
 
 // Types for collection
-export type NewCollectionType = components["schemas"]["CollectionModelWithoutId"];
-export type CollectionType = components["schemas"]["CollectionModel"];
-export type CollectionFullType = components["schemas"]["CollectionModelFull"];
+export type CollectionData = components["schemas"]["CollectionData"];
+export type CollectionModel = components["schemas"]["CollectionModel"];
+export type CollectionModelFull = components["schemas"]["CollectionModelFull"];
 
 // Types for Image
-export type ImageType = components["schemas"]["ImageModel"];
-export type ImageFullType = components["schemas"]["ImageModelFull"];
+export type ImageModel = components["schemas"]["ImageModel"];
+export type ImageModelFull = components["schemas"]["ImageModelFull"];
 
 // Types for schema
-export type NewSchemaType = components["schemas"]["SchemaModelWithoutId"];
-export type SchemaType = components["schemas"]["SchemaModel"];
-export type SchemaFullType = components["schemas"]["SchemaModelFull"];
+export type SchemaData = components["schemas"]["SchemaData"];
+export type SchemaModel = components["schemas"]["SchemaModel"];
+export type SchemaModelFull = components["schemas"]["SchemaModelFull"];
 
 // Types for annotation
-export type NewAnnotationType = components["schemas"]["AnnotationModelWithoutId"];
-export type AnnotationType = components["schemas"]["AnnotationModel"];
+export type AnnotationData = components["schemas"]["AnnotationData"];
+export type AnnotationModel = components["schemas"]["AnnotationModel"];
 
 export interface AlertMessage {
   message: string;
@@ -56,6 +56,7 @@ export const collectionSchemaForm: JsonSchemaForm = {
 export const schemaSchemaForm: JsonSchemaForm = {
   schema: {
     type: "object",
+    required: ["name", "color"],
     properties: {
       name: {
         type: "string",
@@ -68,6 +69,7 @@ export const schemaSchemaForm: JsonSchemaForm = {
       fields: {
         type: "array",
         title: "Form's fields",
+        minItems: 1,
         items: {
           type: "object",
           required: ["name", "type"],

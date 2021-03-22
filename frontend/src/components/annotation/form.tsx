@@ -2,37 +2,37 @@ import React, { FC, useContext, useEffect, useState } from "react";
 import Form from "@rjsf/bootstrap-4";
 import { omit } from "lodash";
 import Loader from "../loader";
-import { AnnotationType, NewAnnotationType, SchemaType } from "../../types";
+import { AnnotationModel, AnnotationData, SchemaModel } from "../../types";
 import { AppContext } from "../../context/app-context";
 import { usePost, usePut } from "../../hooks/api";
 
 interface Props {
   collectionID: number;
-  imageID: number;
-  schemas: Array<SchemaType>;
-  annotation: AnnotationType;
-  onSaved?: (a: AnnotationType) => void;
+  schemas: Array<SchemaModel>;
+  annotation: AnnotationModel;
+  onSaved?: (id: number) => void;
   onCancel?: () => void;
+  withTitle?: boolean;
 }
 export const AnnotationForm: FC<Props> = (props: Props) => {
   //props
-  const { annotation, collectionID, imageID, onCancel, onSaved, schemas } = props;
+  const { annotation, collectionID, onCancel, onSaved, schemas, withTitle } = props;
 
   const { setAlertMessage } = useContext(AppContext);
   // The selected schema
-  const [schema, setSchema] = useState<SchemaType | null>(null);
+  const [schema, setSchema] = useState<SchemaModel | null>(null);
   // Hook to create the data
-  const [create, { loading: createLoading }] = usePost<NewAnnotationType, AnnotationType>(
-    `/collections/${collectionID}/images/${imageID}/annotations`,
+  const [create, { loading: createLoading }] = usePost<AnnotationData, AnnotationModel>(
+    `/collections/${collectionID}/images/${annotation.image_id}/annotations`,
   );
   // Hook to update the data
-  const [update, { loading: updateLoading }] = usePut<NewAnnotationType>(
-    `/collections/${collectionID}/images/${imageID}/annotations/${annotation.id}`,
+  const [update, { loading: updateLoading }] = usePut<AnnotationData>(
+    `/collections/${collectionID}/images/${annotation.image_id}/annotations/${annotation.id}`,
   );
 
   useEffect(() => {
     if (annotation.id > 0) {
-      const annotationSchema = schemas.find((item) => item.id === annotation.schemaId);
+      const annotationSchema = schemas.find((item) => item.id === annotation.schema_id);
       if (annotationSchema) setSchema(annotationSchema);
       else {
         throw new Error("Schema not found in collection");
@@ -45,14 +45,16 @@ export const AnnotationForm: FC<Props> = (props: Props) => {
   return (
     <>
       {createLoading || (updateLoading && <Loader />)}
-      <div className="row">
-        <div className="col">
-          <h3>
-            <i className="fas fa-vector-square mr-1"></i>
-            {annotation.id < 0 ? "New annotation" : `Annotation #${annotation.id}`}
-          </h3>
+      {(withTitle === undefined || withTitle === true) && (
+        <div className="row">
+          <div className="col">
+            <h3>
+              <i className="fas fa-vector-square mr-1"></i>
+              {annotation.id < 0 ? "New annotation" : `Annotation #${annotation.id}`}
+            </h3>
+          </div>
         </div>
-      </div>
+      )}
 
       {annotation.id < 0 && schemas.length > 1 && (
         <div className="row">
@@ -81,16 +83,22 @@ export const AnnotationForm: FC<Props> = (props: Props) => {
               formData={annotation.data}
               onSubmit={async (e) => {
                 try {
-                  let data = { ...annotation, data: e.formData };
+                  let data = omit({ ...annotation, data: e.formData }, [
+                    "schema_id",
+                    "image_id",
+                    "created_at",
+                    "updated_at",
+                  ]);
                   if (annotation.id < 0) {
-                    data = await create(omit(data, ["id"]), { schemaId: schema.id });
+                    data = await create(data, {
+                      schemaId: schema.id,
+                    });
                     setAlertMessage({ message: `Annotation created`, type: "success" });
-                    if (onSaved) onSaved(data);
                   } else {
                     await update(data);
                     setAlertMessage({ message: `Annotation updated`, type: "success" });
                   }
-                  if (onSaved) onSaved(data);
+                  if (onSaved) onSaved(data.id);
                 } catch (error) {
                   setAlertMessage({
                     message: `Error when creating annotation "${error?.message}" created`,

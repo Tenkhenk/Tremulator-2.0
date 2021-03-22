@@ -7,7 +7,7 @@ import Loader from "../components/loader";
 import { PageHeader } from "../components/page-header";
 import { JsonSchemaEditor } from "../components/schema/editor";
 import { JsonSchemaPreview } from "../components/schema/preview";
-import { NewSchemaType, SchemaType, SchemaFullType } from "../types";
+import { SchemaData, SchemaModelFull } from "../types";
 
 interface props {
   collectionID: number;
@@ -21,16 +21,16 @@ export const AnnotationSchemaEdit: React.FC<props> = (props: props) => {
   const { setAlertMessage } = useContext(AppContext);
 
   // data hooks
-  const { data: schema, loading, error } = useGet<SchemaFullType>(`/collections/${collectionID}/schema/${schemaID}`);
-  const [update, { loading: updateLoading }] = usePut<SchemaType>(`/collections/${collectionID}/schema/${schemaID}`);
+  const { data: schema, loading, error } = useGet<SchemaModelFull>(`/collections/${collectionID}/schema/${schemaID}`);
+  const [update, { loading: updateLoading }] = usePut<SchemaData>(`/collections/${collectionID}/schema/${schemaID}`);
 
   // States
-  const [schemaForm, setSchemaForm] = useState<NewSchemaType | null>(null);
+  const [schemaForm, setSchemaForm] = useState<SchemaData | null>(null);
 
   // When schema changed
   //  => we reset the one for the form
   useEffect(() => {
-    setSchemaForm(pick(schema, ["name", "schema", "ui", "color"]) as NewSchemaType);
+    setSchemaForm(pick(schema, ["name", "schema", "ui", "color"]) as SchemaData);
   }, [schema]);
 
   // When error happend on loading the schema
@@ -50,34 +50,32 @@ export const AnnotationSchemaEdit: React.FC<props> = (props: props) => {
             </h1>
           </PageHeader>
 
-          <div className="container-fluid">
-            <div className="row">
-              <div className="col">
-                <h2>Schema annotation : {schema.name}</h2>
-              </div>
+          <div className="row page-title">
+            <div className="col">
+              <h2>Schema annotation : {schema.name}</h2>
             </div>
-            <div className="row">
-              <div className="col-8">
-                <JsonSchemaEditor
-                  value={schemaForm ? schemaForm : undefined}
-                  onChange={(e) => setSchemaForm(e)}
-                  onSubmit={async (e) => {
-                    try {
-                      await update({ ...e, id: schemaID });
-                      setAlertMessage({ message: `Annotation schema updated`, type: "success" });
-                      history.push(`/collections/${collectionID}/edit`);
-                    } catch (error) {
-                      setAlertMessage({
-                        message: `Error when saving your annotation schema "${error?.message}"`,
-                        type: "warning",
-                      });
-                    }
-                  }}
-                />
-              </div>
-              <div className="col-4">
-                <JsonSchemaPreview schema={schemaForm ? schemaForm.schema : {}} ui={schemaForm ? schemaForm.ui : {}} />
-              </div>
+          </div>
+          <div className="row">
+            <div className="col-8">
+              <JsonSchemaEditor
+                value={schemaForm ? schemaForm : undefined}
+                onChange={(e) => setSchemaForm(e)}
+                onSubmit={async (e) => {
+                  try {
+                    await update(e);
+                    setAlertMessage({ message: `Annotation schema updated`, type: "success" });
+                    history.push(`/collections/${collectionID}/edit`);
+                  } catch (error) {
+                    setAlertMessage({
+                      message: `Error when saving your annotation schema "${error?.message}"`,
+                      type: "warning",
+                    });
+                  }
+                }}
+              />
+            </div>
+            <div className="col-4">
+              <JsonSchemaPreview schema={schemaForm ? schemaForm.schema : {}} ui={schemaForm ? schemaForm.ui : {}} />
             </div>
           </div>
         </>

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AppContext } from "../context/app-context";
 import { useGet } from "../hooks/api";
-import { CollectionFullType, ImageType } from "../types/index";
+import { CollectionModelFull, ImageModel } from "../types/index";
 import ImageUploadForms from "../components/image-upload-forms";
 import Modal from "../components/modal";
 import Loader from "../components/loader";
@@ -18,7 +18,7 @@ export const Collection: React.FC<Props> = (props: Props) => {
   const { setAlertMessage } = useContext(AppContext);
 
   const [isAddingPicture, setIsAddingPicture] = useState<Boolean>(false);
-  const { data: collection, loading, error } = useGet<CollectionFullType>(`/collections/${id}`);
+  const { data: collection, loading, error, fetch } = useGet<CollectionModelFull>(`/collections/${id}`);
 
   // WHen an error occurred
   //  => we set it in the context
@@ -38,27 +38,31 @@ export const Collection: React.FC<Props> = (props: Props) => {
             </Link>
           </PageHeader>
 
-          <div className="row">
-            <div className="col d-flex justify-content-start">
-              <h3>{collection.images.length} Pictures </h3>
-              <button onClick={() => setIsAddingPicture(true)} className="btn btn-link btn-sm">
-                <i className="far fa-plus-square fa-2x" aria-label="add a picture" title="add a picture"></i>
+          <div className="row page-title">
+            <div className="col">
+              <h2>{collection.images.length} Pictures</h2>
+              <button onClick={() => setIsAddingPicture(true)} className="btn btn-link">
+                <i className="far fa-plus-square"></i>
               </button>
             </div>
           </div>
 
           <div className="row">
-            <div className="col d-flex flex-wrap justify-content-center">
-              {collection.images.map((image: ImageType) => (
-                <Link key={image.id} to={`/collections/${collection.id}/images/${image.id}`}>
-                  <ImageThumbnail image={image} />
-                </Link>
+            <div className="col gallery">
+              {collection.images.map((image: ImageModel) => (
+                <ImageThumbnail key={image.id} image={image} />
               ))}
             </div>
           </div>
           {isAddingPicture && (
             <Modal title="Add pictures" onClose={() => setIsAddingPicture(false)}>
-              <ImageUploadForms collection={collection} />
+              <ImageUploadForms
+                collection={collection}
+                onUploaded={() => {
+                  setIsAddingPicture(false);
+                  fetch();
+                }}
+              />
             </Modal>
           )}
         </>

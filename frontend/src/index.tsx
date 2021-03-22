@@ -15,6 +15,7 @@ import { Header } from "./layout/header";
 import { Alert } from "./components/alert";
 // contexts
 import { config } from "./config/index";
+import { AppContextProvider } from "./context/app-context-provider";
 import { AuthenticationProvider, oidcLog } from "@axa-fr/react-oidc-context";
 // auth
 import { Authenticating, Authenticated, NotAuthenticated, SessionLost } from "./pages/auth/auth-messages";
@@ -35,14 +36,16 @@ ReactDOM.render(
     notAuthorized={NotAuthenticated}
     sessionLostComponent={SessionLost}
   >
-    <Router>
-      <Header />
-      <Alert />
-      <main className="container-fluid" role="main">
-        <RouterWrapper routes={routes} />
-      </main>
-      <Footer />
-    </Router>
+    <AppContextProvider>
+      <Router>
+        <Header />
+        <Alert />
+        <main className="container-fluid" role="main">
+          <RouterWrapper routes={routes} />
+        </main>
+        <Footer />
+      </Router>
+    </AppContextProvider>
   </AuthenticationProvider>,
   document.getElementById("root"),
 );

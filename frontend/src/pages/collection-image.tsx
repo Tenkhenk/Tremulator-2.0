@@ -4,7 +4,7 @@ import ModalPortal from "../components/modal";
 import { AppContext } from "../context/app-context";
 import { useGet, useDelete } from "../hooks/api";
 import { useQueryParam } from "../hooks/useQueryParam";
-import { AnnotationType, CollectionFullType, ImageFullType } from "../types/index";
+import { AnnotationModel, CollectionModelFull, ImageModelFull } from "../types/index";
 import Loader from "../components/loader";
 import { PageHeader } from "../components/page-header";
 import { AnnotationAccordion } from "../components/annotation/accordion";
@@ -13,7 +13,7 @@ import { MapContainer } from "react-leaflet";
 import { IIIFLayer } from "../components/iiif";
 import { IIIFLayerAnnotation } from "../components/iiif/annotation";
 import { AnnotationForm } from "../components/annotation/form";
-import L, { latLng, latLngBounds, LatLngBounds } from "leaflet";
+import L, { Browser, latLng, latLngBounds, LatLngBounds } from "leaflet";
 
 /**
  * Desiarlization of the `toBBoxString`.
@@ -36,22 +36,24 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
   const history = useHistory();
   const { setAlertMessage } = useContext(AppContext);
   // Data hooks
-  const { data: collection, loading: collectionLoading, error: collectionError } = useGet<CollectionFullType>(
+  const { data: collection, loading: collectionLoading, error: collectionError } = useGet<CollectionModelFull>(
     `/collections/${collectionID}`,
   );
-  const { data: image, loading: imageLoading, error: imageError, fetch } = useGet<ImageFullType>(
+  const { data: image, loading: imageLoading, error: imageError, fetch } = useGet<ImageModelFull>(
     `/collections/${collectionID}/images/${imageID}`,
   );
-  const [deleteImage] = useDelete<any>(`/collections/${collectionID}/images/${imageID}`);
+  const [deleteImage] = useDelete(`/collections/${collectionID}/images/${imageID}`);
 
   // States
   // ~~~~~~~~~~~~~~~~~~
   // for the image deletion
   const [needsConfirmation, setNeedsConfirmation] = useState<boolean>(false);
   // For the annotation that is currently created
-  const [annotation, setAnnotation] = useState<AnnotationType | null>(null);
+  const [annotation, setAnnotation] = useState<AnnotationModel | null>(null);
   // Id of the selected annotation
   const [selectedAnnotation, setSelectedAnnotation] = useQueryParam<number | null>("annotation", null);
+  //Set mode (view / new / edit)
+  const [mode, setMode] = useQueryParam<string>("mode", "view");
   // Map BBOX
   const [bbox, setBbox] = useQueryParam<string>("bbox", "", true);
 
@@ -69,6 +71,13 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
     setNeedsConfirmation(false);
   }, [imageID]);
 
+  useEffect(() => {
+    if (image && selectedAnnotation && image.annotations.findIndex((a) => a.id === selectedAnnotation)) {
+      setAnnotation(image.annotations?.find((a) => a.id === selectedAnnotation) || null);
+    } else {
+      setAnnotation(null);
+    }
+  }, [image, selectedAnnotation, setAnnotation]);
   return (
     <>
       {(imageLoading || collectionLoading) && <Loader />}
@@ -79,17 +88,17 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
           </PageHeader>
 
           <div className="image-viewer">
-            <div className="image-viewer-header">
-              <h2>
-                {image.name || image.url}{" "}
-                <button className="btn" onClick={() => setNeedsConfirmation(true)}>
+            <div className="row image-viewer-header page-title">
+              <div className="col">
+                <h2>{image.name || image.url} </h2>
+                <button title="Delete picture" className="btn btn-link" onClick={() => setNeedsConfirmation(true)}>
                   <i className="fas fa-trash-alt"></i>
                 </button>
-              </h2>
+              </div>
             </div>
             <div className="image-viewer-body">
               <div className="image">
-                <MapContainer center={[0, 0]} zoom={0} crs={L.CRS.Simple} scrollWheelZoom={true}>
+                <MapContainer doubleClickZoom={!Browser.mobile} center={[0, 0]} zoom={0} crs={L.CRS.Simple}>
                   <IIIFLayer
                     url={image.url}
                     bbox={fromBBoxString(bbox)}
@@ -98,16 +107,30 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                     }}
                   />
                   <IIIFLayerAnnotation
-                    editMode={false}
-                    addMode={true}
+                    editMode={mode !== "view"}
+                    addMode={mode !== "new"}
                     schemas={collection.schemas}
-                    annotations={annotation ? image.annotations.concat([annotation]) : image.annotations}
+                    annotations={
+                      annotation
+                        ? image.annotations.filter((e) => e.id !== annotation.id).concat([annotation])
+                        : image.annotations
+                    }
                     selected={annotation ? annotation.id : selectedAnnotation}
                     onCreate={(geo) => {
-                      setAnnotation({ id: -1, data: {}, geometry: geo, schemaId: -1 });
+                      setMode("new");
+                      setAnnotation({
+                        id: -1,
+                        data: {},
+                        geometry: geo,
+                        schema_id: -1,
+                        image_id: image.id,
+                        created_at: "",
+                        updated_at: "",
+                      });
                     }}
                     onUpdate={(e) => {
-                      console.log(e);
+                      // console.log(Object.assign({}, annotation, { geometry: e }));
+                      setAnnotation((annotation) => Object.assign({}, annotation, { geometry: e }));
                     }}
                     onSelect={(id) => {
                       setSelectedAnnotation((prev) => {
@@ -120,31 +143,38 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
               </div>
 
               <div className="annotation">
-                {!annotation && (
+                {(mode === "view" || mode === "edit") && (
                   <>
                     <h3>
                       <i className="fas fa-vector-square mr-1"></i>
                       {image.annotations.length} annotations
                     </h3>
                     <AnnotationAccordion
-                      onClick={(a) => setSelectedAnnotation(a.id)}
+                      collection={collection}
+                      annotations={image.annotations.map((a) => (a.id === annotation?.id ? annotation : a))}
                       selected={selectedAnnotation}
-                      annotations={image.annotations}
+                      setSelected={(a) => setSelectedAnnotation(a?.id || null)}
+                      editMode={mode === "edit"}
+                      setEditMode={(b: boolean) => setMode(b ? "edit" : "view")}
+                      onSaved={() => fetch()}
                     />
                   </>
                 )}
-                {collection && annotation && (
+                {mode === "new" && collection && annotation && (
                   <AnnotationForm
                     annotation={annotation}
                     schemas={collection?.schemas || []}
                     collectionID={collection.id}
-                    imageID={image.id}
-                    onSaved={(a) => {
+                    onSaved={(id) => {
                       setAnnotation(null);
-                      setSelectedAnnotation(a.id);
+                      setSelectedAnnotation(id);
+                      setMode("view");
                       fetch();
                     }}
-                    onCancel={() => setAnnotation(null)}
+                    onCancel={() => {
+                      setAnnotation(null);
+                      setMode("view");
+                    }}
                   />
                 )}
               </div>

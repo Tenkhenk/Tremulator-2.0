@@ -1,10 +1,10 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
-import { CollectionFullType, ImageType } from "../types";
+import { CollectionModelFull, ImageModelFull } from "../types";
 
 interface Props {
-  collection: CollectionFullType;
-  image: ImageType;
+  collection: CollectionModelFull;
+  image: ImageModelFull;
 }
 export const ImagePageHeader: FC<Props> = (props: Props) => {
   const { collection, image } = props;

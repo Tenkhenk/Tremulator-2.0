@@ -1,18 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
-import { usePost } from "../hooks/api";
-import { CollectionFullType, ImageType } from "../types/index";
 import urlRegexpSafe from "url-regex-safe";
+import { usePost } from "../hooks/api";
+import { CollectionModelFull, ImageModel } from "../types/index";
 import { AppContext } from "../context/app-context";
-import { useHistory } from "react-router";
+import Loader from "./loader";
+
 interface Props {
-  collection: CollectionFullType;
+  onUploaded: () => void;
+  collection: CollectionModelFull;
 }
 const ImageURLUpload: React.FC<Props> = (props: Props) => {
-  const { collection } = props;
+  const { collection, onUploaded } = props;
 
-  const history = useHistory();
   const { setAlertMessage } = useContext(AppContext);
-  const [postImageURLs, { loading }] = usePost<{ urls: string[] }, ImageType[]>(
+  const [postImageURLs, { loading }] = usePost<{ urls: string[] }, ImageModel[]>(
     `/collections/${collection.id}/images/download`,
   );
 
@@ -25,44 +26,48 @@ const ImageURLUpload: React.FC<Props> = (props: Props) => {
   }, [imagesURLsText]);
 
   return (
-    <form>
-      <div className="fromGroup m-2">
-        <label htmlFor="name">Copy/paste Image URLs</label>
-        <textarea
-          className="form-control"
-          id="imagesURLs"
-          value={imagesURLsText}
-          onChange={(e) => setImagesURLsText(e.target.value)}
-        ></textarea>
-      </div>
-      <div className="fromGroup m-2">
-        <button
-          className="btn btn-primary"
-          disabled={imagesURLs.length === 0 || loading}
-          onClick={async (e) => {
-            e.preventDefault();
-            if (imagesURLs.length > 0) {
-              try {
-                const downloadedImages = await postImageURLs({ urls: imagesURLs });
-                setAlertMessage({
-                  message: `${downloadedImages?.length || 0} images were downloaded from the ${
-                    imagesURLs.length
-                  } URLs you uploaded`,
-                  type: "success",
-                });
-                history.push(`/collections/${collection.id}`);
-              } catch (error) {
-                setAlertMessage({ message: `Error in uploading image URLs ${error}`, type: "warning" });
-              }
-            }
-          }}
-        >
-          {loading && <i className="fa fa-spinner fa-spin mr-1"></i>}
-          Upload{loading && "ing"} {imagesURLs.length} URL{imagesURLs.length > 1 && "s"}
-        </button>
-      </div>
-      <div className="fromGroup m-2">Note that only URLs pointing to image file format will be processed.</div>
-    </form>
+    <>
+      {loading && <Loader />}
+      {!loading && (
+        <form>
+          <div className="fromGroup m-2">
+            <label htmlFor="name">Copy/paste Image URLs</label>
+            <textarea
+              className="form-control"
+              id="imagesURLs"
+              value={imagesURLsText}
+              onChange={(e) => setImagesURLsText(e.target.value)}
+            ></textarea>
+          </div>
+          <div className="fromGroup m-2">
+            <button
+              className="btn btn-primary"
+              disabled={imagesURLs.length === 0 || loading}
+              onClick={async (e) => {
+                e.preventDefault();
+                if (imagesURLs.length > 0) {
+                  try {
+                    const downloadedImages = await postImageURLs({ urls: imagesURLs });
+                    setAlertMessage({
+                      message: `${downloadedImages?.length || 0} images were downloaded from the ${
+                        imagesURLs.length
+                      } URLs you uploaded`,
+                      type: "success",
+                    });
+                    if (onUploaded) onUploaded();
+                  } catch (error) {
+                    setAlertMessage({ message: `Error in uploading image URLs ${error}`, type: "warning" });
+                  }
+                }
+              }}
+            >
+              Upload{loading && "ing"} {imagesURLs.length} URL{imagesURLs.length > 1 && "s"}
+            </button>
+          </div>
+          <div className="fromGroup m-2">Note that only URLs pointing to image file format will be processed.</div>
+        </form>
+      )}
+    </>
   );
 };
 export default ImageURLUpload;

@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState, useMemo, CSSProperties } from "react";
-import { useHistory } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { uniqBy } from "lodash";
-import { CollectionFullType, ImageType } from "../types";
+import { CollectionModelFull, ImageModel } from "../types";
 import { AppContext } from "../context/app-context";
 import { usePost } from "../hooks/api";
 import { config } from "../config";
+import Loader from "./loader";
 
 const baseStyle: CSSProperties = {
   flex: 1,
@@ -36,20 +36,22 @@ const rejectStyle = {
 };
 
 interface Props {
-  collection: CollectionFullType;
+  collection: CollectionModelFull;
+  onUploaded: () => void;
 }
 const ImageUpload: React.FC<Props> = (props: Props) => {
-  const { collection } = props;
+  const { collection, onUploaded } = props;
+
   const { setAlertMessage } = useContext(AppContext);
-  const history = useHistory();
   const [files, setFiles] = useState<File[]>([]);
-  const [uploadPost] = usePost<FormData, ImageType[]>(`/collections/${collection.id}/images/upload`);
+  const [uploadPost, { loading }] = usePost<FormData, ImageModel[]>(`/collections/${collection.id}/images/upload`);
   const { getRootProps, getInputProps, open, acceptedFiles, isDragActive, isDragAccept, isDragReject } = useDropzone({
     // Disable click and keydown behavior
     noClick: true,
     noKeyboard: true,
     accept: config.mime_types.join(","),
   });
+
   const style = useMemo(
     () => ({
       ...baseStyle,
@@ -72,36 +74,43 @@ const ImageUpload: React.FC<Props> = (props: Props) => {
         message: `Created ${newImages.length} images in the collection "${collection.name}"`,
         type: "success",
       });
-      // TODO: replace this after integrated the modal system
-      history.push(`/collections/${collection.id}`);
+      if (onUploaded) onUploaded();
     } catch (error) {
       setAlertMessage({ message: `Error when uploading ${error.message}`, type: "danger" });
     }
   };
 
   return (
-    <div className="container">
-      <div {...getRootProps({ className: "dropzone", style })}>
-        <input {...getInputProps()} />
-        <p>Drag 'n' drop some files here</p>
-        <button type="button" onClick={open}>
-          Open File Dialog
-        </button>
-      </div>
-      <aside>
-        <h4>Files</h4>
-        <ul style={{ maxHeight: "200px", overflowY: "scroll" }}>
-          {files.map((file) => (
-            <li key={file.name}>
-              {file.name} - {file.size} bytes
-            </li>
-          ))}
-        </ul>
-      </aside>
-      <button className="btn btn-primary" onClick={upload}>
-        Upload
-      </button>
-    </div>
+    <>
+      {loading && <Loader />}
+      {!loading && (
+        <div className="container">
+          <div {...getRootProps({ className: "dropzone", style })}>
+            <input {...getInputProps()} />
+            <p>Drag 'n' drop some files here</p>
+            <button type="button" onClick={open}>
+              Open File Dialog
+            </button>
+          </div>
+          <aside>
+            <h4>Files</h4>
+            <ul style={{ maxHeight: "200px", overflowY: "scroll" }}>
+              {files.map((file) => (
+                <li key={file.name}>
+                  {file.name} - {file.size} bytes
+                </li>
+              ))}
+            </ul>
+          </aside>
+          <div className="text-center">
+            <button className="btn btn-primary" onClick={upload}>
+              {loading && <i className="fas mr-1 fa-spinner"></i>}
+              Upload
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

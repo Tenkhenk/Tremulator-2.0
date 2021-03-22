@@ -1,11 +1,11 @@
 import React from "react";
 import Form from "@rjsf/bootstrap-4";
-import { schemaSchemaForm, NewSchemaType } from "../../types";
+import { schemaSchemaForm, SchemaData } from "../../types";
 
 /**
  * Translate the schema (ie. json schema + ui) to fields for the form.
  */
-function schemaToForm(value: NewSchemaType): { name: string; fields: Array<any> } {
+function schemaToForm(value: SchemaData): { name: string; fields: Array<any> } {
   let form: any = { name: value.name, color: value.color, fields: [] };
 
   if (value.schema && value.schema.properties) {
@@ -40,7 +40,7 @@ function schemaToForm(value: NewSchemaType): { name: string; fields: Array<any> 
 /**
  * Translate the form value (ie. fields) to schema (ie. json schema + ui)
  */
-function formToSchema(form: { name: string; color: string; fields: Array<any> }): NewSchemaType {
+function formToSchema(form: { name: string; color: string; fields: Array<any> }): SchemaData {
   // init schema
   let schema: any = {
     name: form.name,
@@ -69,6 +69,7 @@ function formToSchema(form: { name: string; color: string; fields: Array<any> })
           break;
         case "range":
           schemaField.type = "number";
+          schemaField.default = field.min;
           schemaField.minimum = field.min;
           schemaField.maximum = field.max;
           schema.ui[field.name] = { "ui:widget": "range" };
@@ -87,9 +88,9 @@ function formToSchema(form: { name: string; color: string; fields: Array<any> })
 }
 
 interface Props {
-  value?: NewSchemaType;
-  onChange: (value: NewSchemaType) => void;
-  onSubmit: (value: NewSchemaType) => void;
+  value?: SchemaData;
+  onChange: (value: SchemaData) => void;
+  onSubmit: (value: SchemaData) => void;
 }
 
 export const JsonSchemaEditor: React.FC<Props> = (props: Props) => {

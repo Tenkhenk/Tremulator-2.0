@@ -1,24 +1,35 @@
 import React, { FC } from "react";
-import { AnnotationType } from "../../types";
-import { AccordionAnnotation } from "./accordion-annotation";
+import { AnnotationModel, CollectionModelFull } from "../../types";
+import { Annotation } from "./annotation";
 
 interface Props {
   selected?: number | null;
-  onClick: (a: AnnotationType) => void;
-  annotations: Array<AnnotationType>;
+  setSelected: (a: AnnotationModel | null) => void;
+  editMode: boolean;
+  setEditMode: (b: boolean) => void;
+  onSaved: () => void;
+  collection: CollectionModelFull;
+  annotations: Array<AnnotationModel>;
 }
 export const AnnotationAccordion: FC<Props> = (props: Props) => {
-  const { annotations, onClick, selected } = props;
+  const { annotations, collection, editMode, setEditMode, selected, setSelected, onSaved } = props;
 
   return (
     <div className="accordion">
       {annotations.map((annotation) => {
         return (
-          <AccordionAnnotation
-            onClick={() => onClick(annotation)}
+          <Annotation
             key={annotation.id}
-            className={annotation.id === selected ? "selected" : ""}
+            isSelected={annotation.id === selected}
+            editMode={editMode}
+            collection={collection}
             annotation={annotation}
+            toggleSelected={(force?: boolean) => {
+              if (force === true) setSelected(annotation);
+              else setSelected(selected === annotation.id ? null : annotation);
+            }}
+            setEditMode={setEditMode}
+            onSaved={onSaved}
           />
         );
       })}
