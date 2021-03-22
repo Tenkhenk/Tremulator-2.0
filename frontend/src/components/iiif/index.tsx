@@ -26,12 +26,11 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
   //  => reset layer
   useEffect(() => {
     // add IIF layer to leaflet
-    const l = new (L.TileLayer as any).Iiif(url, { fitBounds: true, quality: quality ? quality : "default" });
+    const l = new (L.TileLayer as any).Iiif(url, {
+      fitBounds: true,
+      quality: quality ? quality : "default",
+    });
     l.addTo(map);
-
-    // add iiif quality toolbar
-    const qualityToolbar = (L.control as any).iiifQuality({ setQuality });
-    qualityToolbar.addTo(map);
 
     // when layer is fully-loaded, set it in the state
     l.on("load", () => {
@@ -41,27 +40,34 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
     // clean method
     return () => {
       try {
+        setLayer(null);
         map.removeLayer(l);
-        map.removeControl(qualityToolbar);
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
     };
   }, [url, map, quality]);
+
+  // add iiif quality toolbar
+  useEffect(() => {
+    const qualityToolbar = (L.control as any).iiifQuality({ setQuality });
+    qualityToolbar.addTo(map);
+    return () => {
+      map.removeControl(qualityToolbar);
+    };
+  }, [setQuality, map]);
 
   // When bbox changed
   //  => move the map and then listen for moves
   useEffect(() => {
+    const mvFn = () => {
+      if (onMoveEnd) onMoveEnd(map.getBounds());
+    };
+
     if (layer) {
       if (bbox) map.fitBounds(bbox);
-      map.on("moveend", () => {
-        if (onMoveEnd) onMoveEnd(map.getBounds());
-      });
+      map.on("moveend", mvFn);
     }
     return () => {
-      map.off("moveend", () => {
-        if (onMoveEnd) onMoveEnd(map.getBounds());
-      });
+      map.off("moveend", mvFn);
     };
   }, [map, layer, bbox, onMoveEnd]);
 

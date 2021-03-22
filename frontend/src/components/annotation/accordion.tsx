@@ -1,4 +1,4 @@
-import React, { FC, useRef, useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { AnnotationModel, CollectionModelFull } from "../../types";
 import { Annotation } from "./annotation";
 

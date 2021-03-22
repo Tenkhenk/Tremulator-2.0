@@ -29,7 +29,6 @@ export interface Options {
   createButton: function (title: string, className: string, icon: string, container: any, fn: () => void) {
     // Modified from Leaflet zoom control
     var link: any = L.DomUtil.create("a", className, container);
-    link.href = "#";
     link.title = title;
     link.innerHTML = `<i class='${icon}'></i>`;
     L.DomEvent.on(link, "mousedown dblclick", L.DomEvent.stopPropagation).on(link, "click", fn, this);

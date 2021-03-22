@@ -84,7 +84,6 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
 
   useEffect(() => {
     if (mode !== "new" && image && selectedAnnotation) {
-      console.log("set annot");
       setAnnotation(image.annotations?.find((a) => a.id === selectedAnnotation) || null);
     }
   }, [image, mode, selectedAnnotation, setAnnotation]);
