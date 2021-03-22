@@ -4,7 +4,7 @@ import * as faker from "faker";
 import { CollectionsController } from "../src/controllers/collections";
 import { DbService } from "../src/services/db";
 import { UserEntity } from "../src/entities/user";
-import { CollectionModel, CollectionEntity } from "../src/entities/collection";
+import { CollectionData, CollectionModel, CollectionEntity } from "../src/entities/collection";
 import { ImageModel, ImageEntity } from "../src/entities/image";
 import { SchemaModel, SchemaEntity } from "../src/entities/schema";
 import { AnnotationModel, AnnotationEntity } from "../src/entities/annotation";
@@ -63,7 +63,7 @@ export async function dbInitWithUser(): Promise<void> {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 export async function createCollection(
   request: MockExpressRequest,
-  collection?: Omit<CollectionModel, "id">,
+  collection?: CollectionData,
 ): Promise<CollectionModel> {
   const col = collection
     ? collection
@@ -84,6 +84,7 @@ export async function createImage(collectionId: number): Promise<ImageModel> {
     url: faker.internet.url(),
     path: faker.system.filePath(),
     collection: collectionEntity,
+    nb_annotations: 0,
   });
 
   return image;
@@ -105,7 +106,9 @@ export async function createSchema(collectionId: number): Promise<SchemaModel> {
         },
         required: ["foo", "bar"],
       },
+      ui: {},
       collection: collectionEntity,
+      nb_annotations: 0,
     });
 
   return schema;

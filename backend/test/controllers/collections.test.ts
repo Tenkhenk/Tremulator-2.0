@@ -13,7 +13,7 @@ import {
   requestAnn,
 } from "../utils";
 import { CollectionsController } from "../../src/controllers/collections";
-import { CollectionEntity } from "../../src/entities/collection";
+import { CollectionEntity, CollectionData } from "../../src/entities/collection";
 
 const controller = new CollectionsController();
 
@@ -33,7 +33,7 @@ describe("Test Controller Collections", () => {
 
   it("Create collection should work", async () => {
     // Create a collection
-    const collection = {
+    const collection: CollectionData = {
       name: faker.lorem.words(),
       description: faker.lorem.sentences(),
     };
@@ -56,7 +56,9 @@ describe("Test Controller Collections", () => {
     const collection = await createCollection(requestJhon);
 
     // API call
-    await assert.doesNotReject(controller.update(requestJhon, collection.id, { ...collection, name: "TEST" }));
+    await assert.doesNotReject(
+      controller.update(requestJhon, collection.id, { name: "TEST", description: collection.description }),
+    );
 
     // Check the db
     const dbColl = await CollectionEntity.findOne(collection.id, { relations: ["owner"] });

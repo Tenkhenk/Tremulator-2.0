@@ -8,7 +8,14 @@ import { config } from "../config";
 import { DefaultController, ExpressAuthRequest } from "./default";
 import { getLogger, Logger } from "../services/logger";
 import { DbService } from "../services/db";
-import { imageEntityToModel, imageEntityToModelFull, ImageModel, ImageModelFull, ImageEntity } from "../entities/image";
+import {
+  imageEntityToModel,
+  imageEntityToModelFull,
+  ImageData,
+  ImageModel,
+  ImageModelFull,
+  ImageEntity,
+} from "../entities/image";
 
 @Tags("Images")
 @Route("collections")
@@ -191,7 +198,7 @@ export class ImagesController extends DefaultController {
     @Request() req: ExpressAuthRequest,
     @Path() collectionId: number,
     @Path() id: number,
-    @Body() body: ImageModel,
+    @Body() body: ImageData,
   ): Promise<void> {
     // Retrieve the image
     const image = await this.getImage(req, collectionId, id);

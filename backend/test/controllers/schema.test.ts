@@ -2,6 +2,7 @@ import * as assert from "assert";
 import * as Boom from "@hapi/boom";
 import * as faker from "faker";
 import { JSONSchema7 } from "json-schema";
+import { pick } from "lodash";
 import {
   createCollection,
   createImage,
@@ -67,6 +68,8 @@ describe("Test Controller Schema", () => {
     const schema = {
       name: faker.lorem.words(),
       schema: jsonSchema,
+      ui: {},
+      color: "#FFFFF",
     };
 
     // Do the call
@@ -82,6 +85,8 @@ describe("Test Controller Schema", () => {
     const schema = {
       name: faker.lorem.words(),
       schema: jsonSchema,
+      ui: {},
+      color: "#FFFFF",
     };
 
     await assert.rejects(controller.create(requestJane, collection.id, schema), Boom.forbidden());
@@ -91,6 +96,8 @@ describe("Test Controller Schema", () => {
     const schema = {
       name: faker.lorem.words(),
       schema: invalidJsonSchema,
+      ui: {},
+      color: "#FFFFF",
     };
 
     await assert.rejects(controller.create(requestJhon, collection.id, schema), Boom.badRequest("Schema is invalid"));
@@ -102,7 +109,12 @@ describe("Test Controller Schema", () => {
 
     // Do the call
     await assert.doesNotReject(
-      controller.update(requestJhon, collection.id, schema.id, Object.assign({}, schema, { name: "TEST" })),
+      controller.update(
+        requestJhon,
+        collection.id,
+        schema.id,
+        Object.assign({}, pick(schema, ["name", "color", "schema", "ui"]), { name: "TEST" }),
+      ),
     );
 
     // Check the db
@@ -113,7 +125,7 @@ describe("Test Controller Schema", () => {
 
   it("Update an unexisting schema should return a not found", async () => {
     await assert.rejects(
-      controller.update(requestJhon, collection.id, -1, { id: -1, name: "TEST", schema: {} }),
+      controller.update(requestJhon, collection.id, -1, { name: "TEST", schema: {}, ui: {}, color: "#FFFFF" }),
       Boom.notFound("Schema not found"),
     );
   });

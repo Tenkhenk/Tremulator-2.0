@@ -1,6 +1,7 @@
 import * as assert from "assert";
 import * as Boom from "@hapi/boom";
 import * as faker from "faker";
+import { pick } from "lodash";
 import { createCollection, createImage, dbInitWithUser, jhon, jane, requestJhon, requestJane } from "../utils";
 import { ImagesController } from "../../src/controllers/images";
 import { CollectionEntity } from "../../src/entities/collection";
@@ -22,7 +23,7 @@ describe("Test Controller Images", () => {
 
     // Check the response
     assert.equal(result.length === 1, true);
-    assert.equal(result[0].name, "wikipedia.png");
+    assert.equal(result[0].name, "wikipedia");
   });
 
   it("Create an image by given urls that point to an unauthorized file should not work", async () => {
@@ -48,7 +49,12 @@ describe("Test Controller Images", () => {
     const image = await createImage(collection.id);
 
     // update the image
-    await controller.update(requestJhon, collection.id, image.id, Object.assign({}, image, { name: "TEST" }));
+    await controller.update(
+      requestJhon,
+      collection.id,
+      image.id,
+      Object.assign({}, pick(image, ["name", "url"]), { name: "TEST" }),
+    );
 
     // retrieve it for checks
     const result = await controller.get(requestJhon, collection.id, image.id);
