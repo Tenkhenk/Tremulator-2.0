@@ -72,7 +72,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
   }, [imageID]);
 
   useEffect(() => {
-    if (image && selectedAnnotation && image.annotations.findIndex((a) => a.id === selectedAnnotation)) {
+    if (image && selectedAnnotation) {
       setAnnotation(image.annotations?.find((a) => a.id === selectedAnnotation) || null);
     } else {
       setAnnotation(null);
@@ -117,11 +117,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                       editMode={mode !== "view"}
                       addMode={mode !== "new"}
                       schemas={collection.schemas}
-                      annotations={
-                        annotation
-                          ? image.annotations.filter((e) => e.id !== annotation.id).concat([annotation])
-                          : image.annotations
-                      }
+                      annotations={image.annotations.map((a) => (a.id === annotation?.id ? annotation : a))}
                       selected={annotation ? annotation.id : selectedAnnotation}
                       onCreate={(geo) => {
                         setMode("new");
@@ -169,7 +165,9 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                           collection={collection}
                           annotations={image.annotations.map((a) => (a.id === annotation?.id ? annotation : a))}
                           selected={selectedAnnotation}
-                          setSelected={(a) => setSelectedAnnotation(a?.id || null)}
+                          setSelected={(a) => {
+                            setSelectedAnnotation(a?.id || null);
+                          }}
                           editMode={mode === "edit"}
                           setEditMode={(b: boolean) => setMode(b ? "edit" : "view")}
                           onSaved={() => fetch()}
