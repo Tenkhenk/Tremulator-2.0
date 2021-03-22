@@ -85,7 +85,6 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
 
       // listener for creation
       const createFn = (e: LeafletEvent) => {
-        console.log(e);
         if (onCreate) onCreate(e.layer.toGeoJSON().geometry);
       };
       map.on("draw:created", createFn);

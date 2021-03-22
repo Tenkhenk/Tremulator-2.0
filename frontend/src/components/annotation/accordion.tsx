@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useRef, useEffect } from "react";
 import { AnnotationModel, CollectionModelFull } from "../../types";
 import { Annotation } from "./annotation";
 
@@ -13,6 +13,11 @@ interface Props {
 }
 export const AnnotationAccordion: FC<Props> = (props: Props) => {
   const { annotations, collection, editMode, setEditMode, selected, setSelected, onSaved } = props;
+
+  useEffect(() => {
+    const dom = document.querySelector(`.card.selected`);
+    if (dom) dom.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+  }, [selected]);
 
   return (
     <div className="accordion">

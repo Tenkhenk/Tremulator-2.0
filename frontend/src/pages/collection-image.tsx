@@ -14,14 +14,23 @@ import { IIIFLayer } from "../components/iiif";
 import { IIIFLayerAnnotation } from "../components/iiif/annotation";
 import { AnnotationForm } from "../components/annotation/form";
 import L, { Browser, latLng, latLngBounds, LatLngBounds } from "leaflet";
+import * as geojsonBbox from "geojson-bbox";
 
 /**
- * Desiarlization of the `toBBoxString`.
+ * Deserialization of the `toBBoxString`.
  */
 function fromBBoxString(bbox: string): LatLngBounds | null {
   if (bbox === "") return null;
   const parsed = bbox.split(",").map(parseFloat);
   return latLngBounds(latLng(parsed[1], parsed[0]), latLng(parsed[3], parsed[2]));
+}
+
+/**
+ * Serialization to `toBBoxString`.
+ */
+function toBBoxString(bbox: Array<Number>): string | null {
+  if (!bbox! || bbox.length !== 4) return null;
+  return bbox.join(",");
 }
 
 interface Props {
@@ -166,7 +175,13 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                           annotations={image.annotations.map((a) => (a.id === annotation?.id ? annotation : a))}
                           selected={selectedAnnotation}
                           setSelected={(a) => {
-                            setSelectedAnnotation(a?.id || null);
+                            if (a !== null) {
+                              setSelectedAnnotation(a.id);
+                              const bbox = geojsonBbox(a.geometry);
+                              setBbox(toBBoxString(bbox) || "");
+                            } else {
+                              setSelectedAnnotation(null);
+                            }
                           }}
                           editMode={mode === "edit"}
                           setEditMode={(b: boolean) => setMode(b ? "edit" : "view")}

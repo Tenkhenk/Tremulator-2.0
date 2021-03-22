@@ -32,9 +32,11 @@
     align-items: stretch;
     .image {
       flex-grow: 1;
+      height: 100%;
     }
     .annotation {
       overflow: auto;
+      height: 100%;
     }
   }
 }
