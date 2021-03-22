@@ -81,12 +81,11 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
   }, [imageID]);
 
   useEffect(() => {
-    if (image && selectedAnnotation) {
+    if (mode !== "new" && image && selectedAnnotation) {
+      console.log("set annot");
       setAnnotation(image.annotations?.find((a) => a.id === selectedAnnotation) || null);
-    } else {
-      setAnnotation(null);
     }
-  }, [image, selectedAnnotation, setAnnotation]);
+  }, [image, mode, selectedAnnotation, setAnnotation]);
   return (
     <>
       {(imageLoading || collectionLoading) && <Loader />}
@@ -126,7 +125,11 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                       editMode={mode !== "view"}
                       addMode={mode !== "new"}
                       schemas={collection.schemas}
-                      annotations={image.annotations.map((a) => (a.id === annotation?.id ? annotation : a))}
+                      annotations={
+                        mode === "new" && annotation
+                          ? image.annotations.concat([annotation])
+                          : image.annotations.map((a) => (a.id === annotation?.id ? annotation : a))
+                      }
                       selected={annotation ? annotation.id : selectedAnnotation}
                       onCreate={(geo) => {
                         setMode("new");

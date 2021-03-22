@@ -31,10 +31,12 @@ export const Annotation: FC<Props> = (props: Props) => {
 
   return (
     <>
-      <div className={`card ${isSelected ? "selected" : ""}`}>
+      <div
+        className={`accordion-item card ${isSelected ? "selected" : ""}`}
+        style={schema ? { borderColor: schema.color } : {}}
+      >
         <div
-          className="card-header d-flex justify-content-between"
-          style={schema ? { borderLeft: `10px solid ${schema.color}` } : {}}
+          className="accordion-header card-header d-flex justify-content-between"
           onClick={() => {
             toggleSelected();
             setEditMode(false);
@@ -68,7 +70,7 @@ export const Annotation: FC<Props> = (props: Props) => {
             </button>
           </div>
         </div>
-        <div className="card-body">
+        <div className="card-body accordion-collapse collapse show">
           {!editMode && (
             <>
               {Object.keys(annotation.data).map((field) => (
@@ -77,6 +79,8 @@ export const Annotation: FC<Props> = (props: Props) => {
                   <span className="value">{annotation.data[field]}</span>
                 </div>
               ))}
+
+              {Object.keys(annotation.data).length === 0 && <p className="text-center text-muted">No data</p>}
             </>
           )}
           {editMode && (

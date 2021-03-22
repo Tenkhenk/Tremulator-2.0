@@ -1,5 +1,7 @@
 .accordion {
   .card {
+    border-width: 0px 0px 0px 10px;
+
     .card-header {
       button {
         padding-right: 0;
@@ -9,6 +11,14 @@
       display: none;
     }
     &.selected {
+      border-width: 1px 1px 1px 10px !important;
+      box-shadow: 5px 5px 5px grey;
+      border-bottom: 1px solid red;
+      z-index: 999;
+      .card-header {
+        // background-color: lighten($primary, 0.5);
+        // color: $white;
+      }
       .card-body {
         display: block;
 

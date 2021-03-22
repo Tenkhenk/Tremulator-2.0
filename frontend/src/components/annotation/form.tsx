@@ -59,17 +59,21 @@ export const AnnotationForm: FC<Props> = (props: Props) => {
       {annotation.id < 0 && schemas.length > 1 && (
         <div className="row">
           <div className="col">
-            <label htmlFor="schema">Select a schema</label>
-            <select
-              id="schema"
-              onChange={(e) => setSchema(schemas.find((item) => "" + item.id === e.target.value) || null)}
-            >
-              {schemas.map((schema) => (
-                <option key={schema.id} value={schema.id}>
-                  {schema.name}
-                </option>
-              ))}
-            </select>
+            <div className="form-group">
+              <div className="form-group">
+                <select
+                  id="schema"
+                  className="custom-select"
+                  onChange={(e) => setSchema(schemas.find((item) => "" + item.id === e.target.value) || null)}
+                >
+                  {schemas.map((schema) => (
+                    <option key={schema.id} value={schema.id}>
+                      Schema: {schema.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
         </div>
       )}
