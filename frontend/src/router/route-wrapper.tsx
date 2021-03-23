@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useReactOidc } from "@axa-fr/react-oidc-context";
+import { useReactOidc, OidcSecure } from "@axa-fr/react-oidc-context";
 import Loader from "../components/loader";
 
 interface Props {
@@ -10,23 +10,23 @@ export const RouteWrapper: React.FC<Props> = (props: React.PropsWithChildren<Pro
   const { secured, children } = props;
   const { oidcUser, login } = useReactOidc();
 
-  const [allowed, setAllowed] = useState<boolean>(false);
+  const [allowed, setAllowed] = useState<boolean>(true);
 
   useEffect(() => {
-    if ((secured === true && oidcUser) || secured === undefined || secured === false) {
-      setAllowed(true);
-    } else {
+    if (secured === true && !oidcUser) {
       setAllowed(false);
+    } else {
+      setAllowed(true);
     }
-  }, [secured, oidcUser]);
+  }, [secured, oidcUser, login]);
 
-  useEffect(() => {
-    if (allowed === false) {
-      console.log("Login process");
-      login();
-    }
-  }, [allowed, login]);
-
-  if (allowed) return <>{children}</>;
-  else return <Loader />;
+  if (allowed === false) {
+    return (
+      <OidcSecure>
+        <>{children}</>
+      </OidcSecure>
+    );
+  } else {
+    return <>{children}</>;
+  }
 };
