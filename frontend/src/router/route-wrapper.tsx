@@ -13,7 +13,7 @@ export const RouteWrapper: React.FC<Props> = (props: React.PropsWithChildren<Pro
   const [allowed, setAllowed] = useState<boolean>(false);
 
   useEffect(() => {
-    if ((secured && oidcUser) || !secured) {
+    if ((secured === true && oidcUser) || secured === undefined || secured === false) {
       setAllowed(true);
     } else {
       setAllowed(false);
@@ -21,7 +21,10 @@ export const RouteWrapper: React.FC<Props> = (props: React.PropsWithChildren<Pro
   }, [secured, oidcUser]);
 
   useEffect(() => {
-    if (allowed === false) login();
+    if (allowed === false) {
+      console.log("Login process");
+      login();
+    }
   }, [allowed, login]);
 
   if (allowed) return <>{children}</>;
