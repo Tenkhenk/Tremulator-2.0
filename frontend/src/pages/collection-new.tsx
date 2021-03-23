@@ -37,7 +37,7 @@ export const CollectionNew: React.FC<Props> = (props: Props) => {
             <h1>Create a collection</h1>
           </PageHeader>
 
-          <div className="container-fluid">
+          <div className="container">
             <div className="row page-title">
               <div className="col">
                 <h2>Create a collection</h2>
