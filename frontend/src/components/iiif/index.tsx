@@ -11,16 +11,30 @@ interface Props {
   setQuality: (quality: string) => void;
   bbox: LatLngBounds | null;
   onMoveEnd?: (e: LatLngBounds) => void;
+  // juts to know when to invalidate map size
+  sideOpened: boolean;
 }
 
 export const IIIFLayer: React.FC<Props> = (props: Props) => {
-  const { url, bbox, onMoveEnd, quality, setQuality } = props;
+  const { url, bbox, onMoveEnd, quality, setQuality, sideOpened } = props;
 
   // state
   const [layer, setLayer] = useState<Layer | null>(null);
 
   // Map
   const map = useMap();
+
+  // WHen size changed (based on sideOpened)
+  //  => invalidate map size in a timeout
+  useEffect(() => {
+    const timeout: number = window.setTimeout(() => {
+      map.invalidateSize();
+    }, 400);
+
+    return () => {
+      if (timeout) window.clearTimeout(timeout);
+    };
+  }, [map, sideOpened]);
 
   // When map or url changed
   //  => reset layer

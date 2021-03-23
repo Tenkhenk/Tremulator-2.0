@@ -61,12 +61,14 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
   const [annotation, setAnnotation] = useState<AnnotationModel | null>(null);
   // Id of the selected annotation
   const [selectedAnnotation, setSelectedAnnotation] = useQueryParam<number | null>("annotation", null);
-  //Set mode (view / new / edit)
+  //Set mode (view / new / edit )
   const [mode, setMode] = useQueryParam<string>("mode", "view");
   // Map BBOX
   const [bbox, setBbox] = useQueryParam<string>("bbox", "", true);
   // iiif quality mode
   const [quality, setQuality] = useQueryParam<string>("quality", "default");
+  // View ann
+  const [sideOpened, setSideOpened] = useQueryParam<boolean>("opened", true);
 
   // When error happened
   //  => set the alerte
@@ -87,6 +89,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
       setAnnotation(image.annotations?.find((a) => a.id === selectedAnnotation) || null);
     }
   }, [image, mode, selectedAnnotation, setAnnotation]);
+
   return (
     <>
       {(imageLoading || collectionLoading) && <Loader />}
@@ -106,19 +109,26 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                   </button>
                 </div>
                 <div className="h5">
-                  <i className="fas fa-vector-square mr-1"></i>
-                  {image.annotations.length}
+                  <button
+                    title={`Open / Close Annotations`}
+                    className="btn btn-link"
+                    onClick={() => setSideOpened(!sideOpened)}
+                  >
+                    <i className="fas fa-vector-square mr-1"></i>
+                    {image.annotations.length}
+                  </button>
                 </div>
               </div>
             </div>
             <div className="row image-viewer-body">
-              <div className="col-8 image">
+              <div className="col image" id="image-viewer-body">
                 <MapContainer doubleClickZoom={!Browser.mobile} center={[0, 0]} zoom={0} crs={L.CRS.Simple}>
                   <IIIFLayer
                     url={image.url}
                     bbox={fromBBoxString(bbox)}
                     quality={quality}
                     setQuality={setQuality}
+                    sideOpened={sideOpened}
                     onMoveEnd={(e) => {
                       setBbox(e.toBBoxString());
                     }}
@@ -136,6 +146,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                       selected={annotation ? annotation.id : selectedAnnotation}
                       onCreate={(geo) => {
                         setMode("new");
+                        setSideOpened(true);
                         setAnnotation({
                           id: -1,
                           data: {},
@@ -160,65 +171,65 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                 </MapContainer>
               </div>
 
-              <div className="col-4 annotation">
-                {collection.schemas.length === 0 && (
-                  <div>
-                    <p className="text-center text-muted">
-                      To create annotations, you must create an schema annotation schema
-                    </p>
-                    <Link title="Create a schema" to={`/collections/${collection.id}/schemas/new`}>
-                      Create a schema
-                    </Link>
-                  </div>
-                )}
-                {collection.schemas.length > 0 && (
-                  <>
-                    {(mode === "view" || mode === "edit") && (
-                      <>
-                        {image.annotations.length === 0 && (
-                          <p className="text-center text-muted">
-                            To create an annotation, click on a shape button on the top-right corner of the image
-                          </p>
-                        )}
-                        <AnnotationAccordion
-                          collection={collection}
-                          annotations={image.annotations.map((a) => (a.id === annotation?.id ? annotation : a))}
-                          selected={selectedAnnotation}
-                          setSelected={(a) => {
-                            if (a !== null) {
-                              setSelectedAnnotation(a.id);
-                              const bbox = geojsonBbox(a.geometry);
-                              setBbox(toBBoxString(bbox) || "");
-                            } else {
-                              setSelectedAnnotation(null);
-                            }
+              {sideOpened === true && (
+                <div className="col-4 annotation">
+                  {collection.schemas.length === 0 && (
+                    <div className="text-center text-muted justify-content-center">
+                      <p>To create annotations, you must create an schema annotation schema</p>
+                      <Link title="Create a schema" to={`/collections/${collection.id}/schemas/new`}>
+                        Create a schema
+                      </Link>
+                    </div>
+                  )}
+                  {collection.schemas.length > 0 && (
+                    <>
+                      {(mode === "view" || mode === "edit") && (
+                        <>
+                          {image.annotations.length === 0 && (
+                            <p className="text-center text-muted">
+                              To create an annotation, click on a shape button on the top-right corner of the image
+                            </p>
+                          )}
+                          <AnnotationAccordion
+                            collection={collection}
+                            annotations={image.annotations.map((a) => (a.id === annotation?.id ? annotation : a))}
+                            selected={selectedAnnotation}
+                            setSelected={(a) => {
+                              if (a !== null) {
+                                setSelectedAnnotation(a.id);
+                                const bbox = geojsonBbox(a.geometry);
+                                setBbox(toBBoxString(bbox) || "");
+                              } else {
+                                setSelectedAnnotation(null);
+                              }
+                            }}
+                            editMode={mode === "edit"}
+                            setEditMode={(b: boolean) => setMode(b ? "edit" : "view")}
+                            onSaved={() => fetch()}
+                          />
+                        </>
+                      )}
+                      {mode === "new" && collection && annotation && (
+                        <AnnotationForm
+                          annotation={annotation}
+                          schemas={collection?.schemas || []}
+                          collectionID={collection.id}
+                          onSaved={(id) => {
+                            setAnnotation(null);
+                            setSelectedAnnotation(id);
+                            setMode("view");
+                            fetch();
                           }}
-                          editMode={mode === "edit"}
-                          setEditMode={(b: boolean) => setMode(b ? "edit" : "view")}
-                          onSaved={() => fetch()}
+                          onCancel={() => {
+                            setAnnotation(null);
+                            setMode("view");
+                          }}
                         />
-                      </>
-                    )}
-                    {mode === "new" && collection && annotation && (
-                      <AnnotationForm
-                        annotation={annotation}
-                        schemas={collection?.schemas || []}
-                        collectionID={collection.id}
-                        onSaved={(id) => {
-                          setAnnotation(null);
-                          setSelectedAnnotation(id);
-                          setMode("view");
-                          fetch();
-                        }}
-                        onCancel={() => {
-                          setAnnotation(null);
-                          setMode("view");
-                        }}
-                      />
-                    )}
-                  </>
-                )}
-              </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           {needsConfirmation && (

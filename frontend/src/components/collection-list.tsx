@@ -38,18 +38,17 @@ export const CollectionList: React.FC<Props> = (props: Props) => {
         </div>
       )}
       {/* Collection creation */}
-      <div>
-        {!loading && !error && data && data.length === 0 && (
+      {!loading && !error && data && data.length === 0 && (
+        <div className="col-4 offset-md-4 text-center text-muted justify-content-center">
+          <p>No collection</p>
           <p>
-            There is no collection ...
-            <br />
             Ask an access to a collection's owner or{" "}
             <Link to={"/collections/new"} title="Create a new collection">
               create your own collection
             </Link>
           </p>
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 };

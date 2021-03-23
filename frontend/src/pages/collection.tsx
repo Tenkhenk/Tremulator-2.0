@@ -51,13 +51,13 @@ export const Collection: React.FC<Props> = (props: Props) => {
             {collection.images.length > 0 && (
               <div className="col gallery">
                 {collection.images.map((image: ImageModel) => (
-                  <Image key={image.id} image={image} />
+                  <Image key={image.id} image={image} onDelete={() => fetch()} />
                 ))}
               </div>
             )}
             {collection.images.length === 0 && (
-              <div>
-                <p>There is no images ...</p>
+              <div className="col-4 offset-md-4 text-center text-muted justify-content-center">
+                <p>No images</p>
                 <button onClick={() => setIsAddingPicture(true)} className="btn btn-link">
                   <i className="fas fa-upload"></i>
                   Start by upload images

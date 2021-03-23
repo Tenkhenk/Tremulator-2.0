@@ -116,9 +116,11 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
                       </div>
                     )}
                     {collection.schemas.length === 0 && (
-                      <Link className="mr-1" to={`/collections/${collection.id}/schemas/new`}>
-                        Create a schema
-                      </Link>
+                      <div className="text-center text-muted justify-content-center">
+                        <Link className="mr-1" to={`/collections/${collection.id}/schemas/new`}>
+                          Create a schema
+                        </Link>
+                      </div>
                     )}
                   </div>
                 </div>
