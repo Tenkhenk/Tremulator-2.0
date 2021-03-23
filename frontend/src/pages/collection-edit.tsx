@@ -47,7 +47,7 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
     try {
       await putCollection(item);
       setAlertMessage({ message: `Collection saved`, type: "success" });
-      history.push(`/collections/${id}/edit`);
+      fetch();
     } catch (error) {
       setAlertMessage({ message: `Error when saving your collection "${error.message}"`, type: "warning" });
     }
@@ -74,15 +74,11 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
             </h1>
           </PageHeader>
           <div className="container">
-            <div className="row">
+            <div className="row ">
               <div className="col">
-                <div className="row page-title">
-                  <div className="col">
-                    <h2>{collection.name}</h2>
-                  </div>
-                </div>
-                <div className="row justify-content-md-center">
-                  <div className="col-6">
+                <div className="row justify-content-md-left mt-5">
+                  <div className="col-2"></div>
+                  <div className="col-8">
                     <Form
                       schema={collectionSchemaForm.schema}
                       uiSchema={collectionSchemaForm.ui}
@@ -97,11 +93,21 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
                       </div>
                     </Form>
                   </div>
+                  <div className="col-2"></div>
                 </div>
-
+                {/* SPACER */}
+                <div className="row my-3">
+                  <div className="col-2"></div>
+                  <div className="col-8">
+                    <hr />
+                  </div>
+                  <div className="col-2"></div>
+                </div>
+                {/* ANNOTATIONS SCHEMA */}
                 <div className="row">
-                  <div className="col">
-                    <h3>
+                  <div className="col-2"></div>
+                  <div className="col-8">
+                    <h3 className="text-center">
                       <i className="fas fa-list-ul"></i> {collection.schemas.length} annotations schema
                       {collection.schemas.length > 1 && "s"}{" "}
                       <Link className="mr-1" to={`/collections/${collection.id}/schemas/new`}>
@@ -109,9 +115,15 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
                       </Link>
                     </h3>
                     {collection.schemas.length > 0 && (
-                      <div className="d-flex flex-wrap justify-content-start">
+                      <div className="d-flex flex-wrap justify-content-center mt-3">
                         {collection.schemas.map((s) => (
-                          <SchemaInline key={s.id} collectionID={collection.id} schema={s} onDelete={() => fetch()} />
+                          <SchemaInline
+                            key={s.id}
+                            collectionID={collection.id}
+                            schema={s}
+                            onDelete={() => fetch()}
+                            className="align-baseline"
+                          />
                         ))}
                       </div>
                     )}
@@ -123,23 +135,38 @@ export const CollectionEdit: React.FC<Props> = (props: Props) => {
                       </div>
                     )}
                   </div>
+                  <div className="col-2"></div>
                 </div>
-
+                {/* DELETION */}
                 {isOwner(collection, oidcUser) && (
-                  <div className="row">
-                    <div className="col">
-                      <h3>
-                        <i className="fas fa-exclamation-triangle"></i> Danger Zone
-                      </h3>
-                      <p>
-                        If you delete this collection all the related {collection.images.length} images and their
-                        annotations will be deleted too.
-                      </p>
-                      <button className="btn btn-secondary" onClick={() => setNeedsConfirmation(true)}>
-                        Delete this collection
-                      </button>
+                  <>
+                    <div className="row my-3">
+                      <div className="col-2"></div>
+                      <div className="col-8">
+                        <hr />
+                      </div>
+                      <div className="col-2"></div>
                     </div>
-                  </div>
+
+                    <div className="row text-center">
+                      <div className="col-2"></div>
+                      <div className="col-8">
+                        <h3>
+                          <i className="fas fa-exclamation-triangle"></i> Danger Zone
+                        </h3>
+                        {collection.images.length > 0 && (
+                          <p>
+                            If you delete this collection all the related {collection.images.length} images and their
+                            annotations will be deleted too.
+                          </p>
+                        )}
+                        <button className="btn btn-secondary mt-2" onClick={() => setNeedsConfirmation(true)}>
+                          Delete this collection
+                        </button>
+                      </div>
+                      <div className="col-2"></div>
+                    </div>
+                  </>
                 )}
                 {needsConfirmation && (
                   <ModalPortal
