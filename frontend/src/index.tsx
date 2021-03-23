@@ -34,6 +34,7 @@ ReactDOM.render(
     authenticating={Authenticating}
     callbackComponentOverride={Authenticated}
     notAuthorized={NotAuthenticated}
+    notAuthenticated={NotAuthenticated}
     sessionLostComponent={SessionLost}
   >
     <AppContextProvider>

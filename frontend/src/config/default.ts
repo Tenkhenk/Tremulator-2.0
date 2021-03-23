@@ -38,7 +38,7 @@ export const config_default = {
       "/authentication/silent_callback",
     scope: "openid profile email",
     response_type: "code",
-    automaticSilentRenew: false,
+    automaticSilentRenew: true,
     filterProtocolClaims: true,
     loadUserInfo: false,
     revokeAccessTokenOnSignout: true,
