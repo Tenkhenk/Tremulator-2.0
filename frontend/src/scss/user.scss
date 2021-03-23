@@ -1,0 +1,21 @@
+.user-card {
+  @extend .card;
+  display: flex;
+  flex-direction: row;
+  padding: 0.3em;
+  margin-right: 0.6em;
+  margin-bottom: 0.6em;
+  align-items: center;
+
+  .user-card-body {
+    font-size: 1.2em;
+    margin: 0 5px;
+  }
+  .user-card-action {
+    display: flex;
+    align-items: center;
+    > * {
+      margin-left: 10px;
+    }
+  }
+}

@@ -21,6 +21,9 @@ export type SchemaModelFull = components["schemas"]["SchemaModelFull"];
 export type AnnotationData = components["schemas"]["AnnotationData"];
 export type AnnotationModel = components["schemas"]["AnnotationModel"];
 
+//Types for user
+export type UserModel = components["schemas"]["UserModel"];
+
 export interface AlertMessage {
   message: string;
   type: string;
@@ -153,4 +156,18 @@ export const schemaSchemaForm: JsonSchemaForm = {
       "ui:widget": "textarea",
     },
   },
+};
+
+export const collectionUserForm: JsonSchemaForm = {
+  schema: {
+    type: "object",
+    required: ["email"],
+    properties: {
+      email: {
+        type: "string",
+        title: "Email",
+      },
+    },
+  },
+  ui: {},
 };
