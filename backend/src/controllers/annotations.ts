@@ -19,6 +19,7 @@ import {
   AnnotationModel,
   AnnotationModelFull,
 } from "../entities/annotation";
+import { In } from "typeorm";
 
 @Tags("Annotations")
 @Route("collections")
@@ -174,5 +175,37 @@ export class AnnotationsController extends DefaultController {
     // Delete
     await annotation.remove();
     this.setStatus(204);
+  }
+
+  /**
+   * List annotations from a collection.
+   */
+  @Get("{collectionId}/schema/{schemaId}/annotations")
+  @Security("auth")
+  @Response("200", "Success")
+  @Response("400", "Bad Request")
+  @Response("401", "Unauthorized")
+  @Response("500", "Internal Error")
+  public async list(
+    @Request() req: ExpressAuthRequest,
+    @Path() collectionId: number,
+    @Path() schemaId: number,
+    //@Query() search = "",
+    @Query() skip = 0,
+    @Query() limit = 100,
+  ): Promise<Array<AnnotationModelFull>> {
+    // Get the collection
+    const collection = await this.getCollection(req, collectionId);
+    const annotations = await AnnotationEntity.find({
+      relations: ["image", "schema"],
+      where: {
+        image: In(collection.images_id),
+        schema: schemaId,
+      },
+      skip,
+      take: limit,
+    });
+
+    return annotations.map((u) => annotationEntityToModelFull(u));
   }
 }

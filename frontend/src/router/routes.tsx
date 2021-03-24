@@ -6,6 +6,7 @@ import { Collection } from "../pages/collection";
 import { CollectionImage } from "../pages/collection-image";
 import { AnnotationSchemaEdit } from "../pages/annotation-schema-edit";
 import { AnnotationSchemaNew } from "../pages/annotation-schema-new";
+import { SchemaAnnotationList } from "../pages/schema-annotation-list";
 
 // Definition of a route
 export interface RouteDefinition {
@@ -69,6 +70,13 @@ export const routes: RouteDefinition[] = [
                 path: "/:schemaID",
                 secured: true,
                 redirect: "/:schemaID/edit",
+                routes: [
+                  {
+                    path: "/annotations",
+                    secured: true,
+                    component: SchemaAnnotationList,
+                  },
+                ],
               },
             ],
           },

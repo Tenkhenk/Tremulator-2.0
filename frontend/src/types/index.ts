@@ -20,6 +20,7 @@ export type SchemaModelFull = components["schemas"]["SchemaModelFull"];
 // Types for annotation
 export type AnnotationData = components["schemas"]["AnnotationData"];
 export type AnnotationModel = components["schemas"]["AnnotationModel"];
+export type AnnotationModelFull = components["schemas"]["AnnotationModelFull"];
 
 //Types for user
 export type UserModel = components["schemas"]["UserModel"];
