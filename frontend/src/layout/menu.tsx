@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect, useCallback, useRef } from "react";
 import { AuthenticationContext } from "@axa-fr/react-oidc-context";
 import { Link } from "react-router-dom";
 
@@ -7,6 +7,23 @@ import { Link } from "react-router-dom";
  */
 export const Menu: React.FC = () => {
   const { oidcUser, logout, login } = useContext(AuthenticationContext);
+
+  const [menuOpened, setMenuOpened] = useState<boolean>(false);
+  let menu = useRef(null);
+
+  const closeMenu = useCallback(
+    (e: MouseEvent) => {
+      if (e.target !== menu.current) setMenuOpened(false);
+    },
+    [setMenuOpened, menu],
+  );
+
+  useEffect(() => {
+    document.body.addEventListener("click", closeMenu);
+    return function cleanup() {
+      document.body.removeEventListener("click", closeMenu);
+    };
+  }, [closeMenu]);
 
   return (
     <ul className="navbar-nav navbar-align">
@@ -20,7 +37,11 @@ export const Menu: React.FC = () => {
       )}
       {oidcUser && (
         <li className="nav-item dropdown">
-          <Link className="btn btn-link nav-link dropdown-toggle" to="/collections" title="My collections">
+          <button
+            className="btn btn-link nav-link dropdown-toggle"
+            ref={menu}
+            onClick={() => setMenuOpened((prev) => !prev)}
+          >
             {oidcUser.profile.picture ? (
               <img
                 className="avatar rounded-circle"
@@ -31,18 +52,18 @@ export const Menu: React.FC = () => {
               <i className="fas fa-user"></i>
             )}
             {oidcUser.profile.name}
-          </Link>
-          <ul className="dropdown-menu">
+          </button>
+          <ul className={`dropdown-menu${menuOpened ? " opened" : ""}`}>
             <li>
               <Link className="dropdown-item" title="My collections" to="/collections">
                 <i className="far fa-images"></i>
-                <span className="ml-3">My collections</span>
+                <span className="ml-2">My collections</span>
               </Link>
             </li>
             <li>
               <button className="dropdown-item" onClick={() => logout()} title="sign out">
                 <i className="fas fa-sign-out-alt"></i>
-                <span className="ml-3">Sign out</span>
+                <span className="ml-2">Sign out</span>
               </button>
             </li>
           </ul>

@@ -57,12 +57,10 @@ html {
 
               .dropdown {
                 .dropdown-menu {
-                  margin-top: 0;
+                  margin: 0;
                 }
-                &:hover {
-                  .dropdown-menu {
-                    display: block;
-                  }
+                .dropdown-menu.opened {
+                  display: block;
                 }
               }
             }
