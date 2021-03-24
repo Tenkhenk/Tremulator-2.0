@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const getAnnotationIIIFRegion = (annotation: AnnotationModelFull) => {
-  // using zomm level 6 works. I don't know why. To investigate
+  // Scale issue to be solved: zoom level in latLngToPoint has to be adapted by annotation.
   const points = annotation.geometry.coordinates[0].map((c: [number, number]) =>
     L.CRS.Simple.latLngToPoint(L.latLng([...c, 0]), 6),
   );
