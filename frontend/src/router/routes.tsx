@@ -6,7 +6,7 @@ import { Collection } from "../pages/collection";
 import { CollectionImage } from "../pages/collection-image";
 import { AnnotationSchemaEdit } from "../pages/annotation-schema-edit";
 import { AnnotationSchemaNew } from "../pages/annotation-schema-new";
-import { SchemaAnnotationList } from "../pages/schema-annotation-list";
+import { AnnotationSchemaDatatable } from "../pages/annotation-schema-datatable";
 
 // Definition of a route
 export interface RouteDefinition {
@@ -74,7 +74,7 @@ export const routes: RouteDefinition[] = [
                   {
                     path: "/annotations",
                     secured: true,
-                    component: SchemaAnnotationList,
+                    component: AnnotationSchemaDatatable,
                   },
                 ],
               },

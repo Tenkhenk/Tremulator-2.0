@@ -28,7 +28,7 @@ export const getAnnotationIIIFRegion = (annotation: AnnotationModelFull) => {
   return region.map((c) => max([c, 0]));
 };
 
-export const SchemaAnnotationList: React.FC<Props> = (props: Props) => {
+export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
   const { collectionID, schemaID } = props;
 
   const { data: annotations } = useGet<AnnotationModelFull[]>(
