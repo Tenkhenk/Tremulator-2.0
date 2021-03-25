@@ -32,6 +32,15 @@ export const SchemaInline: FC<Props> = (props: Props) => {
         <div className="schema-card-body">{schema.name}</div>
 
         <div className="schema-card-action">
+          {schema.nb_annotations > 0 && (
+            <Link
+              title={`Schema ${schema.nb_annotations} annotations list"`}
+              to={`/collections/${collectionID}/schemas/${schema.id}/annotations`}
+            >
+              <i className="fas fa-vector-square"></i> {schema.nb_annotations}
+            </Link>
+          )}
+
           <Link title={`Edit schema "${schema.name}"`} to={`/collections/${collectionID}/schemas/${schema.id}/edit`}>
             <i className="fas fa-edit"></i>
           </Link>

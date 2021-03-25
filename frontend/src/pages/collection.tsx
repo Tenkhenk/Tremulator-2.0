@@ -8,6 +8,7 @@ import Modal from "../components/modal";
 import Loader from "../components/loader";
 import { PageHeader } from "../components/page-header";
 import { Image } from "../components/image/image";
+import { AnnotationsMenu } from "../components/annotation/menu";
 
 interface Props {
   id: string;
@@ -39,11 +40,17 @@ export const Collection: React.FC<Props> = (props: Props) => {
           </PageHeader>
 
           <div className="row page-title">
-            <div className="col">
-              <h2>{collection.images.length} Pictures</h2>
-              <button onClick={() => setIsAddingPicture(true)} className="btn btn-link">
-                <i className="far fa-plus-square"></i>
-              </button>
+            <div className="col-6">
+              <h2>
+                <i className="far fa-image mr-2"></i>
+                {collection.images.length} Pictures
+                <button onClick={() => setIsAddingPicture(true)} className="btn btn-link">
+                  <i className="far fa-plus-square"></i>
+                </button>
+              </h2>
+            </div>
+            <div className="col-6 d-inline-flex flex-row-reverse">
+              <AnnotationsMenu schemas={collection.schemas} />
             </div>
           </div>
 
