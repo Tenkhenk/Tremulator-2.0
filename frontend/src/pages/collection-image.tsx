@@ -150,7 +150,8 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                         setAnnotation({
                           id: -1,
                           data: {},
-                          geometry: geo,
+                          geometry: geo.geometry,
+                          maxZoom: geo.maxZoom,
                           schema_id: -1,
                           image_id: image.id,
                           created_at: "",
@@ -158,7 +159,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                         });
                       }}
                       onUpdate={(e) => {
-                        setAnnotation((annotation) => Object.assign({}, annotation, { geometry: e }));
+                        setAnnotation((annotation) => Object.assign({}, annotation, e));
                       }}
                       onSelect={(id) => {
                         setSelectedAnnotation((prev) => {

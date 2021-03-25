@@ -12,6 +12,10 @@ export interface paths {
     put: operations["Update"];
     delete: operations["Delete"];
   };
+  "/collections/{collectionId}/schema/{schemaId}/annotations": {
+    /** List annotations from a collection. */
+    get: operations["List"];
+  };
   "/auth/validate_code": {
     post: operations["Validate_code"];
   };
@@ -64,6 +68,10 @@ export interface paths {
     /** Create images in the collection by specifying a list of url to download. */
     post: operations["Download"];
   };
+  "/collections/{collectionId}/images/iiif_presentation": {
+    /** Import images of a IIIF presentation manifest into the collection. */
+    post: operations["IiifPresentation"];
+  };
   "/collections/{collectionId}/images/{id}": {
     /** Get an image from the collection. */
     get: operations["Get"];
@@ -71,14 +79,6 @@ export interface paths {
     put: operations["Update"];
     /** Delete an image from the collection. */
     delete: operations["Delete"];
-  };
-  "/collections/{collectionId}/images/{id}/next": {
-    /** Get the next image from the collection. */
-    get: operations["Next"];
-  };
-  "/collections/{collectionId}/images/{id}/previous": {
-    /** Get the previous image from the collection. */
-    get: operations["Previous"];
   };
   "/misc/ping": {
     get: operations["Ping"];
@@ -106,22 +106,24 @@ export interface paths {
 export interface components {
   schemas: {
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_AnnotationEntity.id-or-created_at-or-updated_at-or-data-or-geometry-or-image_id-or-schema_id_": {
+    "Pick_AnnotationEntity.id-or-created_at-or-updated_at-or-data-or-geometry-or-maxZoom-or-image_id-or-schema_id_": {
       id: number;
       created_at: string;
       updated_at: string;
       data: { [key: string]: any };
       geometry: { [key: string]: any };
+      maxZoom: number;
       image_id: number;
       schema_id: number;
     };
-    AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-created_at-or-updated_at-or-data-or-geometry-or-image_id-or-schema_id_"];
+    AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-created_at-or-updated_at-or-data-or-geometry-or-maxZoom-or-image_id-or-schema_id_"];
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_AnnotationEntity.data-or-geometry_": {
+    "Pick_AnnotationEntity.data-or-geometry-or-maxZoom_": {
       data: { [key: string]: any };
       geometry: { [key: string]: any };
+      maxZoom: number;
     };
-    AnnotationData: components["schemas"]["Pick_AnnotationEntity.data-or-geometry_"];
+    AnnotationData: components["schemas"]["Pick_AnnotationEntity.data-or-geometry-or-maxZoom_"];
     /** From T, pick a set of properties whose keys are in the union K */
     "Pick_AnnotationModel.Exclude_keyofAnnotationModel.image_id-or-schema_id__": {
       id: number;
@@ -129,6 +131,7 @@ export interface components {
       updated_at: string;
       data: { [key: string]: any };
       geometry: { [key: string]: any };
+      maxZoom: number;
     };
     "Omit_AnnotationModel.image_id-or-schema_id_": components["schemas"]["Pick_AnnotationModel.Exclude_keyofAnnotationModel.image_id-or-schema_id__"];
     /** From T, pick a set of properties whose keys are in the union K */
@@ -245,6 +248,12 @@ export interface components {
       annotations: components["schemas"]["AnnotationModel"][];
       collection: components["schemas"]["CollectionModel"];
     };
+    /** From T, pick a set of properties whose keys are in the union K */
+    "Pick_ImageEntity.name-or-url_": {
+      name: string;
+      url: string;
+    };
+    ImageData: components["schemas"]["Pick_ImageEntity.name-or-url_"];
     /** From T, pick a set of properties whose keys are in the union K */
     "Pick_SchemaEntity.name-or-color-or-schema-or-ui_": {
       name: string;
@@ -383,6 +392,33 @@ export interface operations {
       403: unknown;
       /** Not found */
       404: unknown;
+      /** Internal Error */
+      500: unknown;
+    };
+  };
+  /** List annotations from a collection. */
+  List: {
+    parameters: {
+      path: {
+        collectionId: number;
+        schemaId: number;
+      };
+      query: {
+        skip?: number;
+        limit?: number;
+      };
+    };
+    responses: {
+      /** Ok */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AnnotationModelFull"][];
+        };
+      };
+      /** Bad Request */
+      400: unknown;
+      /** Unauthorized */
+      401: unknown;
       /** Internal Error */
       500: unknown;
     };
@@ -637,23 +673,22 @@ export interface operations {
       };
     };
   };
-  /** Get the next image from the collection. */
-  Next: {
+  /** Import images of a IIIF presentation manifest into the collection. */
+  IiifPresentation: {
     parameters: {
       path: {
         collectionId: number;
-        id: number;
       };
     };
     responses: {
       /** Ok */
       200: {
         content: {
-          "application/json": components["schemas"]["ImageModelFull"];
+          "application/json": components["schemas"]["ImageModel"][];
         };
       };
-      /** No Content */
-      204: never;
+      /** Created */
+      201: unknown;
       /** Bad Request */
       400: unknown;
       /** Unauthorized */
@@ -665,34 +700,12 @@ export interface operations {
       /** Internal Error */
       500: unknown;
     };
-  };
-  /** Get the previous image from the collection. */
-  Previous: {
-    parameters: {
-      path: {
-        collectionId: number;
-        id: number;
-      };
-    };
-    responses: {
-      /** Ok */
-      200: {
-        content: {
-          "application/json": components["schemas"]["ImageModelFull"];
+    requestBody: {
+      content: {
+        "application/json": {
+          url: string;
         };
       };
-      /** No Content */
-      204: never;
-      /** Bad Request */
-      400: unknown;
-      /** Unauthorized */
-      401: unknown;
-      /** Forbidden */
-      403: unknown;
-      /** Not Found */
-      404: unknown;
-      /** Internal Error */
-      500: unknown;
     };
   };
   Ping: {

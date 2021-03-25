@@ -12,8 +12,8 @@ interface Props {
   schemas: Array<SchemaModel>;
   editMode: boolean;
   addMode: boolean;
-  onCreate?: (geo: GeoJSON) => void;
-  onUpdate?: (geo: GeoJSON) => void;
+  onCreate?: (geo: { geometry: GeoJSON; maxZoom: number }) => void;
+  onUpdate?: (geo: { geometry: GeoJSON; maxZoom: number }) => void;
   onSelect?: (id: number) => void;
   selected?: number | null;
 }
@@ -87,13 +87,14 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
 
       // listener for creation
       const createFn = (e: LeafletEvent) => {
-        if (onCreate) onCreate(e.layer.toGeoJSON().geometry);
+        if (onCreate) onCreate({ geometry: e.layer.toGeoJSON().geometry, maxZoom: map.getMaxZoom() });
       };
       map.on("draw:created", createFn);
 
       // Listener for change
       const editFn = (e: any) => {
-        if (onUpdate) onUpdate((drawLayer.toGeoJSON() as any).features[0].geometry);
+        const geojson = (drawLayer.toGeoJSON() as any).features[0];
+        if (onUpdate) onUpdate({ geometry: geojson.geometry, maxZoom: map.getMaxZoom() });
       };
       map.on("draw:editvertex", editFn);
 

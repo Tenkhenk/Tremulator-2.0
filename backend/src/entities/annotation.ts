@@ -33,6 +33,9 @@ export class AnnotationEntity extends BaseEntity {
   @IsNotEmpty()
   geometry: any;
 
+  @Column()
+  maxZoom: number;
+
   @ManyToOne(() => ImageEntity, (image) => image.annotations, { onDelete: "CASCADE" })
   image: ImageEntity;
 
@@ -47,11 +50,11 @@ export class AnnotationEntity extends BaseEntity {
 }
 
 // For forms
-export type AnnotationData = Pick<AnnotationEntity, "data" | "geometry">;
+export type AnnotationData = Pick<AnnotationEntity, "data" | "geometry" | "maxZoom">;
 // Just the table properties with forgein keys
 export type AnnotationModel = Pick<
   AnnotationEntity,
-  "id" | "created_at" | "updated_at" | "data" | "geometry" | "image_id" | "schema_id"
+  "id" | "created_at" | "updated_at" | "data" | "geometry" | "maxZoom" | "image_id" | "schema_id"
 >;
 
 // Full
