@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useReactOidc, OidcSecure } from "@axa-fr/react-oidc-context";
-import Loader from "../components/loader";
 
 interface Props {
   secured?: boolean;
