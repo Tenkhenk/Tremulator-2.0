@@ -5,6 +5,7 @@ import { config_default } from "./default";
 export interface Configuration {
   api_path: string;
   iiif_path: string;
+  annotations_page_limit: number;
   auth: UserManagerSettings;
   schema_colors: Array<string>;
   mime_types: Array<string>;

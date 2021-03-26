@@ -15,6 +15,7 @@ export const config_default = {
     "#bd6e61",
   ],
   mime_types: ["image/jpeg", "image/jpg", "image/png", "image/tiff"],
+  annotations_page_limit: 100,
   auth: {
     authority: "https://accounts.google.com",
     client_id: "118173508985-pk9j97rcj7ivfpf1c1scuekfsmdqefn7.apps.googleusercontent.com",

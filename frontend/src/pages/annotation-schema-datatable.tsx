@@ -6,6 +6,10 @@ import { keys, max, min } from "lodash";
 import L, { Point } from "leaflet";
 import { PageHeader } from "../components/page-header";
 import { Link } from "react-router-dom";
+import Loader from "../components/loader";
+import { useQueryParam } from "../hooks/useQueryParam";
+import { PaginationMenu } from "../components/pagination-menu";
+import { config } from "../config/index";
 
 interface Props {
   collectionID: number;
@@ -31,21 +35,56 @@ export const getAnnotationIIIFRegion = (annotation: AnnotationModelFull) => {
 export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
   const { collectionID, schemaID } = props;
 
-  const { data: annotations } = useGet<AnnotationModelFull[]>(
-    `/collections/${collectionID}/schema/${schemaID}/annotations/`,
+  const [page, setPage] = useQueryParam<number>("page", 1);
+  const { data: annotations, loading: annotationsLoading, fetch: fetchAnnotations } = useGet<AnnotationModelFull[]>(
+    `/collections/${collectionID}/schema/${schemaID}/annotations`,
+    { limit: config.annotations_page_limit, skip: (page - 1) * config.annotations_page_limit },
   );
-  const { data: schema } = useGet<SchemaModelFull>(`/collections/${collectionID}/schema/${schemaID}`);
+  const { data: schema, loading: schemaLoading } = useGet<SchemaModelFull>(
+    `/collections/${collectionID}/schema/${schemaID}`,
+  );
+  const changePage = (page: number) => {
+    // page -1 cause page is 1-based
+    fetchAnnotations({ limit: config.annotations_page_limit, skip: (page - 1) * config.annotations_page_limit });
+    setPage(page);
+  };
+
   const headers = schema ? keys(schema.schema.properties) : [];
   return (
     <>
       {schema && (
-        <PageHeader title={`${schema.collection.name}: Edit schema ${schema.name}`}>
-          <h1>
-            <Link to={`/collections/${schema.collection.id}`}>{schema.collection.name}</Link>
-          </h1>
-        </PageHeader>
+        <>
+          <PageHeader title={`${schema.collection.name}: Edit schema ${schema.name}`}>
+            <h1>
+              <Link title={`Collection ${schema.collection.name}`} to={`/collections/${schema.collection.id}`}>
+                {schema.collection.name}
+              </Link>
+            </h1>
+          </PageHeader>
+
+          <div className="row page-title">
+            <div className="col-6 ">
+              <h2>
+                <i className="fas fa-vector-square mr-2"></i>
+                {schema.nb_annotations}
+                <span className="ml-2">"{schema.name}" annotations</span>
+              </h2>
+            </div>
+            <div className="col-6  d-inline-flex  flex-row-reverse">
+              {schema.nb_annotations > config.annotations_page_limit && (
+                <PaginationMenu
+                  page={page}
+                  totalPages={Math.floor(schema.nb_annotations / config.annotations_page_limit)}
+                  changePage={changePage}
+                />
+              )}
+            </div>
+          </div>
+        </>
       )}
-      <div className="container-fluid">
+      {schemaLoading && <Loader />}
+
+      <div className="row">
         <table className="table">
           {schema && (
             <thead>
@@ -78,6 +117,11 @@ export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
                   </tr>
                 );
               })}
+            </tbody>
+          )}
+          {annotationsLoading && (
+            <tbody>
+              <Loader />
             </tbody>
           )}
         </table>
