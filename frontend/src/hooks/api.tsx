@@ -12,18 +12,26 @@ interface APIResult<T> {
 /**
  * API hook for GET
  */
-export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }): APIResult<R> & { fetch: () => void } {
+export function useGet<R>(
+  path: string,
+  urlParams?: { [key: string]: unknown },
+): APIResult<R> & { fetch: (params?: { [key: string]: unknown }) => void } {
   const [data, setData] = useState<R | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<AxiosError | null>(null);
   const { oidcUser } = useContext(AuthenticationContext);
+  const [params, setParams] = useState<{ [key: string]: unknown }>(urlParams || {});
 
   // just a var that we increment for refetch
   const [refetchVar, setRefetchVar] = useState<number>(0);
-  function fetch() {
-    setRefetchVar((e) => {
-      return e + 1;
-    });
+  function fetch(params?: { [key: string]: unknown }) {
+    if (params) setParams(params);
+    else {
+      // force useEffect
+      setRefetchVar((e) => {
+        return e + 1;
+      });
+    }
   }
 
   useEffect(() => {
@@ -34,7 +42,7 @@ export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }):
       try {
         const response = await axios({
           method: "GET",
-          params: urlParams,
+          params,
           url: `${config.api_path}${path}`,
           responseType: "json",
           headers: oidcUser ? { Authorization: `${oidcUser.token_type} ${oidcUser.access_token}` } : {},
@@ -47,7 +55,7 @@ export function useGet<R>(path: string, urlParams?: { [key: string]: unknown }):
       }
     };
     main();
-  }, [path, urlParams, oidcUser, refetchVar]);
+  }, [path, params, oidcUser, refetchVar]);
 
   return { loading, error, data, fetch };
 }
