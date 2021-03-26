@@ -28,7 +28,7 @@ export const AnnotationsMenu: FC<Props> = (props: Props) => {
   return (
     <div className="dropdown">
       <button
-        className="btn btn-link dropdown-toggle"
+        className="btn btn-link dropdown-toggle px-2"
         ref={annotationsMenu}
         onClick={() => setAnnotationsMenuOpened((prev) => !prev)}
       >
@@ -37,7 +37,7 @@ export const AnnotationsMenu: FC<Props> = (props: Props) => {
       </button>
       <ul className={`dropdown-menu ${annotationsMenuOpened ? "show" : ""}`}>
         {schemas.map((s) => (
-          <li key={s.id} className="dropdown-item">
+          <li key={s.id} className="dropdown-item px-2">
             <Link
               title={`list {s.name} annotations`}
               to={`/collections/${s.collection_id}/schemas/${s.id}/annotations`}
