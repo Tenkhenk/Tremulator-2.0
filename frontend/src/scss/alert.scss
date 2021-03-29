@@ -1,0 +1,9 @@
+.alert {
+  margin-bottom: 0;
+  position: fixed;
+  top: $header-height;
+  width: 80%;
+  margin-left: 10%;
+  z-index: 999;
+  opacity: 0.9;
+}
