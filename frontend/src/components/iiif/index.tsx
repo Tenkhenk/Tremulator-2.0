@@ -19,7 +19,7 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
   const { url, bbox, onMoveEnd, quality, setQuality, sideOpened } = props;
 
   // state
-  const [layer, setLayer] = useState<Layer | null>(null);
+  const [isInit, setIsInit] = useState<boolean>(false);
 
   // Map
   const map = useMap();
@@ -48,13 +48,13 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
 
     // when layer is fully-loaded, set it in the state
     l.on("load", () => {
-      setLayer(l);
+      setIsInit(true);
     });
 
     // clean method
     return () => {
       try {
-        setLayer(null);
+        setIsInit(false);
         map.removeLayer(l);
       } catch (e) {}
     };
@@ -72,18 +72,17 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
   // When bbox changed
   //  => move the map and then listen for moves
   useEffect(() => {
-    const mvFn = () => {
+    const mvFn = (e: any) => {
       if (onMoveEnd) onMoveEnd(map.getBounds());
     };
-
-    if (layer) {
-      if (bbox) map.fitBounds(bbox);
+    if (isInit === true) {
+      if (bbox) map.fitBounds(bbox, { noMoveStart: true, animate: true, padding: [0, 0] });
       map.on("moveend", mvFn);
+      return () => {
+        map.off("moveend", mvFn);
+      };
     }
-    return () => {
-      map.off("moveend", mvFn);
-    };
-  }, [map, layer, bbox, onMoveEnd]);
+  }, [map, onMoveEnd, isInit, bbox]);
 
   return null;
 };
