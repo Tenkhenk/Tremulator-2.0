@@ -108,6 +108,8 @@ export class ImagesController extends DefaultController {
         image.name = file.originalname;
         image.url = `/iiif/2/${file.path.replace(config.data.path + "/", "").replace(/\//, "%2F")}/info.json`;
         image.path = file.path;
+        image.height = file.height;
+        image.width = file.width;
         image.order = collection.images_id.length + 1 + index;
         image.collection = collection;
         await image.save();
@@ -151,6 +153,8 @@ export class ImagesController extends DefaultController {
         image.name = file.originalname;
         image.url = `/iiif/2/${file.path.replace(config.data.path + "/", "").replace(/\//, "%2F")}/info.json`;
         image.path = file.path;
+        image.height = file.height;
+        image.width = file.width;
         image.collection = collection;
         image.order = collection.images_id.length + 1 + index;
         await image.save();
@@ -197,13 +201,15 @@ export class ImagesController extends DefaultController {
                 const name = canvas.label;
                 return (canvas.images || []).map(async (img, index) => {
                   order++;
-                  console.log(img.resource);
+
                   // Create the image
                   const image = new ImageEntity();
                   image.name = index === 0 ? name : `${name} - ${index}`;
                   image.url = img.resource.service["@id"] + "/info.json";
                   image.order = order;
                   image.collection = collection;
+                  image.width = img.resource.width;
+                  image.height = img.resource.height;
                   await image.save();
                   return image;
                 });

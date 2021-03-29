@@ -35,6 +35,12 @@ export class ImageEntity extends BaseEntity {
   @IsNotEmpty()
   name: string;
 
+  @Column({ nullable: true })
+  width: number;
+
+  @Column({ nullable: true })
+  height: number;
+
   @Column({ nullable: false })
   @IsUrl()
   @IsNotEmpty()
@@ -74,7 +80,7 @@ export type ImageData = Pick<ImageEntity, "name" | "url">;
 // Just the table properties with forgein keys
 export type ImageModel = Pick<
   ImageEntity,
-  "id" | "created_at" | "updated_at" | "name" | "order" | "url" | "collection_id"
+  "id" | "created_at" | "updated_at" | "name" | "order" | "url" | "collection_id" | "width" | "height"
 > & {
   nb_annotations: number;
 };

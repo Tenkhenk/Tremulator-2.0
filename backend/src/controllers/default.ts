@@ -8,6 +8,7 @@ import * as url from "url";
 import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { ValidationError } from "class-validator";
+import sizeOf from "image-size";
 import { UserEntity } from "../entities/user";
 import { CollectionEntity } from "../entities/collection";
 import { ImageEntity } from "../entities/image";
@@ -23,6 +24,8 @@ export type File = {
   fieldname?: string;
   mimetype: string;
   path: string;
+  width: number;
+  height: number;
 };
 
 const log: Logger = getLogger("DefaultController");
@@ -193,10 +196,13 @@ export class DefaultController extends Controller {
       // Save the file
       fs.writeFile(filePath, data, (err) => {
         if (err) reject(err);
+        const dimensions = sizeOf(filePath);
         resolve({
           originalname: this.cleanFilename(filename),
           mimetype: mimetype,
           path: filePath,
+          width: dimensions.width,
+          height: dimensions.height,
         });
       });
     });

@@ -149,7 +149,7 @@ export interface components {
       nb_annotations: number;
     };
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_ImageEntity.id-or-created_at-or-updated_at-or-name-or-order-or-url-or-collection_id_": {
+    "Pick_ImageEntity.id-or-created_at-or-updated_at-or-name-or-order-or-url-or-collection_id-or-width-or-height_": {
       id: number;
       created_at: string;
       updated_at: string;
@@ -157,8 +157,10 @@ export interface components {
       collection_id: number;
       order: number;
       url: string;
+      width: number;
+      height: number;
     };
-    ImageModel: components["schemas"]["Pick_ImageEntity.id-or-created_at-or-updated_at-or-name-or-order-or-url-or-collection_id_"] & {
+    ImageModel: components["schemas"]["Pick_ImageEntity.id-or-created_at-or-updated_at-or-name-or-order-or-url-or-collection_id-or-width-or-height_"] & {
       nb_annotations: number;
     };
     AnnotationModelFull: components["schemas"]["Omit_AnnotationModel.image_id-or-schema_id_"] & {
@@ -242,6 +244,8 @@ export interface components {
       name: string;
       order: number;
       url: string;
+      width: number;
+      height: number;
     };
     "Omit_ImageModel.collection_id-or-nb_annotations_": components["schemas"]["Pick_ImageModel.Exclude_keyofImageModel.collection_id-or-nb_annotations__"];
     ImageModelFull: components["schemas"]["Omit_ImageModel.collection_id-or-nb_annotations_"] & {
