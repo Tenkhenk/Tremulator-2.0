@@ -39,7 +39,7 @@ export const AnnotationsMenu: FC<Props> = (props: Props) => {
         {schemas.map((s) => (
           <li key={s.id} className="dropdown-item px-2">
             <Link
-              title={`list {s.name} annotations`}
+              title={`list ${s.name} annotations`}
               to={`/collections/${s.collection_id}/schemas/${s.id}/annotations`}
             >
               <i className="fas fa-vector-square mr-2"></i>
