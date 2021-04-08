@@ -103,6 +103,11 @@ export const schemaSchemaForm: JsonSchemaForm = {
                 },
                 {
                   properties: {
+                    type: { enum: ["boolean"] },
+                  },
+                },
+                {
+                  properties: {
                     type: { enum: ["textarea"] },
                   },
                 },

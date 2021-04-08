@@ -28,7 +28,7 @@ export const Annotation: FC<Props> = (props: Props) => {
 
   // States
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
-
+  console.log(annotation.data);
   return (
     <>
       <div
@@ -76,7 +76,7 @@ export const Annotation: FC<Props> = (props: Props) => {
               {Object.keys(annotation.data).map((field) => (
                 <div key={field} className="field">
                   <span className="name">{field}</span>
-                  <span className="value">{annotation.data[field]}</span>
+                  <span className="value">{`${annotation.data[field]}`}</span>
                 </div>
               ))}
 
