@@ -33,6 +33,9 @@ export class AnnotationEntity extends BaseEntity {
   @IsNotEmpty()
   geometry: any;
 
+  @Column({ nullable: true })
+  order: number;
+
   @Column()
   maxZoom: number;
 
@@ -47,6 +50,15 @@ export class AnnotationEntity extends BaseEntity {
 
   @RelationId((a: AnnotationEntity) => a.schema)
   schema_id: number;
+
+  // @AfterInsert()
+  // private async computeOrder() {
+  //   const db = Container.get(DbService);
+  //   const result = await db.connection.manager.query(
+  //     `SELECT max(annotation.order) as max FROM annotation INNER JOIN image ON annotation."imageId" = image."id" WHERE image."id"=${this.image_id}`,
+  //   );
+  //   log.info("*******************************************", result);
+  // }
 }
 
 // For forms
@@ -54,7 +66,7 @@ export type AnnotationData = Pick<AnnotationEntity, "data" | "geometry" | "maxZo
 // Just the table properties with forgein keys
 export type AnnotationModel = Pick<
   AnnotationEntity,
-  "id" | "created_at" | "updated_at" | "data" | "geometry" | "maxZoom" | "image_id" | "schema_id"
+  "id" | "created_at" | "updated_at" | "data" | "geometry" | "maxZoom" | "image_id" | "schema_id" | "order"
 >;
 
 // Full

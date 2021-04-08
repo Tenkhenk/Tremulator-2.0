@@ -42,10 +42,10 @@ export const Annotation: FC<Props> = (props: Props) => {
             setEditMode(false);
           }}
         >
-          <h5>Annotation #{annotation.id}</h5>
+          <h5>Annotation #{annotation.order ? annotation.order : annotation.id}</h5>
           <div>
             <button
-              title={`Edit annotation #${annotation.id}`}
+              title={`Edit annotation #${annotation.order ? annotation.order : annotation.id}`}
               className="btn btn-link"
               onClick={(e) => {
                 e.stopPropagation();
@@ -57,7 +57,7 @@ export const Annotation: FC<Props> = (props: Props) => {
               <i className="fas fa-edit"></i>
             </button>
             <button
-              title={`Delete annotation #${annotation.id}`}
+              title={`Delete annotation #${annotation.order ? annotation.order : annotation.id}`}
               className="btn btn-link"
               onClick={(e) => {
                 e.stopPropagation();
@@ -105,7 +105,9 @@ export const Annotation: FC<Props> = (props: Props) => {
             <div className="modal-body">
               {loading && <Loader />}
               {!loading && (
-                <div className="text-center h5">You are about to delete the annotation #{annotation.id}.</div>
+                <div className="text-center h5">
+                  You are about to delete the annotation #{annotation.order ? annotation.order : annotation.id}.
+                </div>
               )}
             </div>
             <div className="modal-footer">

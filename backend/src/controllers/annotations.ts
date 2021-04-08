@@ -78,10 +78,19 @@ export class AnnotationsController extends DefaultController {
     // validate geojson
     if (!gjv.valid(body.geometry)) throw Boom.badRequest("Geometry is invalid");
 
+    // compute annotation order
+    const result = await this.db.connection.manager.query(
+      `SELECT max(annotation.order) as max FROM annotation INNER JOIN image ON annotation."imageId" = image."id" WHERE image."id"=${image.id}`,
+    );
+    const order: number = result[0] && result[0].max !== null ? result[0].max + 1 : 1;
+
     // Save & return the collection
-    const annotation = await this.db
-      .getRepository(AnnotationEntity)
-      .save({ ...(body as AnnotationEntity), image, schema });
+    const annotation = await this.db.getRepository(AnnotationEntity).save({
+      ...(body as AnnotationEntity),
+      image,
+      schema,
+      order,
+    });
     this.setStatus(201);
 
     return annotationEntityToModel(annotation);

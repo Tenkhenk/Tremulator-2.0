@@ -149,6 +149,7 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                         setSideOpened(true);
                         setAnnotation({
                           id: -1,
+                          order: -1,
                           data: {},
                           geometry: geo.geometry,
                           maxZoom: geo.maxZoom,
