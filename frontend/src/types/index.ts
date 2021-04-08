@@ -90,7 +90,7 @@ export const schemaSchemaForm: JsonSchemaForm = {
               title: "Type",
               default: "string",
               enum: ["string", "textarea", "select", "range", "number", "boolean"],
-              enumNames: ["Simple text", "Large text", "List of items", "Range number", "Number", "True / False"],
+              enumNames: ["Short text", "Long text", "List of items", "Range number", "Number", "True / False"],
             },
           },
           dependencies: {
