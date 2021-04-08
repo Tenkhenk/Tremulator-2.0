@@ -66,10 +66,10 @@ export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
           </div>
         </>
       )}
-      {schemaLoading && <Loader />}
+      {(schemaLoading || annotationsLoading) && <Loader />}
 
       <div className="row">
-        <table className="table">
+        <table className="table annotations-table">
           {schema && (
             <thead>
               <tr>
@@ -88,7 +88,7 @@ export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
               {annotations.map((a) => {
                 const thumbnailURL = `${a.image.url.split("/").slice(0, -1).join("/")}/${getAnnotationIIIFRegion(
                   a,
-                ).join(",")}/200,/0/default.jpg`;
+                ).join(",")}/max/0/default.jpg`;
                 return (
                   <tr>
                     <th scope="row">
@@ -101,11 +101,6 @@ export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
                   </tr>
                 );
               })}
-            </tbody>
-          )}
-          {annotationsLoading && (
-            <tbody>
-              <Loader />
             </tbody>
           )}
         </table>
