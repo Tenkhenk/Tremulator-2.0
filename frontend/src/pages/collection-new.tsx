@@ -20,7 +20,7 @@ export const CollectionNew: React.FC<Props> = (props: Props) => {
     try {
       const createdCollection = await postCollection(item);
       setAlertMessage({ message: `Collection "${createdCollection.name}" created`, type: "success" });
-      history.push(`/collections/${createdCollection.id}/edit`);
+      history.push(`/collections/${createdCollection.id}`);
     } catch (error) {
       setAlertMessage({ message: `Error when creating collection "${error.message}" created`, type: "warning" });
       // Keep it in case of errors
