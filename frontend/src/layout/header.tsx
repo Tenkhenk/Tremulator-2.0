@@ -8,7 +8,7 @@ export const Header: React.FC = () => {
       <nav className="navbar navbar-dark bg-primary navbar-expand-lg navbar-fixed">
         <div id="brand">
           <Link className="navbar-brand" to={"/"} title="Tremulator's home">
-            Tr.
+            Tremulator
           </Link>
         </div>
         <div id="app-header"></div>
