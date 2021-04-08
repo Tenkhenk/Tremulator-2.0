@@ -50,7 +50,12 @@ export const Collection: React.FC<Props> = (props: Props) => {
               </h2>
             </div>
             <div className="col-6 d-inline-flex flex-row-reverse">
-              <AnnotationsMenu schemas={collection.schemas} />
+              {collection.schemas.length === 0 && (
+                <Link title="Create a schema" to={`/collections/${collection.id}/schemas/new`}>
+                  <i className="fas fa-list-ul"></i> Create a schema
+                </Link>
+              )}
+              {collection.schemas.length > 0 && <AnnotationsMenu schemas={collection.schemas} />}
             </div>
           </div>
 
