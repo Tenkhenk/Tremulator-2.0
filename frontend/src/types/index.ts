@@ -1,4 +1,3 @@
-import { JSONSchema7 } from "json-schema";
 import { components } from "./api";
 
 export type UserType = Omit<components["schemas"]["UserModel"], "access_token" | "expires_at">;
@@ -31,7 +30,7 @@ export interface AlertMessage {
 }
 
 export interface JsonSchemaForm {
-  schema: JSONSchema7;
+  schema: any;
   ui?: any;
 }
 
@@ -90,7 +89,8 @@ export const schemaSchemaForm: JsonSchemaForm = {
               type: "string",
               title: "Type",
               default: "string",
-              enum: ["string", "boolean", "number", "textarea", "select", "range"],
+              enum: ["string", "textarea", "select", "range", "number", "boolean"],
+              enumNames: ["Simple text", "Large text", "List of items", "Range number", "Number", "True / False"],
             },
           },
           dependencies: {
