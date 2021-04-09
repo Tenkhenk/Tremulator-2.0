@@ -75,7 +75,7 @@ export const Annotation: FC<Props> = (props: Props) => {
               {Object.keys(annotation.data).map((field) => (
                 <div key={field} className="field">
                   <span className="name">{field}</span>
-                  <span className="value">{`${annotation.data[field]}`}</span>
+                  <span className="annotation value">{`${annotation.data[field]}`}</span>
                 </div>
               ))}
 

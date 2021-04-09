@@ -1,0 +1,12 @@
+@import "~@fortawesome/fontawesome-free/css/all.css";
+@import "~@typopro/web-junicode/TypoPRO-Junicode.css";
+
+span.annotation.value {
+  font-family: "TypoPRO Junicode";
+}
+div.annotation > form {
+  input,
+  textarea {
+    font-family: "TypoPRO Junicode";
+  }
+}

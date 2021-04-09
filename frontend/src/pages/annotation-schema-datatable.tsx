@@ -116,7 +116,9 @@ export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
                       </Link>
                     </td>
                     {headers.map((f: string, i: number) => (
-                      <td key={i}>{a.data[f] || ""}</td>
+                      <td key={i}>
+                        <span className="annotation value">{a.data[f] || ""}</span>
+                      </td>
                     ))}
                   </tr>
                 );

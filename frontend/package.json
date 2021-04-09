@@ -32,6 +32,7 @@
     "@mapbox/geojson-area": "^0.2.2",
     "@rjsf/bootstrap-4": "^2.5.0",
     "@rjsf/core": "^2.5.0",
+    "@typopro/web-junicode": "^3.7.5",
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "boundingbox": "^1.2.3",

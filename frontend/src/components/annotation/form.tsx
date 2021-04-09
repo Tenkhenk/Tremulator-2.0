@@ -82,7 +82,7 @@ export const AnnotationForm: FC<Props> = (props: Props) => {
 
           {schema && (
             <div className="row">
-              <div className="col">
+              <div className="col annotation">
                 <Form
                   schema={schema.schema}
                   uiSchema={schema.ui}
