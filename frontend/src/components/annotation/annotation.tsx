@@ -28,7 +28,6 @@ export const Annotation: FC<Props> = (props: Props) => {
 
   // States
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
-  console.log(annotation.data);
   return (
     <>
       <div

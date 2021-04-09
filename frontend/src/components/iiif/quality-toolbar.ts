@@ -21,8 +21,6 @@ export interface Options {
   changeQuality: function (quality: string) {
     if ((this as any).options.setQuality) {
       (this as any).options.setQuality(quality);
-    } else {
-      console.log("Changing quality to", quality);
     }
   },
 

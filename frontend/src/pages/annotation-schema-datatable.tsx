@@ -74,7 +74,6 @@ export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
       <InfiniteScroll
         dataLength={annotations.length}
         next={async () => {
-          console.log("load page");
           await fetch({ limit: config.pagination_size, skip: annotations.length });
         }}
         scrollableTarget={document.querySelector("main")}
