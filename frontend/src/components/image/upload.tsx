@@ -6,6 +6,7 @@ import { AppContext } from "../../context/app-context";
 import { usePost } from "../../hooks/api";
 import { config } from "../../config";
 import Loader from "./../loader";
+import { formatBytes } from "../../utils";
 
 const baseStyle: CSSProperties = {
   flex: 1,
@@ -81,6 +82,8 @@ const ImageUpload: React.FC<Props> = (props: Props) => {
     }
   };
 
+  const totalFiles = files.reduce((acc, file) => acc + file.size, 0);
+
   return (
     <>
       <div className="modal-body">
@@ -95,22 +98,38 @@ const ImageUpload: React.FC<Props> = (props: Props) => {
               </button>
             </div>
             {files.length > 0 && (
-              <aside>
-                <h4>Files</h4>
-                <ul style={{ maxHeight: "200px", overflowY: "scroll" }}>
-                  {files.map((file) => (
-                    <li key={file.name}>
-                      {file.name} - {file.size} bytes
-                    </li>
+              <aside className="mt-2">
+                <h4>
+                  {files.length} Files - {formatBytes(totalFiles)}
+                </h4>
+                {totalFiles > config.max_upload_size && (
+                  <p className="error">Total size is upper the limit ({formatBytes(config.max_upload_size)})</p>
+                )}
+                <div style={{ maxHeight: "200px", overflowY: "scroll" }}>
+                  {files.map((file, index) => (
+                    <div key={file.name}>
+                      <span>
+                        {file.name} - {formatBytes(file.size)}
+                      </span>
+                      <button
+                        className="btn btn-lg btn-link"
+                        title="Remove from the selection"
+                        onClick={() => {
+                          setFiles((files) => files.filter((f, i) => i !== index));
+                        }}
+                      >
+                        <i className="fas fa-minus-circle"></i>
+                      </button>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </aside>
             )}
           </>
         )}
       </div>
       <div className="modal-footer">
-        <button className="btn btn-primary" onClick={upload} disabled={loading}>
+        <button className="btn btn-primary" onClick={upload} disabled={loading || totalFiles > config.max_upload_size}>
           <i className="fas fa-upload"></i>
           Upload
         </button>

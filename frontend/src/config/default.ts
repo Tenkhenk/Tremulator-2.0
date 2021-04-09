@@ -16,6 +16,7 @@ export const config_default = {
   ],
   mime_types: ["image/jpeg", "image/jpg", "image/png", "image/tiff"],
   annotations_page_limit: 100,
+  max_upload_size: 209715200,
   auth: {
     authority: "https://accounts.google.com",
     client_id: "118173508985-pk9j97rcj7ivfpf1c1scuekfsmdqefn7.apps.googleusercontent.com",

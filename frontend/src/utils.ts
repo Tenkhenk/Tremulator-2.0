@@ -18,10 +18,14 @@ export const getAnnotationIIIFRegion = (annotation: AnnotationModelFull) => {
   return region.map((c) => max([c, 0]));
 };
 
-export const latLongToIiif = (point: [number, number]): [number, number] => {
-  return [0, 0];
-};
+export function formatBytes(bytes: number, decimals = 2): string {
+  if (bytes === 0) return "0 Bytes";
 
-export const iiifToLatLng = (point: [number, number]): [number, number] => {
-  return [0, 0];
-};
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
