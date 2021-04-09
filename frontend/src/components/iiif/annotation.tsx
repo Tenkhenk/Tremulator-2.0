@@ -79,7 +79,7 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
           circle: false,
           polygon: {
             allowIntersection: false,
-            showArea: true,
+            showArea: false,
           },
         },
       });

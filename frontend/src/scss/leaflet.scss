@@ -7,4 +7,9 @@
   width: 100%;
   background-color: transparent;
   border: 1px solid $secondary;
+
+  .leaflet-editing-icon {
+    border-radius: 20px;
+    opacity: 0.7;
+  }
 }
