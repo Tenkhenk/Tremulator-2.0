@@ -3,9 +3,53 @@ table.annotations-table {
     th,
     td {
       vertical-align: middle;
+      text-align: center;
       img {
         max-width: 100%;
       }
+    }
+
+    th {
+      width: min-content;
+    }
+  }
+}
+
+button.export-btn {
+  border: none;
+  color: green;
+  padding: 0;
+  margin: 0;
+  height: auto;
+  line-height: normal;
+
+  &:hover {
+    color: lighten(green, 5);
+  }
+
+  i.fas {
+    font-size: 2rem;
+  }
+
+  //loading
+  &.loading {
+    animation: opacity 2s linear infinite;
+  }
+
+  //error
+  &.error {
+    color: $error;
+  }
+
+  @keyframes opacity {
+    0% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
     }
   }
 }

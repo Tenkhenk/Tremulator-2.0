@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { keys } from "lodash";
 
 import { AnnotationModelFull, SchemaModelFull } from "../types";
-import { useGet } from "../hooks/api";
-import { keys } from "lodash";
-import { PageHeader } from "../components/page-header";
-import { Link } from "react-router-dom";
-import Loader from "../components/loader";
-import { useQueryParam } from "../hooks/useQueryParam";
-import { PaginationMenu } from "../components/pagination-menu";
+import { getAnnotationDetailUrl } from "../utils";
 import { config } from "../config/index";
-import { getAnnotationIIIFRegion } from "../utils";
+import { useGet } from "../hooks/api";
+import { useQueryParam } from "../hooks/useQueryParam";
+import { PageHeader } from "../components/page-header";
+import Loader from "../components/loader";
+import { AnnotationBtnExport } from "../components/annotation/btn-export-csv";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface Props {
   collectionID: number;
@@ -19,19 +20,25 @@ interface Props {
 export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
   const { collectionID, schemaID } = props;
 
-  const [page, setPage] = useQueryParam<number>("page", 1);
-  const { data: annotations, loading: annotationsLoading, fetch: fetchAnnotations } = useGet<AnnotationModelFull[]>(
+  const { data, loading: annotationsLoading, fetch } = useGet<AnnotationModelFull[]>(
     `/collections/${collectionID}/schema/${schemaID}/annotations`,
-    { limit: config.annotations_page_limit, skip: (page - 1) * config.annotations_page_limit },
+    { limit: config.pagination_size, skip: 0 },
   );
   const { data: schema, loading: schemaLoading } = useGet<SchemaModelFull>(
     `/collections/${collectionID}/schema/${schemaID}`,
   );
-  const changePage = (page: number) => {
-    // page -1 cause page is 1-based
-    fetchAnnotations({ limit: config.annotations_page_limit, skip: (page - 1) * config.annotations_page_limit });
-    setPage(page);
-  };
+
+  const [annotations, setAnnotations] = useState<Array<AnnotationModelFull>>([]);
+
+  useEffect(() => {
+    if (data) {
+      setAnnotations((annotations) => annotations.concat(data || []));
+    }
+  }, [data]);
+
+  useEffect(() => {
+    setAnnotations([]);
+  }, [collectionID, schemaID]);
 
   const headers = schema ? keys(schema.schema.properties) : [];
   return (
@@ -46,30 +53,39 @@ export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
             </h1>
           </PageHeader>
 
-          <div className="row page-title">
-            <div className="col-6 ">
+          <div className="row page-title ">
+            <div className="col d-flex justify-content-between">
               <h2>
                 <i className="fas fa-vector-square mr-2"></i>
                 {schema.nb_annotations}
                 <span className="ml-2">"{schema.name}" annotations</span>
               </h2>
-            </div>
-            <div className="col-6  d-inline-flex  flex-row-reverse">
-              {schema.nb_annotations > config.annotations_page_limit && (
-                <PaginationMenu
-                  page={page}
-                  totalPages={Math.floor(schema.nb_annotations / config.annotations_page_limit)}
-                  changePage={changePage}
-                />
-              )}
+              <AnnotationBtnExport
+                title={`Export annotations in CSV`}
+                filename={`${schema.collection.name} - ${schema.name}.csv`}
+                schema={schema}
+              />
             </div>
           </div>
         </>
       )}
       {(schemaLoading || annotationsLoading) && <Loader />}
 
-      <div className="row">
-        <table className="table annotations-table">
+      <InfiniteScroll
+        dataLength={annotations.length}
+        next={async () => {
+          console.log("load page");
+          await fetch({ limit: config.pagination_size, skip: annotations.length });
+        }}
+        scrollableTarget={document.querySelector("main")}
+        hasMore={data && data.length === 0 ? false : true}
+        loader={
+          <div className="loader" key={0}>
+            Loading ...
+          </div>
+        }
+      >
+        <table className="table table-hover annotations-table">
           {schema && (
             <thead>
               <tr>
@@ -86,15 +102,20 @@ export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
           {annotations && (
             <tbody>
               {annotations.map((a) => {
-                const thumbnailURL = `${a.image.url.split("/").slice(0, -1).join("/")}/${getAnnotationIIIFRegion(
-                  a,
-                ).join(",")}/max/0/default.jpg`;
                 return (
-                  <tr>
+                  <tr key={a.id}>
                     <th scope="row">
-                      <img src={thumbnailURL} alt={a.image.name} title={thumbnailURL} />
+                      <img
+                        src={getAnnotationDetailUrl(a)}
+                        alt={a.image.name}
+                        title={`Detail image for annotation ${a.order ? a.order : a.id}`}
+                      />
                     </th>
-                    <td>{a.image.name}</td>
+                    <td>
+                      <Link to={`/collections/${collectionID}/images/${a.image.id}?annotation=${a.id}`}>
+                        {a.image.name}
+                      </Link>
+                    </td>
                     {headers.map((f: string, i: number) => (
                       <td key={i}>{a.data[f] || ""}</td>
                     ))}
@@ -104,7 +125,7 @@ export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
             </tbody>
           )}
         </table>
-      </div>
+      </InfiniteScroll>
     </>
   );
 };

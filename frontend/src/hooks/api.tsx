@@ -24,6 +24,7 @@ export function useGet<R>(
 
   // just a var that we increment for refetch
   const [refetchVar, setRefetchVar] = useState<number>(0);
+
   function fetch(params?: { [key: string]: unknown }) {
     if (params) setParams(params);
     else {

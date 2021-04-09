@@ -5,7 +5,7 @@ import { config_default } from "./default";
 export interface Configuration {
   api_path: string;
   iiif_path: string;
-  annotations_page_limit: number;
+  pagination_size: number;
   // The max size of upload in bytes.
   // this configuration must match the `client_max_body_size` of nginx
   max_upload_size: number;

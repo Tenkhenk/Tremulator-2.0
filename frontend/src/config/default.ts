@@ -1,3 +1,4 @@
+import { getServerUrl } from "../utils";
 // Default configuration file
 export const config_default = {
   api_path: "/api/v1",
@@ -15,29 +16,14 @@ export const config_default = {
     "#bd6e61",
   ],
   mime_types: ["image/jpeg", "image/jpg", "image/png", "image/tiff"],
-  annotations_page_limit: 100,
+  pagination_size: 50,
   max_upload_size: 209715200,
   auth: {
     authority: "https://accounts.google.com",
     client_id: "118173508985-pk9j97rcj7ivfpf1c1scuekfsmdqefn7.apps.googleusercontent.com",
-    redirect_uri:
-      window.location.protocol +
-      "//" +
-      window.location.hostname +
-      (window.location.port ? ":" + window.location.port : "") +
-      "/authentication/callback",
-    post_logout_redirect_uri:
-      window.location.protocol +
-      "//" +
-      window.location.hostname +
-      (window.location.port ? ":" + window.location.port : "") +
-      "/",
-    silent_redirect_uri:
-      window.location.protocol +
-      "//" +
-      window.location.hostname +
-      (window.location.port ? ":" + window.location.port : "") +
-      "/authentication/silent_callback",
+    redirect_uri: getServerUrl() + "/authentication/callback",
+    post_logout_redirect_uri: getServerUrl() + "/",
+    silent_redirect_uri: getServerUrl() + "/authentication/silent_callback",
     scope: "openid profile email",
     response_type: "code",
     automaticSilentRenew: true,

@@ -2,3 +2,7 @@ p.error {
   color: $error;
   text-align: center;
 }
+
+button.btn-link:focus {
+  box-shadow: none;
+}

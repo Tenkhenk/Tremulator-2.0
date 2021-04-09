@@ -2,7 +2,7 @@ import { AnnotationModelFull } from "./types";
 import L, { Point } from "leaflet";
 import { max, min } from "lodash";
 
-export const getAnnotationIIIFRegion = (annotation: AnnotationModelFull) => {
+export function getAnnotationIIIFRegion(annotation: AnnotationModelFull): Array<number> {
   const points = annotation.geometry.coordinates[0].map((c: [number, number]) =>
     // geoJson is lnglat, leaflet is latlng => swap
     // maxZoom is used to scale correctly coord to image pixels space
@@ -15,8 +15,14 @@ export const getAnnotationIIIFRegion = (annotation: AnnotationModelFull) => {
 
   const region = [x0, y0, Math.abs(x1 - x0), Math.abs(y1 - y0)];
   // fallback to 0 cause annotation points can be drawn off the picture
-  return region.map((c) => max([c, 0]));
-};
+  return region.map((c) => max([c, 0])) as Array<number>;
+}
+
+export function getAnnotationDetailUrl(annotation: AnnotationModelFull): string {
+  return `${annotation.image.url.split("/").slice(0, -1).join("/")}/${getAnnotationIIIFRegion(annotation).join(
+    ",",
+  )}/max/0/default.jpg`;
+}
 
 export function formatBytes(bytes: number, decimals = 2): string {
   if (bytes === 0) return "0 Bytes";
@@ -28,4 +34,13 @@ export function formatBytes(bytes: number, decimals = 2): string {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
+
+export function getServerUrl(): string {
+  return (
+    window.location.protocol +
+    "//" +
+    window.location.hostname +
+    (window.location.port ? ":" + window.location.port : "")
+  );
 }
