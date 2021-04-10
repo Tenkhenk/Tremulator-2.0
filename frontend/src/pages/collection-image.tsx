@@ -67,8 +67,10 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
   const [bbox, setBbox] = useQueryParam<string>("bbox", "", true);
   // iiif quality mode
   const [quality, setQuality] = useQueryParam<string>("quality", "default");
-  // View ann
+  // View annotation
   const [sideOpened, setSideOpened] = useQueryParam<boolean>("opened", true);
+  // Selected tool
+  const [tool, setTool] = useQueryParam<string>("tool", "");
 
   // When error happened
   //  => set the alerte
@@ -138,6 +140,8 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                       editMode={mode !== "view"}
                       addMode={mode !== "new"}
                       schemas={collection.schemas}
+                      tool={tool}
+                      setTool={setTool}
                       annotations={
                         mode === "new" && annotation
                           ? image.annotations.concat([annotation])

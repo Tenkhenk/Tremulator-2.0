@@ -16,10 +16,12 @@ interface Props {
   onUpdate?: (geo: { geometry: GeoJSON; maxZoom: number }) => void;
   onSelect?: (id: number) => void;
   selected?: number | null;
+  setTool?: (tool: string) => void;
+  tool?: string;
 }
 
 export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
-  const { annotations, addMode, editMode, schemas, onCreate, onUpdate, onSelect, selected } = props;
+  const { annotations, addMode, editMode, schemas, onCreate, onUpdate, onSelect, selected, tool, setTool } = props;
   const map = useMap();
 
   useEffect(() => {
@@ -81,15 +83,42 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
             allowIntersection: false,
             showArea: false,
           },
+          rectangle: {
+            showRadius: false,
+          },
         },
       });
       map.addControl(drawControl);
 
+      // selected tool
+      switch (tool) {
+        case "polygon":
+          (document?.querySelector(".leaflet-draw-draw-polygon") as HTMLElement).click();
+          break;
+        case "rectangle":
+          (document?.querySelector(".leaflet-draw-draw-rectangle") as HTMLElement).click();
+          break;
+      }
+
       // listener for creation
       const createFn = (e: LeafletEvent) => {
-        if (onCreate) onCreate({ geometry: e.layer.toGeoJSON().geometry, maxZoom: map.getMaxZoom() });
+        if (onCreate) {
+          console.log("create");
+          onCreate({ geometry: e.layer.toGeoJSON().geometry, maxZoom: map.getMaxZoom() });
+          if (setTool) setTool((e as any).layerType);
+        }
       };
       map.on("draw:created", createFn);
+
+      const cancelFn = (e: any) => {
+        console.log("cancelFn", e, editMode, addMode, selected);
+        if (setTool) setTool("");
+      };
+      const drawMenu: any = document?.querySelector(".leaflet-draw-actions  a");
+      if (drawMenu) {
+        console.log("register");
+        drawMenu["onclick"] = cancelFn;
+      }
 
       // Listener for change
       const editFn = (e: any) => {
@@ -113,7 +142,7 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
         map.removeLayer(drawLayer);
       };
     }
-  }, [addMode, schemas, map, annotations, editMode, onCreate, onUpdate, onSelect, selected]);
+  }, [addMode, schemas, map, annotations, editMode, onCreate, onUpdate, onSelect, selected, tool, setTool]);
 
   return null;
 };
