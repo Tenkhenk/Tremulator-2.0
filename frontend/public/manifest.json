@@ -2,10 +2,15 @@
   "short_name": "Tremulator2.0",
   "name": "Tremulator 2.0",
   "icons": [
+      {
+        "src": "/android-chrome-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+    },
     {
-      "src": "/android-chrome-48x48.png",
-      "sizes": "48x48",
-      "type": "image/png"
+        "src": "/android-chrome-256x256.png",
+        "sizes": "256x256",
+        "type": "image/png"
     }
   ],
   "start_url": ".",

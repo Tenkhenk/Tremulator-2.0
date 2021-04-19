@@ -17,6 +17,9 @@ html {
           #brand {
             flex-grow: 1;
             width: 20%;
+            img {
+              height: 40px;
+            }
           }
 
           #app-header {
