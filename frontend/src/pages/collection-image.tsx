@@ -116,8 +116,19 @@ export const CollectionImage: React.FC<Props> = (props: Props) => {
                     className="btn btn-link"
                     onClick={() => setSideOpened(!sideOpened)}
                   >
+                    {sideOpened && (
+                      <>
+                        <i className="fas fa-chevron-left mr-1"></i>{" "}
+                      </>
+                    )}
                     <i className="fas fa-vector-square mr-1"></i>
                     {image.annotations.length}
+                    {!sideOpened && (
+                      <>
+                        {" "}
+                        <i className="fas fa-chevron-right mr-1"></i>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
