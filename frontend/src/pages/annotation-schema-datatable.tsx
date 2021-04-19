@@ -6,7 +6,6 @@ import { AnnotationModelFull, SchemaModelFull } from "../types";
 import { getAnnotationDetailUrl } from "../utils";
 import { config } from "../config/index";
 import { useGet } from "../hooks/api";
-import { useQueryParam } from "../hooks/useQueryParam";
 import { PageHeader } from "../components/page-header";
 import Loader from "../components/loader";
 import { AnnotationBtnExport } from "../components/annotation/btn-export-csv";
@@ -78,11 +77,7 @@ export const AnnotationSchemaDatatable: React.FC<Props> = (props: Props) => {
         }}
         scrollableTarget={document.querySelector("main")}
         hasMore={data && data.length === 0 ? false : true}
-        loader={
-          <div className="loader" key={0}>
-            Loading ...
-          </div>
-        }
+        loader={<></>}
       >
         <table className="table table-hover annotations-table">
           {schema && (

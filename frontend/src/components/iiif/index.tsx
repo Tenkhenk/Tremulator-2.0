@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
-import L, { Layer, LatLngBounds } from "leaflet";
-import "leaflet-iiif";
+import L, { LatLngBounds } from "leaflet";
+import { IIIFLayer as LeafletIIIFLayer } from "leaflet-iiif";
 import "leaflet-draw";
 import "./quality-toolbar";
 
@@ -40,9 +40,10 @@ export const IIIFLayer: React.FC<Props> = (props: Props) => {
   //  => reset layer
   useEffect(() => {
     // add IIF layer to leaflet
-    const l = new (L.TileLayer as any).Iiif(url, {
+    const l = new LeafletIIIFLayer(url, {
       fitBounds: true,
       quality: quality ? quality : "default",
+      maxZoom: 2,
     });
     l.addTo(map);
 

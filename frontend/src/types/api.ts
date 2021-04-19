@@ -106,25 +106,23 @@ export interface paths {
 export interface components {
   schemas: {
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_AnnotationEntity.id-or-created_at-or-updated_at-or-data-or-geometry-or-maxZoom-or-image_id-or-schema_id-or-order_": {
+    "Pick_AnnotationEntity.id-or-created_at-or-updated_at-or-data-or-geometry-or-image_id-or-schema_id-or-order_": {
       id: number;
       created_at: string;
       updated_at: string;
       data: { [key: string]: any };
       geometry: { [key: string]: any };
-      maxZoom: number;
       image_id: number;
       schema_id: number;
       order: number;
     };
-    AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-created_at-or-updated_at-or-data-or-geometry-or-maxZoom-or-image_id-or-schema_id-or-order_"];
+    AnnotationModel: components["schemas"]["Pick_AnnotationEntity.id-or-created_at-or-updated_at-or-data-or-geometry-or-image_id-or-schema_id-or-order_"];
     /** From T, pick a set of properties whose keys are in the union K */
-    "Pick_AnnotationEntity.data-or-geometry-or-maxZoom_": {
+    "Pick_AnnotationEntity.data-or-geometry_": {
       data: { [key: string]: any };
       geometry: { [key: string]: any };
-      maxZoom: number;
     };
-    AnnotationData: components["schemas"]["Pick_AnnotationEntity.data-or-geometry-or-maxZoom_"];
+    AnnotationData: components["schemas"]["Pick_AnnotationEntity.data-or-geometry_"];
     /** From T, pick a set of properties whose keys are in the union K */
     "Pick_AnnotationModel.Exclude_keyofAnnotationModel.image_id-or-schema_id__": {
       id: number;
@@ -132,7 +130,6 @@ export interface components {
       updated_at: string;
       data: { [key: string]: any };
       geometry: { [key: string]: any };
-      maxZoom: number;
       order: number;
     };
     "Omit_AnnotationModel.image_id-or-schema_id_": components["schemas"]["Pick_AnnotationModel.Exclude_keyofAnnotationModel.image_id-or-schema_id__"];

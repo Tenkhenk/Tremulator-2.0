@@ -12,8 +12,8 @@ interface Props {
   schemas: Array<SchemaModel>;
   editMode: boolean;
   addMode: boolean;
-  onCreate?: (geo: { geometry: GeoJSON; maxZoom: number }) => void;
-  onUpdate?: (geo: { geometry: GeoJSON; maxZoom: number }) => void;
+  onCreate?: (geometry: GeoJSON) => void;
+  onUpdate?: (geometry: GeoJSON) => void;
   onSelect?: (id: number) => void;
   selected?: number | null;
   setTool?: (tool: string) => void;
@@ -103,27 +103,24 @@ export const IIIFLayerAnnotation: React.FC<Props> = (props: Props) => {
       // listener for creation
       const createFn = (e: LeafletEvent) => {
         if (onCreate) {
-          console.log("create");
-          onCreate({ geometry: e.layer.toGeoJSON().geometry, maxZoom: map.getMaxZoom() });
+          onCreate(e.layer.toGeoJSON().geometry);
           if (setTool) setTool((e as any).layerType);
         }
       };
       map.on("draw:created", createFn);
 
       const cancelFn = (e: any) => {
-        console.log("cancelFn", e, editMode, addMode, selected);
         if (setTool) setTool("");
       };
       const drawMenu: any = document?.querySelector(".leaflet-draw-actions  a");
       if (drawMenu) {
-        console.log("register");
         drawMenu["onclick"] = cancelFn;
       }
 
       // Listener for change
       const editFn = (e: any) => {
         const geojson = (drawLayer.toGeoJSON() as any).features[0];
-        if (onUpdate) onUpdate({ geometry: geojson.geometry, maxZoom: map.getMaxZoom() });
+        if (onUpdate) onUpdate(geojson.geometry);
       };
       map.on("draw:editvertex", editFn);
 

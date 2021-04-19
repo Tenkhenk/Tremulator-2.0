@@ -5,8 +5,7 @@ import { max, min } from "lodash";
 export function getAnnotationIIIFRegion(annotation: AnnotationModelFull): Array<number> {
   const points = annotation.geometry.coordinates[0].map((c: [number, number]) =>
     // geoJson is lnglat, leaflet is latlng => swap
-    // maxZoom is used to scale correctly coord to image pixels space
-    L.CRS.Simple.latLngToPoint(L.latLng([c[1], c[0], 0]), annotation.maxZoom),
+    L.CRS.Simple.latLngToPoint(L.latLng([c[1], c[0], 0]), 0),
   );
   const x0: number = min(points.map((p: Point) => p.x)) || 0;
   const y0: number = min(points.map((p: Point) => p.y)) || 0;
