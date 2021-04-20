@@ -20,7 +20,7 @@ export const config_default = {
   max_upload_size: 209715200,
   auth: {
     authority: "https://accounts.google.com",
-    client_id: "118173508985-pk9j97rcj7ivfpf1c1scuekfsmdqefn7.apps.googleusercontent.com",
+    client_id: process.env.REACT_APP_CLIENT_ID,
     redirect_uri: getServerUrl() + "/authentication/callback",
     post_logout_redirect_uri: getServerUrl() + "/",
     silent_redirect_uri: getServerUrl() + "/authentication/silent_callback",
