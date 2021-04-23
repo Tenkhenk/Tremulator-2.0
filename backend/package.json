@@ -2,6 +2,7 @@
   "name": "tremulator-backend",
   "version": "1.0.0",
   "description": "REST API server for Tremulator",
+  "license": "MIT",
   "main": "./build/index.js",
   "scripts": {
     "start": "export configuration=\"dev\" && npm run generate && tsc-watch --onSuccess 'nodemon ./build/index.js'",

@@ -1,6 +1,8 @@
 {
   "name": "tremulator-frontend",
   "version": "1.0.0",
+  "description": "Web application for Tremulator",
+  "license": "MIT",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
