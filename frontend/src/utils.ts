@@ -14,7 +14,7 @@ export function getAnnotationIIIFRegion(annotation: AnnotationModelFull): Array<
 
   const region = [x0, y0, Math.abs(x1 - x0), Math.abs(y1 - y0)];
   // fallback to 0 cause annotation points can be drawn off the picture
-  return region.map((c) => max([c, 0])) as Array<number>;
+  return region.map((c) => Math.round(max([c, 0]) as number));
 }
 
 export function getAnnotationDetailUrl(annotation: AnnotationModelFull): string {
