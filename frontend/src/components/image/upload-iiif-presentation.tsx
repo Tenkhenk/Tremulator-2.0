@@ -24,7 +24,7 @@ const ImageIiifPresentationUpload: React.FC<Props> = (props: Props) => {
         {loading && <Loader />}
         {!loading && (
           <div className="fromGroup m-2">
-            <label htmlFor="name">IIIF Presentation Manifest url</label>
+            <label htmlFor="name">IIIF Manifest url</label>
             <input className="form-control" id="url" value={url} onChange={(e) => setUrl(e.target.value)} />
           </div>
         )}

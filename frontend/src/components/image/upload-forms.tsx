@@ -35,7 +35,7 @@ const ImageUploadForms: React.FC<Props> = (props: Props) => {
             onClick={() => setUploadMethod(UploadMethod.DistantImage)}
             className={`btn btn-link nav-link ${uploadMethod === UploadMethod.DistantImage ? "active" : ""}`}
           >
-            Distant Images
+            Remote Images
           </button>
         </li>
         <li className="nav-item">
@@ -43,7 +43,7 @@ const ImageUploadForms: React.FC<Props> = (props: Props) => {
             onClick={() => setUploadMethod(UploadMethod.IIIFPresentation)}
             className={`btn btn-link nav-link ${uploadMethod === UploadMethod.IIIFPresentation ? "active" : ""}`}
           >
-            IIIF Presentation
+            IIIF Manifest
           </button>
         </li>
       </ul>
