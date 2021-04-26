@@ -97,7 +97,7 @@ export const JsonSchemaEditor: React.FC<Props> = (props: Props) => {
   const { onChange, onSubmit, value } = props;
   return (
     <div className="container-fluid">
-      <div className="row">
+      <div className="row annotation">
         <Form
           schema={schemaSchemaForm.schema}
           uiSchema={schemaSchemaForm.ui}
