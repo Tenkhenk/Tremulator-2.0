@@ -39,6 +39,8 @@ services:
     volumes:
       - ${PROJECT_PATH}/docker/frontend/nginx.${MODE}.conf:/etc/nginx/nginx.conf
       - ${PROJECT_PATH}/frontend:/frontend
+    environment:
+      - REACT_APP_CLIENT_ID=${CLIENT_ID}
     env_file:
       - ${PROJECT_PATH}/docker/.env
 
@@ -54,5 +56,8 @@ services:
     volumes:
       - ${PROJECT_PATH}/backend:/backend
       - ${PROJECT_PATH}/docker/iiif/data:/data
+    environment:
+      - CLIENT_ID
+      - CLIENT_SECRET
     env_file:
       - ${PROJECT_PATH}/docker/.env

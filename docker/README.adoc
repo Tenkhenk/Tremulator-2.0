@@ -43,7 +43,15 @@ and it's the one of the web application.
 
 == Run the stack in dev
 
-Just run `docker-compose up` inside the project `docker` folder.
+Before to run the stack, you must have a google openID application well configured (check the **requirement** section in **How to install with docker**).
+Add `CLIENT_ID` & `CLIENT_SECRET` as environment variables :
+
+----
+export CLIENT_ID="XXXXXX.apps.googleusercontent.com"
+export CLIENT_SECRET="XXXXXXXXXXXXXXXXXX"
+----
+
+Then, just run `docker-compose up` inside the project `docker` folder.
 
 NOTE: If you have many docker projects, I recommend you to use a prefix for the stack : `docker-compose -p tremulator up`
 
