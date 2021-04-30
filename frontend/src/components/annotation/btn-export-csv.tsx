@@ -31,9 +31,10 @@ export const AnnotationBtnExport: React.FC<Props> = (props: Props) => {
       Object.keys(schema.schema.properties).forEach((field: string) => {
         schemaData[field] = row.data[field];
       });
+      const url = getAnnotationDetailUrl(row);
       return {
         id: row.order ? row.order : row.id,
-        url: getServerUrl() + getAnnotationDetailUrl(row),
+        url: url.startsWith("http") ? url : getServerUrl() + getAnnotationDetailUrl(row),
         ...schemaData,
         collection: row.schema.collection_id,
         schema: row.schema.id,
