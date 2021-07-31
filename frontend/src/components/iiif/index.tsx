@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMap } from "react-leaflet";
 import L, { LatLngBounds } from "leaflet";
-import { IIIFLayer as LeafletIIIFLayer } from "leaflet-iiif";
+import { IIIFLayer as LeafletIIIFLayer } from "ow-leaflet-iiif";
 import "leaflet-draw";
 import "./quality-toolbar";
 
